@@ -2,6 +2,7 @@ using Alexa.NET;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
+using Alexa.NET.Response.Directive;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -33,11 +34,12 @@ public class Function
         .RunAsync();
   }
 
-  public static Dictionary<String, String[]> Intents = new Dictionary<string, string[]> {
-    { "SetFirstName", ["FirstName"] },
-    { "SetAge", ["Age"] } ,
-    { "SetExercice", ["Exercice"] } ,
-    { "SetNbExercice", ["NbExercice"] } ,
+  public static Dictionary<string, IntentData> Intents = new Dictionary<string, IntentData> {
+    { "SetFirstName", new IntentData { Slots = [nameof(HomeworkSession.FirstName)], RelatedStep = HomeworkStep.GetFirstName } },
+    { "SetAge", new IntentData { Slots = [nameof(HomeworkSession.Age)], RelatedStep = HomeworkStep.GetAge} } ,
+    { "SetExercice", new IntentData { Slots = [nameof(HomeworkSession.Exercice)], RelatedStep = HomeworkStep.GetExercice}} ,
+    { "SetNbExercice", new IntentData { Slots = [nameof(HomeworkSession.NbExercice)], RelatedStep = HomeworkStep.GetNbExercice}} ,
+    { "LastAnswer", new IntentData { Slots = [nameof(HomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice}} ,
   };
 
   /// <summary>
@@ -81,7 +83,22 @@ public class Function
 
     var r = BuildAnswerFromCurrentStep(homeworkRunner, nextStep);
     r.SessionAttributes = homeworkSession;
+
+    SetNextIntentExpected(homeworkRunner, r);
+
     return r;
+  }
+
+  private static void SetNextIntentExpected(HomeworkExerciceRunner homeworkRunner, SkillResponse r)
+  {
+    var nextIntentName = FindNextIntentName(homeworkRunner);
+    if (!string.IsNullOrEmpty(nextIntentName))
+      r.Response.Directives.Add(new DialogDelegate { UpdatedIntent = new Intent { Name = nextIntentName } });
+  }
+
+  private static string FindNextIntentName(HomeworkExerciceRunner homeworkRunner)
+  {
+    return Intents.FirstOrDefault(i => i.Value.RelatedStep == homeworkRunner.GetNextStep()).Key;
   }
 
   private static SkillResponse BuildAnswerFromCurrentStep(HomeworkExerciceRunner runner, HomeworkStep nextStep)
@@ -97,7 +114,7 @@ public class Function
       case HomeworkStep.GetNbExercice:
         return ResponseBuilder.Ask("OK ! Et sur combien de questions souhaites-tu t'entraîner ?", new Reprompt("Je n'ai pas compris ce chiffre, peux tu répéter ?"));
       case HomeworkStep.StartExercice:
-        return ResponseBuilder.Ask(runner.NextQuestion(string.Empty), new Reprompt("Je n'ai pas compris ce chiffre, peux tu répéter ?"));
+        return ResponseBuilder.Ask(runner.NextQuestion(), new Reprompt("Je n'ai pas compris ce chiffre, peux tu répéter ?"));
     }
 
     return ResponseBuilder.Tell("OK");
@@ -113,7 +130,7 @@ public class Function
     {
       if (intent.Key == name)
       {
-        foreach (var slotName in intent.Value)
+        foreach (var slotName in intent.Value.Slots)
         {
           intentRequest.Intent.Slots.TryGetValue(slotName, out var slot);
 

@@ -1,6 +1,6 @@
 ﻿namespace Homework.Enums
 {
-  public enum HomeworkExercises
+  public enum HomeworkExercisesTypes
   {
     Unknown,
 

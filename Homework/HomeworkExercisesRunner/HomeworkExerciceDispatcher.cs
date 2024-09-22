@@ -1,11 +1,12 @@
 ﻿using Homework.Enums;
+using Homework.HomeworkExercises;
 using System.Reflection;
 
 namespace Homework.HomeworkExercisesRunner
 {
-  public class HomeworkExerciceDispatcher
+    public class HomeworkExerciceDispatcher
   {
-    public IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercises exercice)
+    public IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
     {
       var type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(t => t.GetInterface(typeof(IExerciceQuestionsRunner).Name) != null && t.GetCustomAttribute<ExerciceAttribute>()?.ExerciceType == exercice);
 

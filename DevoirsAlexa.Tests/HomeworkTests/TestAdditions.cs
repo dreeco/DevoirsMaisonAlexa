@@ -1,10 +1,10 @@
-﻿using Homework.HomeworkExercisesRunner;
+﻿using Homework.HomeworkExercises;
 using Homework.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.HomeworkTests
 {
-  public class TestAdditions
+    public class TestAdditions
   {
     private AdditionsExercises exercice;
 

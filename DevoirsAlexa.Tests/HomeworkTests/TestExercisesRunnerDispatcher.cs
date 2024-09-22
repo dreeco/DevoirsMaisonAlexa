@@ -1,16 +1,19 @@
 ﻿using Homework.Enums;
+using Homework.HomeworkExercises;
 using Homework.HomeworkExercisesRunner;
 using Homework.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.HomeworkTests
 {
-  public class TestExercisesRunnerDispatcher
+    public class TestExercisesRunnerDispatcher
   {
+    public HomeworkSession? _currentSession { get; private set; }
+
     [Theory]
-    [InlineData(HomeworkExercises.Unknown, null)]
-    [InlineData(HomeworkExercises.Additions, typeof(AdditionsExercises))]
-    public void ShouldReturnType_GivenSpecificExercice(HomeworkExercises exercice, Type? expectedType)
+    [InlineData(HomeworkExercisesTypes.Unknown, null)]
+    [InlineData(HomeworkExercisesTypes.Additions, typeof(AdditionsExercises))]
+    public void ShouldReturnType_GivenSpecificExercice(HomeworkExercisesTypes exercice, Type? expectedType)
     {
       var dispatcher = new HomeworkExerciceDispatcher();
       var exerciceInstance = dispatcher.GetExerciceQuestionsRunner(exercice);
@@ -24,40 +27,42 @@ namespace DevoirsAlexa.Tests.HomeworkTests
 
     [Theory]
     //[InlineData(HomeworkExercises.Unknown, null)]
-    [InlineData("FirstName=Alix,Age=6,Exercice=Additions,NbExercice=5", @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
-    public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, string questionKeyPattern, string questionTextPattern) {
-      var runner = new HomeworkExerciceRunner(new HomeworkSession(session));
-
-      string previousAnswer = string.Empty;
-      var nbExercice = runner.NbExercice;
+    [InlineData("FirstName=Alix,Age=6,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
+    [InlineData("FirstName=Elio,Age=4,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
+    public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern) {
+      session += nbExercice.ToString();
+      _currentSession = new HomeworkSession(session);
+      
+      var runner = new HomeworkExerciceRunner(_currentSession);
 
       for (var n = 0; n <= nbExercice; n++)
       {
-        ThereWasNQuestionAsked(runner, n);
+        ThereWasNQuestionAsked(n);
 
-        var outputText = runner.NextQuestion(previousAnswer);
-        var lastQuestionKey = runner.AlreadyAsked.LastOrDefault();
+        var outputText = runner.NextQuestion();
+        var lastQuestionKey = runner.LastQuestionKey;
 
         var isLastRun = n == nbExercice;
         if (!isLastRun)
         {
           Assert.NotNull(lastQuestionKey);
           ThenTheQuestionAskedMatchesTheExpectedPatterns(lastQuestionKey, questionKeyPattern, questionTextPattern, runner, outputText);
-          previousAnswer = runner.GetCorrectAnswer(lastQuestionKey);
+          _currentSession["LastAnswer"] = runner.GetCorrectAnswer(lastQuestionKey);
         }
         else
         {
           Assert.Null(lastQuestionKey);
 
           ThenTheQuestionDoesNotMatchExerciceQuestionPattern(questionTextPattern, outputText);
-          ThenTheDataAreCleanedForNextExercice(runner);
+          ThenTheDataAreCleanedForNextExercice();
         }
       }
     }
 
-    private static void ThereWasNQuestionAsked(HomeworkExerciceRunner runner, int n)
+    private void ThereWasNQuestionAsked(int n)
     {
-      Assert.Equal(n, runner.QuestionAsked);
+      Assert.NotNull(_currentSession);
+      Assert.Equal(n, _currentSession.QuestionAsked);
     }
 
     private static void ThenTheQuestionDoesNotMatchExerciceQuestionPattern(string questionTextPattern, string outputText)
@@ -72,12 +77,13 @@ namespace DevoirsAlexa.Tests.HomeworkTests
       return questionKey;
     }
 
-    private static void ThenTheDataAreCleanedForNextExercice(HomeworkExerciceRunner runner)
+    private void ThenTheDataAreCleanedForNextExercice()
     {
-      Assert.Empty(runner.AlreadyAsked);
-      Assert.Null(runner.Exercice);
-      Assert.Equal(0, runner.CorrectAnswers);
-      Assert.Equal(0, runner.QuestionAsked);
+      Assert.NotNull(_currentSession);
+      Assert.Empty(_currentSession.AlreadyAsked);
+      Assert.Null(_currentSession.Exercice);
+      Assert.Equal(0, _currentSession.CorrectAnswers);
+      Assert.Equal(0, _currentSession.QuestionAsked);
     }
   }
 }

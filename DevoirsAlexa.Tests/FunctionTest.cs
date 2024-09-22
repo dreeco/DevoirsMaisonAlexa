@@ -53,7 +53,7 @@ public class FunctionTest : BaseFunctionTest
 
   private static void ThenIHaveTheFollowingSessionAttribute(string intent, string expectedValue, SkillResponse response)
   {
-    Assert.Equal(expectedValue, response.SessionAttributes[Function.Intents[intent][0]].ToString());
+    Assert.Equal(expectedValue, response.SessionAttributes[Function.Intents[intent].Slots[0]].ToString());
   }
 
   private async Task<SkillResponse> WhenIUseTheFollowingIntent(string intent, string? slots = null)
