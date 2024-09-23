@@ -1,0 +1,181 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "devoirs maison",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "HelloWorldIntent",
+          "slots": [],
+          "samples": [
+            "bonjour",
+            "coucou",
+            "salut",
+            "me dire bonjour"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "SetFirstName",
+          "slots": [
+            {
+              "name": "FirstName",
+              "type": "AMAZON.FirstName"
+            }
+          ],
+          "samples": [
+            "je suis {FirstName}",
+            "mon nom est {FirstName}",
+            "{FirstName}",
+            "je m'appelle {FirstName}"
+          ]
+        },
+        {
+          "name": "SetAge",
+          "slots": [
+            {
+              "name": "Age",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "{Age} ans",
+            "J'ai {Age} ans"
+          ]
+        },
+        {
+          "name": "SetExercice",
+          "slots": [
+            {
+              "name": "Exercice",
+              "type": "HomeworkExercice"
+            }
+          ],
+          "samples": [
+            "m'entrainer à {Exercice}",
+            "Revoir mes {Exercice}",
+            "Faire une {Exercice}",
+            "Reviser mes {Exercice}",
+            "Faire des {Exercice}",
+            "je voudrais {Exercice}",
+            "je voudrais faire des {Exercice}",
+            "je veux {Exercice}",
+            "je veux faire des {Exercice}",
+            "{Exercice}"
+          ]
+        },
+        {
+          "name": "SetNbExercice",
+          "slots": [
+            {
+              "name": "NbExercice",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "{NbExercice}",
+            "en faire {NbExercice}",
+            "Une série de {NbExercice}",
+            "{NbExercice} exercices",
+            "Faire {NbExercice} exercices"
+          ]
+        },
+        {
+          "name": "SetAnswer",
+          "slots": [
+            {
+              "name": "LastAnswer",
+              "type": "AMAZON.NUMBER"
+            }
+          ],
+          "samples": [
+            "la réponse est {LastAnswer}",
+            "ma réponse est {LastAnswer}",
+            "c'est {LastAnswer}",
+            "le résultat est {LastAnswer}",
+            "{LastAnswer}",
+            "ça fait {LastAnswer}",
+            "Cela fait {LastAnswer}"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "HomeworkExercice",
+          "values": [
+            {
+              "name": {
+                "value": "Dictée",
+                "synonyms": [
+                  "mots de la dictée"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "Divisions",
+                "synonyms": [
+                  "division",
+                  "divisions",
+                  "diviser",
+                  "table de divisions"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "Multiplications",
+                "synonyms": [
+                  "multiplications",
+                  "multiplication",
+                  "multiplier",
+                  "table de multiplication",
+                  "table des multiplications"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "Soustractions",
+                "synonyms": [
+                  "Soustraction",
+                  "soustraction",
+                  "soustraire",
+                  "table de soustractions",
+                  "table soustractions"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "Additions",
+                "synonyms": [
+                  "Addition",
+                  "addition",
+                  "additions",
+                  "additionner",
+                  "table additions",
+                  "table d'additions"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

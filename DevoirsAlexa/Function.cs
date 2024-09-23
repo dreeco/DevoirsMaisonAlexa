@@ -39,7 +39,7 @@ public class Function
     { "SetAge", new IntentData { Slots = [nameof(HomeworkSession.Age)], RelatedStep = HomeworkStep.GetAge} } ,
     { "SetExercice", new IntentData { Slots = [nameof(HomeworkSession.Exercice)], RelatedStep = HomeworkStep.GetExercice}} ,
     { "SetNbExercice", new IntentData { Slots = [nameof(HomeworkSession.NbExercice)], RelatedStep = HomeworkStep.GetNbExercice}} ,
-    { "LastAnswer", new IntentData { Slots = [nameof(HomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice}} ,
+    { "SetAnswer", new IntentData { Slots = [nameof(HomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice}} ,
   };
 
   /// <summary>
@@ -84,22 +84,22 @@ public class Function
     var r = BuildAnswerFromCurrentStep(homeworkRunner, nextStep);
     r.SessionAttributes = homeworkSession;
 
-    SetNextIntentExpected(homeworkRunner, r);
+    SetNextIntentExpected(homeworkRunner, r, context.Logger);
 
     return r;
   }
 
-  private static void SetNextIntentExpected(HomeworkExerciceRunner homeworkRunner, SkillResponse r)
+  private static void SetNextIntentExpected(HomeworkExerciceRunner homeworkRunner, SkillResponse r, ILambdaLogger logger)
   {
-    var nextIntentName = FindNextIntentName(homeworkRunner);
+    var data = Intents.FirstOrDefault(i => i.Value.RelatedStep == homeworkRunner.GetNextStep());
+    var nextIntentName = data.Key;
     if (!string.IsNullOrEmpty(nextIntentName))
-      r.Response.Directives.Add(new DialogDelegate { UpdatedIntent = new Intent { Name = nextIntentName } });
+    {
+      r.Response.Directives.Add(new DialogElicitSlot(data.Value.Slots[0]) { UpdatedIntent = new Intent { Name = nextIntentName, Slots = data.Value.Slots.ToDictionary(s => s, s => new Slot() { Name = s }) } });
+      logger.LogInformation($"Expected Next intent is : {nextIntentName}");
+    }
   }
 
-  private static string FindNextIntentName(HomeworkExerciceRunner homeworkRunner)
-  {
-    return Intents.FirstOrDefault(i => i.Value.RelatedStep == homeworkRunner.GetNextStep()).Key;
-  }
 
   private static SkillResponse BuildAnswerFromCurrentStep(HomeworkExerciceRunner runner, HomeworkStep nextStep)
   {
