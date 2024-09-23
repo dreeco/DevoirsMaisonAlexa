@@ -66,7 +66,7 @@
             }
           ],
           "samples": [
-            "m'entrainer à {Exercice}",
+            "m'entrainer ï¿½ {Exercice}",
             "Revoir mes {Exercice}",
             "Faire une {Exercice}",
             "Reviser mes {Exercice}",
@@ -89,7 +89,7 @@
           "samples": [
             "{NbExercice}",
             "en faire {NbExercice}",
-            "Une série de {NbExercice}",
+            "Une sï¿½rie de {NbExercice}",
             "{NbExercice} exercices",
             "Faire {NbExercice} exercices"
           ]
@@ -103,12 +103,12 @@
             }
           ],
           "samples": [
-            "la réponse est {LastAnswer}",
-            "ma réponse est {LastAnswer}",
+            "la rï¿½ponse est {LastAnswer}",
+            "ma rï¿½ponse est {LastAnswer}",
             "c'est {LastAnswer}",
-            "le résultat est {LastAnswer}",
+            "le rï¿½sultat est {LastAnswer}",
             "{LastAnswer}",
-            "ça fait {LastAnswer}",
+            "ï¿½a fait {LastAnswer}",
             "Cela fait {LastAnswer}"
           ]
         }
@@ -119,9 +119,9 @@
           "values": [
             {
               "name": {
-                "value": "Dictée",
+                "value": "Dictï¿½e",
                 "synonyms": [
-                  "mots de la dictée"
+                  "mots de la dictï¿½e"
                 ]
               }
             },
@@ -176,6 +176,37 @@
           ]
         }
       ]
-    }
+    },
+    "dialog": {
+      "intents": [
+        {
+          "name": "SetFirstName",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "FirstName",
+              "type": "AMAZON.FirstName",
+              "elicitationRequired": true,
+              "confirmationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Slot.FirstName"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "prompts": [
+      {
+        "id": "Elicit.Slot.FirstName",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Quel est ton prï¿½nom ?"
+          }
+        ]
+      }
+    ]
   }
 }
