@@ -1,23 +1,26 @@
 ﻿using Homework.Enums;
-using Homework.HomeworkExercises;
+using Homework.HomeworkExercises.MathExercices;
 using Homework.HomeworkExercisesRunner;
 using Homework.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.HomeworkTests
 {
-    public class TestExercisesRunnerDispatcher
+  public class TestExercisesRunnerDispatcher
   {
     public HomeworkSession? _currentSession { get; private set; }
 
     [Theory]
     [InlineData(HomeworkExercisesTypes.Unknown, null)]
     [InlineData(HomeworkExercisesTypes.Additions, typeof(AdditionsExercises))]
+    [InlineData(HomeworkExercisesTypes.Substractions, typeof(SubstractionsExercises))]
+    [InlineData(HomeworkExercisesTypes.Multiplications, typeof(MultiplicationsExercises))]
+    [InlineData(HomeworkExercisesTypes.Divisions, typeof(DivisionsExercises))]
     public void ShouldReturnType_GivenSpecificExercice(HomeworkExercisesTypes exercice, Type? expectedType)
     {
       var dispatcher = new HomeworkExerciceDispatcher();
       var exerciceInstance = dispatcher.GetExerciceQuestionsRunner(exercice);
-      
+
       if (expectedType == null)
         Assert.Null(exerciceInstance);
       else
@@ -29,25 +32,29 @@ namespace DevoirsAlexa.Tests.HomeworkTests
     //[InlineData(HomeworkExercises.Unknown, null)]
     [InlineData("FirstName=Alix,Age=6,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
     [InlineData("FirstName=Elio,Age=4,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
-    public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern) {
+    [InlineData("FirstName=Jonathan,Age=47,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
+    public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern)
+    {
       session += nbExercice.ToString();
       _currentSession = new HomeworkSession(session);
-      
+
       var runner = new HomeworkExerciceRunner(_currentSession);
 
-      for (var n = 0; n <= nbExercice; n++)
+      for (var questionAskedLoopBegin = 0; questionAskedLoopBegin <= nbExercice; questionAskedLoopBegin++)
       {
-        ThereWasNQuestionAsked(n);
-
+        ThereWasNQuestionAskedAndAnswered(questionAskedLoopBegin);
         var outputText = runner.NextQuestion();
+        var questionAsked = questionAskedLoopBegin + 1;
+
         var lastQuestionKey = runner.LastQuestionKey;
 
-        var isLastRun = n == nbExercice;
+        var isLastRun = questionAskedLoopBegin == nbExercice;
         if (!isLastRun)
         {
+          ThenIHaveANewCorrectAnswer(questionAskedLoopBegin);
           Assert.NotNull(lastQuestionKey);
           ThenTheQuestionAskedMatchesTheExpectedPatterns(lastQuestionKey, questionKeyPattern, questionTextPattern, runner, outputText);
-          _currentSession["LastAnswer"] = runner.GetCorrectAnswer(lastQuestionKey);
+          _currentSession.LastAnswer = runner.GetCorrectAnswer(lastQuestionKey);
         }
         else
         {
@@ -59,10 +66,17 @@ namespace DevoirsAlexa.Tests.HomeworkTests
       }
     }
 
-    private void ThereWasNQuestionAsked(int n)
+    private void ThenIHaveANewCorrectAnswer(int n)
+    {
+      Assert.NotNull(_currentSession);
+      Assert.Equal(n, _currentSession.CorrectAnswers);
+    }
+
+    private void ThereWasNQuestionAskedAndAnswered(int n)
     {
       Assert.NotNull(_currentSession);
       Assert.Equal(n, _currentSession.QuestionAsked);
+      Assert.Equal(Math.Max(0, n - 1), _currentSession.CorrectAnswers);
     }
 
     private static void ThenTheQuestionDoesNotMatchExerciceQuestionPattern(string questionTextPattern, string outputText)

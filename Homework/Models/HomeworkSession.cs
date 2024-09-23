@@ -1,5 +1,6 @@
 ﻿using Homework.Enums;
 using System.Collections.Immutable;
+using System.Globalization;
 
 namespace Homework.Models
 {
@@ -58,6 +59,11 @@ namespace Homework.Models
       set { this[nameof(LastAnswer)] = value ?? string.Empty; }
     }
 
+    public DateTime? ExerciceStartTime
+    {
+      get { return DateTime.TryParseExact(TryGetString(nameof(ExerciceStartTime)), "o", CultureInfo.InvariantCulture, DateTimeStyles.None, out var d) ? d : null; }
+      set { this[nameof(ExerciceStartTime)] = value?.ToString("o") ?? string.Empty; }
+    }
 
     private HomeworkExercisesTypes? GetExercice(string exerciceAsString)
     {

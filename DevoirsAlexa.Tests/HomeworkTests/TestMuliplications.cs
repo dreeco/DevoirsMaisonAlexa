@@ -4,13 +4,13 @@ using Xunit;
 
 namespace DevoirsAlexa.Tests.HomeworkTests
 {
-    public class TestAdditions
+    public class TestMultiplications
   {
-    private AdditionsExercises exercice;
+    private MultiplicationsExercises exercice;
 
-    public TestAdditions()
+    public TestMultiplications()
     {
-      exercice = new AdditionsExercises();
+      exercice = new MultiplicationsExercises();
     }
 
     [Theory]
@@ -55,27 +55,30 @@ namespace DevoirsAlexa.Tests.HomeworkTests
 
     private static void ThenTheMinMaxForAgeIsRespected(int min, int max, Question question)
     {
-      var parts = question.Key.Split('+');
+      var parts = question.Key.Split('*');
       foreach (var part in parts)
         Assert.True(int.TryParse(part, out var number) && number >= min && number <= max);
     }
 
     private void ThenTheAnswerValidationIsCorrect(Question question)
     {
-      var parts = question.Key.Split('+');
-      var answer = parts.Sum(p => int.Parse(p));
+      var parts = question.Key.Split('*');
+      var answer = 1;
+      foreach (var part in parts.Select(p => int.Parse(p))) 
+        answer *= part;
+      
       Assert.True(exercice.ValidateAnswer(question.Key, answer.ToString()).IsValid);
       Assert.False(exercice.ValidateAnswer(question.Key, (answer + 1).ToString()).IsValid);
     }
 
     private static void ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(Question question)
     {
-      Assert.Matches($@"Combien font {question.Key.Replace("+", @"\splus\s")} ?", question.Text);
+      Assert.Matches($@"Combien font {question.Key.Replace("*", @"\smultiplié par\s")} ?", question.Text);
     }
 
     private static void ThenTheQuestionKeyIsProperlyFormatted(Question question)
     {
-      Assert.Matches(@"\d+\+\d+", question.Key);
+      Assert.Matches(@"\d+\*\d+", question.Key);
     }
 
     private static void ThenIHaveAQuestion(Question question)

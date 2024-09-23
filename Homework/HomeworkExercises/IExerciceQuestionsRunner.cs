@@ -1,6 +1,6 @@
 ﻿using Homework.Models;
 
-namespace Homework.HomeworkExercisesRunner;
+namespace Homework.HomeworkExercises;
 
 public interface IExerciceQuestionsRunner
 {

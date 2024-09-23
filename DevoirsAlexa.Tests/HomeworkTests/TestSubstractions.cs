@@ -4,13 +4,13 @@ using Xunit;
 
 namespace DevoirsAlexa.Tests.HomeworkTests
 {
-    public class TestAdditions
+    public class TestSubstractions
   {
-    private AdditionsExercises exercice;
+    private SubstractionsExercises exercice;
 
-    public TestAdditions()
+    public TestSubstractions()
     {
-      exercice = new AdditionsExercises();
+      exercice = new SubstractionsExercises();
     }
 
     [Theory]
@@ -55,27 +55,39 @@ namespace DevoirsAlexa.Tests.HomeworkTests
 
     private static void ThenTheMinMaxForAgeIsRespected(int min, int max, Question question)
     {
-      var parts = question.Key.Split('+');
+      var parts = question.Key.Split('-');
       foreach (var part in parts)
         Assert.True(int.TryParse(part, out var number) && number >= min && number <= max);
     }
 
     private void ThenTheAnswerValidationIsCorrect(Question question)
     {
-      var parts = question.Key.Split('+');
-      var answer = parts.Sum(p => int.Parse(p));
+      var parts = question.Key.Split('-');
+      var first = true;
+      var answer = 0;
+      foreach (var part in parts.Select(p => int.Parse(p)))
+      {
+        if (first)
+        {
+          answer = part;
+          first = false;
+        }
+        else
+          answer -= part;
+      }
+
       Assert.True(exercice.ValidateAnswer(question.Key, answer.ToString()).IsValid);
       Assert.False(exercice.ValidateAnswer(question.Key, (answer + 1).ToString()).IsValid);
     }
 
     private static void ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(Question question)
     {
-      Assert.Matches($@"Combien font {question.Key.Replace("+", @"\splus\s")} ?", question.Text);
+      Assert.Matches($@"Combien font {question.Key.Replace("-", @"\smoins\s")} ?", question.Text);
     }
 
     private static void ThenTheQuestionKeyIsProperlyFormatted(Question question)
     {
-      Assert.Matches(@"\d+\+\d+", question.Key);
+      Assert.Matches(@"\d+\-\d+", question.Key);
     }
 
     private static void ThenIHaveAQuestion(Question question)

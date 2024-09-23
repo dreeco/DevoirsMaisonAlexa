@@ -10,8 +10,8 @@
     [TextRepresentations("multiplication")]
     Multiplications,
 
-    [TextRepresentations("soustraction")]
-    Subsctractions,
+    [TextRepresentations("soustraction", "substraction")]
+    Substractions,
 
     [TextRepresentations("division")]
     Divisions,

@@ -1,9 +1,10 @@
 ﻿using Homework.Enums;
+using Homework.HomeworkExercises;
 using Homework.Models;
 
 namespace Homework.HomeworkExercisesRunner
 {
-  public class HomeworkExerciceRunner
+    public class HomeworkExerciceRunner
   {
     private HomeworkSession SessionData { get; }
     private HomeworkExerciceDispatcher _dispatcher { get; }
@@ -67,8 +68,12 @@ namespace Homework.HomeworkExercisesRunner
 
     private void AddNewQuestionToSession(Question question)
     {
+      if (SessionData.ExerciceStartTime == null)
+        SessionData.ExerciceStartTime = DateTime.UtcNow;
+
       if (!SessionData.AlreadyAsked.Contains(question.Key))
         SessionData.AlreadyAsked = SessionData.AlreadyAsked.Add(question.Key);
+
       SessionData.QuestionAsked++;
     }
 
