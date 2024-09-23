@@ -1,10 +1,9 @@
 ﻿using Homework.Enums;
 
-namespace DevoirsAlexa
+namespace DevoirsAlexa;
+
+public class IntentData
 {
-  public class IntentData
-  {
-    public string[] Slots { get; set; } = [];
-    public HomeworkStep RelatedStep { get; set; } = HomeworkStep.GetFirstName;
-  }
+  public string[] Slots { get; set; } = [];
+  public HomeworkStep RelatedStep { get; set; } = HomeworkStep.GetFirstName;
 }

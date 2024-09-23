@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Homework.HomeworkExercisesRunner
 {
-    public class HomeworkExerciceDispatcher
+    public class ExerciceDispatcher
   {
     public IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
     {

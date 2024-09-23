@@ -71,12 +71,15 @@ public class Function
 
     await Task.Delay(0);
 
-    FillRequestSessionWithNewValues(input);
-
+    var intentName = FillRequestSessionWithNewValues(input);
     context.Logger.LogInformation($"Updated input: {System.Text.Json.JsonSerializer.Serialize(input)}");
 
     var homeworkSession = new HomeworkSession(input.Session?.Attributes);
-    var homeworkRunner = new HomeworkExerciceRunner(homeworkSession);
+    var homeworkRunner = new ExerciceRunner(homeworkSession);
+
+    if (intentName == "AMAZON.StopIntent")
+      return ResponseBuilder.Tell(homeworkRunner.EndSession(continueAfter: false));
+
     var nextStep = homeworkRunner.GetNextStep();
 
     context.Logger.LogInformation($"Next step is : {nextStep}");
@@ -89,7 +92,7 @@ public class Function
     return r;
   }
 
-  private static void SetNextIntentExpected(HomeworkExerciceRunner homeworkRunner, SkillResponse r, ILambdaLogger logger)
+  private static void SetNextIntentExpected(ExerciceRunner homeworkRunner, SkillResponse r, ILambdaLogger logger)
   {
     var data = Intents.FirstOrDefault(i => i.Value.RelatedStep == homeworkRunner.GetNextStep());
     var nextIntentName = data.Key;
@@ -100,8 +103,7 @@ public class Function
     }
   }
 
-
-  private static SkillResponse BuildAnswerFromCurrentStep(HomeworkExerciceRunner runner, HomeworkStep nextStep)
+  private static SkillResponse BuildAnswerFromCurrentStep(ExerciceRunner runner, HomeworkStep nextStep)
   {
     switch (nextStep)
     {
@@ -120,10 +122,10 @@ public class Function
     return ResponseBuilder.Tell("OK");
   }
 
-  private static void FillRequestSessionWithNewValues(SkillRequest input)
+  private static string? FillRequestSessionWithNewValues(SkillRequest input)
   {
     if (input.Request is not IntentRequest intentRequest)
-      return;
+      return null;
 
     var name = intentRequest.Intent.Name;
     foreach (var intent in Intents)
@@ -140,6 +142,8 @@ public class Function
         }
       }
     }
+
+    return intentRequest.Intent.Name;
   }
 }
 

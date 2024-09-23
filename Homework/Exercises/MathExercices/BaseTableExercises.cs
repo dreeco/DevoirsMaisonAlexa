@@ -80,7 +80,7 @@ public abstract class BaseTableExercises
             return new AnswerValidation(false, resultNumber.ToString());
 #pragma warning restore CS8604
 
-        return new AnswerValidation(resultNumber == answerNumber, string.Empty);
+        return new AnswerValidation(resultNumber == answerNumber, resultNumber?.ToString() ?? string.Empty);
     }
 
 }
