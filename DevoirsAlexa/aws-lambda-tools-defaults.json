@@ -10,7 +10,7 @@
     "region"      : "eu-west-1",
     "configuration" : "Release",
     "function-runtime" : "dotnet8",
-    "function-memory-size" : 512,
+    "function-memory-size" : 256,
     "function-timeout"     : 15,
     "function-handler"     : "DevoirsAlexa::DevoirsAlexa.Function::FunctionHandler",
     "msbuild-parameters"   : "--self-contained true",
@@ -21,5 +21,8 @@
     "function-architecture" : "x86_64",
     "tracing-mode"          : "PassThrough",
     "environment-variables" : "",
-    "image-tag"             : ""
+    "image-tag"             : "",
+    "function-role"         : "arn:aws:iam::579440272390:role/service-role/devoirsmaison-role-bzhgxw1u",
+    "function-subnets"      : "",
+    "function-security-groups" : ""
 }

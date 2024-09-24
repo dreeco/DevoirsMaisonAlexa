@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DevoirsAlexa.Tests"/>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="xunit.extensibility.core" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Presentation\Presentation.csproj" />
+  </ItemGroup>
+
 </Project>

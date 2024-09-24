@@ -40,12 +40,12 @@ public class FunctionTest : BaseFunctionTest
     // Invoke the lambda function and get status
     SkillResponse response = await WhenIUseTheFollowingIntent(intent, slots);
 
-    //is plain text
-    PlainTextOutputSpeech? speech = ThenThereIsAPlainTextOutputSpeech(response);
-
     //Has given info
     if (!string.IsNullOrEmpty(expectedText))
+    {      //is plain text
+      PlainTextOutputSpeech? speech = ThenThereIsAPlainTextOutputSpeech(response);
       ThenIHaveThisResponseText(expectedText, speech);
+    }
     ThenIHaveANewSessionAttributeWithTheSlotValue(intent, slots, response);
     ThenIReturnTheNextExpectedIntentInTheResponse(response, expectedNextIntent);
   }

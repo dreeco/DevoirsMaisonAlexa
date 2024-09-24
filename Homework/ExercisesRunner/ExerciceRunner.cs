@@ -2,6 +2,7 @@
 using Homework.ExercisesRunner;
 using Homework.HomeworkExercises;
 using Homework.Models;
+using Presentation;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Homework.HomeworkExercisesRunner;
@@ -36,43 +37,50 @@ public class ExerciceRunner
       return HomeworkStep.StartExercice;
   }
 
-  public string NextQuestion()
+  public void NextQuestion(SentenceBuilder sentenceBuilder)
   {
     if (SessionData.Age == null)
       throw new ArgumentNullException(nameof(SessionData.Age));
     var exercice = GetExerciceQuestionsRunner();
 
-    string text = string.Empty;
-
     if (!string.IsNullOrEmpty(SessionData.AlreadyAsked.LastOrDefault()))
-      text = ValidateAnswer(exercice, SessionData.LastAnswer);
+      ValidateAnswer(sentenceBuilder, exercice, SessionData.LastAnswer);
 
     if (SessionData.QuestionAsked >= SessionData.NbExercice)
     {
       var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
-      text += " " + EndSession(continueAfter: true);
-      return text;
+      sentenceBuilder.AppendSimpleText(" ");
+      EndSession(sentenceBuilder, continueAfter: true);
+      return;
     }
 
     var question = exercice.NextQuestion(SessionData.Age.Value, SessionData.AlreadyAsked);
     AddNewQuestionToSession(question);
 
-    return text + " " + question.Text;
+    if (SessionData.QuestionAsked == 1)
+      sentenceBuilder.AppendInterjection("C'est parti");
+
+    sentenceBuilder.AppendSimpleText(" " + question.Text);
   }
 
-  public string EndSession(bool continueAfter) {
-    var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
-    var text = ExerciceSentenceBuilder.GetEndOfExerciceCompletionSentence(SessionData.CorrectAnswers, SessionData.QuestionAsked, timeInSeconds);
+  public void EndSession(SentenceBuilder sentenceBuilder, bool continueAfter) {
+    if (SessionData.QuestionAsked == 0)
+    {
+      sentenceBuilder.AppendInterjection("Au revoir !");
+      return;
+    }
+
+    var timeSpan = (DateTime.UtcNow - SessionData.ExerciceStartTime) ?? TimeSpan.Zero;
+    ExerciceSentenceBuilder.GetEndOfExerciceCompletionSentence(sentenceBuilder, SessionData.CorrectAnswers, SessionData.QuestionAsked, timeSpan);
     if (continueAfter)
     {
-      text += " Quel exercice souhaites-tu faire désormais ?";
+      sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
       ResetSessionAfterExercice();
     }
     else
     {
       SessionData.Clear();
     }
-    return text;
   }
 
   private IExerciceQuestionsRunner GetExerciceQuestionsRunner()
@@ -104,7 +112,7 @@ public class ExerciceRunner
     SessionData.ExerciceStartTime = null;
   }
 
-  private string ValidateAnswer(IExerciceQuestionsRunner exercice, string? answer)
+  private void ValidateAnswer(SentenceBuilder sentenceBuilder, IExerciceQuestionsRunner exercice, string? answer)
   {
     var lastAsked = SessionData.AlreadyAsked.Last();
     var answerValidation = exercice.ValidateAnswer(lastAsked, answer ?? string.Empty);
@@ -112,7 +120,7 @@ public class ExerciceRunner
     if (answerValidation.IsValid)
       SessionData.CorrectAnswers++;
 
-    return ExerciceSentenceBuilder.GetExerciceAnswerSentence(answerValidation.IsValid, answerValidation.CorrectAnswer);
+    ExerciceSentenceBuilder.GetExerciceAnswerSentence(sentenceBuilder, answerValidation.IsValid, answerValidation.CorrectAnswer);
   }
 
   public string GetCorrectAnswer(string questionKey)

@@ -1,17 +1,24 @@
-﻿namespace Homework.ExercisesRunner;
+﻿using Presentation;
+
+namespace Homework.ExercisesRunner;
 
 internal class ExerciceSentenceBuilder
 {
+  private static Random _rand = new Random();
+
   private readonly static string[] PositiveFeedback = [
-    "Bien joué !", "Super !", "Génial !", "Saperlipopette !", "Pas mal !", "Fantastique !",
-    "Bravo !", "Magnifique !", "Parfait !", "Excellent !", "Impressionant !", "Top !",
-    "Chapeau !", "Sensass !", "Extraordinaire !"
+    "Bien joué !", "Super", "Génial !", "Saperlipopette !", "Pas mal !", "Fantastique !",
+    "Bravo", "Magnifique !", "Parfait !", "Excellent !", "Impressionant !", "Top !", "Ok",
+    "Chapeau !", "Sensass !", "Extraordinaire !", "Bazinga !", "Bingo !", "Houra !", "Kaboom !", "Mamma mia !",
+    "Okey dokey !", "Ouah !", "Ouf ", "Oui !", "Ta da !", "Voilà !", "Waouh !", "Woo hoo !", "Yay !", "Youpi !", "Ça alors !"
     ];
 
   private readonly static string[] NegativeFeedback = [
-    "Dommage...", "Non...", "Raté...", "Faux...", "Erreur...", "Zut...", "Aïe...",
-    "Oups...", "Manqué...", "Hélas...", "Désolé...", "Oh non...", "Aouch..."];
-
+    "Dommage...", "Noooon", "Raté", "Faux...", "Erreur...", "Zut.", "Zut alors.", "Aïe...", "Oh là là.", "Oh mince.",
+    "Oups...", "Manqué...", "Hélas.", "Désolé...", "Oh non.", "Aouch...", "Bof.", "Boo hoo.", "C'est la vie.",
+    "Eeeeh non.", "Huh huh.", "Mince.", "Olah.", "Oooh.", "Oulah.", "Oups.", "Outch.", "Pas facile, hein ?", "Patatras.",
+    "Punaise.", "Tralala."
+  ];
 
   private readonly static Dictionary<int, string[]> LevelAssessment = new Dictionary<int, string[]>{
           { 1, [
@@ -80,34 +87,45 @@ internal class ExerciceSentenceBuilder
               ]
           }
       };
-
-  internal static string GetExerciceAnswerSentence(bool isValidAnswer, string correctAnswer)
+  
+  internal static void GetExerciceAnswerSentence(SentenceBuilder sentenceBuilder, bool isValidAnswer, string correctAnswer)
   {
-    var rand = new Random();
-    var text = isValidAnswer ? PositiveFeedback[rand.Next(0, PositiveFeedback.Length)] : $"{NegativeFeedback[rand.Next(0, NegativeFeedback.Length)]} La bonne réponse était {correctAnswer}.";
-    return text;
+    if (isValidAnswer)
+    {
+      sentenceBuilder.AppendInterjection(PositiveFeedback[_rand.Next(0, PositiveFeedback.Length)]);
+      sentenceBuilder.AppendSimpleText(" C'est une bonne réponse !");
+    }
+    else
+    {
+      sentenceBuilder.AppendInterjection(NegativeFeedback[_rand.Next(0, NegativeFeedback.Length)]);
+      sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
+      sentenceBuilder.AppendPause();
+      sentenceBuilder.AppendSimpleText(correctAnswer + ".");
+    }
   }
 
-  internal static string GetEndOfExerciceCompletionSentence(int nbCorrectAnswers, int nbQuestionAsked, TimeSpan totalTime)
+  internal static void GetEndOfExerciceCompletionSentence(SentenceBuilder sentenceBuilder, int nbCorrectAnswers, int nbQuestionAsked, TimeSpan totalTime)
   {
-    var rand = new Random();
-
-    var level = Math.Round((double)nbCorrectAnswers / (double)nbQuestionAsked * 5);
-    var pluralAnswer = nbCorrectAnswers > 1 ? "s" : "";
-    var pluralQuestion = nbQuestionAsked > 1 ? "s" : "";
+    var level = Math.Max(1, Math.Round((double)nbCorrectAnswers / (double)nbQuestionAsked * 5));
 
     var assessmentsForLevel = LevelAssessment[(int)level];
-    var assessment = assessmentsForLevel[rand.Next(0, assessmentsForLevel.Length)];
-    var text = string.Empty;
+    var assessment = assessmentsForLevel[_rand.Next(0, assessmentsForLevel.Length)];
+    
+    sentenceBuilder.AppendSimpleText($"Tu as {nbCorrectAnswers} ");
+    sentenceBuilder.AppendPossiblePlural("bonne", nbCorrectAnswers);
+    sentenceBuilder.AppendPossiblePlural(" réponse", nbCorrectAnswers);
+    sentenceBuilder.AppendSimpleText($" sur {nbQuestionAsked} ");
+    sentenceBuilder.AppendPossiblePlural("question", nbQuestionAsked);
+
     if (totalTime.TotalSeconds > 0 && totalTime.TotalSeconds < 300)
     {
       var time = GetTimeSpanDescription(totalTime);
-      text += $"L'exercice est terminé en moins de {time} secondes. ";
+      sentenceBuilder.AppendSimpleText($", en moins de {time}. ");
     }
-    text += $"Tu as {nbCorrectAnswers} bonne{pluralAnswer} réponse{pluralAnswer} sur {nbQuestionAsked} question{pluralQuestion}. {assessment}";
+    else
+      sentenceBuilder.AppendSimpleText(". ");
 
-    return text;
-
+    sentenceBuilder.AppendSimpleText($"{assessment}");
   }
 
   private static string GetTimeSpanDescription(TimeSpan timeSpan)
@@ -118,7 +136,11 @@ internal class ExerciceSentenceBuilder
     string minuteText = minutes > 0 ? $"{minutes} minute{(minutes > 1 ? "s" : "")}" : "";
     string secondText = seconds > 0 ? $"{seconds} seconde{(seconds > 1 ? "s" : "")}" : "";
     string inBetween = minutes > 0 && seconds > 0 ? " et " : " ";
-    return $"{minuteText}{inBetween}{secondText}";
+    return $"{minuteText}{inBetween}{secondText}".Trim();
   }
 
+  internal static void GetEndOfExerciceCompletionSentence(object sentenceBuilder, int v1, int v2, TimeSpan timeSpan)
+  {
+    throw new NotImplementedException();
+  }
 }

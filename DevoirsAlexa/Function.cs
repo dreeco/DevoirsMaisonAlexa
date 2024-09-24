@@ -6,10 +6,10 @@ using Alexa.NET.Response.Directive;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
-using Homework;
 using Homework.Enums;
 using Homework.HomeworkExercisesRunner;
 using Homework.Models;
+using Presentation;
 using System.Text.Json.Serialization;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -78,7 +78,11 @@ public class Function
     var homeworkRunner = new ExerciceRunner(homeworkSession);
 
     if (intentName == "AMAZON.StopIntent")
-      return ResponseBuilder.Tell(homeworkRunner.EndSession(continueAfter: false));
+    {
+      var sentenceBuilder = new SentenceBuilder();
+      homeworkRunner.EndSession(sentenceBuilder, continueAfter: false);
+      return ResponseBuilder.Tell(new SsmlOutputSpeech() { Ssml = sentenceBuilder.ToString() });
+    }
 
     var nextStep = homeworkRunner.GetNextStep();
 
@@ -108,15 +112,35 @@ public class Function
     switch (nextStep)
     {
       case HomeworkStep.GetFirstName:
-        return ResponseBuilder.Ask("Quel est ton prénom ?", new Reprompt("Je n'ai pas compris ce prénom, peux tu répéter ?"));
+        return ResponseBuilder.Ask("Quel est ton prénom ?", new Reprompt("Je n'ai pas compris ton prénom, peux tu répéter ?"));
       case HomeworkStep.GetAge:
-        return ResponseBuilder.Ask($"Bonjour {runner.FirstName}, quel âge as-tu ?", new Reprompt("Je n'ai pas compris ce chiffre, peux tu répéter ?"));
+        return ResponseBuilder.Ask($"Bonjour {runner.FirstName}, quel âge as-tu ?", new Reprompt("Je n'ai pas compris ton âge, peux tu répéter ?"));
       case HomeworkStep.GetExercice:
-        return ResponseBuilder.Ask("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?", new Reprompt("Je n'ai pas compris cet exercice, Tu peux me demander additions ou multiplications."));
+        return ResponseBuilder.Ask("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?", new Reprompt("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions."));
       case HomeworkStep.GetNbExercice:
-        return ResponseBuilder.Ask("OK ! Et sur combien de questions souhaites-tu t'entraîner ?", new Reprompt("Je n'ai pas compris ce chiffre, peux tu répéter ?"));
+        return ResponseBuilder.Ask("OK ! Et sur combien de questions souhaites-tu t'entraîner ?", new Reprompt("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?"));
       case HomeworkStep.StartExercice:
-        return ResponseBuilder.Ask(runner.NextQuestion(), new Reprompt("Je n'ai pas compris ce chiffre, peux tu répéter ?"));
+        {
+          var mainAnswerBuilder = new SentenceBuilder();
+          var repromptBuilder = new SentenceBuilder();
+
+          runner.NextQuestion(mainAnswerBuilder);
+          repromptBuilder.AppendInterjection("Hmmmm");
+          repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
+          repromptBuilder.AppendSimpleText("Je n'ai pas compris ta réponse.");
+          repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
+          repromptBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {mainAnswerBuilder.GetSimpleText()}");
+
+          var reprompt = new Reprompt()
+          {
+            OutputSpeech = new SsmlOutputSpeech()
+            {
+              Ssml = repromptBuilder.ToString()
+            }
+          };
+
+          return ResponseBuilder.Ask(new SsmlOutputSpeech() { Ssml = mainAnswerBuilder.ToString() }, reprompt);
+        }
     }
 
     return ResponseBuilder.Tell("OK");
