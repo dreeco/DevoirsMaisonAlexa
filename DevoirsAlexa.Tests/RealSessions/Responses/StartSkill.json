@@ -1,0 +1,32 @@
+﻿{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "Quel est ton prénom ?"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetFirstName",
+          "slots": {
+            "FirstName": {
+              "name": "FirstName"
+            }
+          }
+        },
+        "slotToElicit": "FirstName"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Je n'ai pas compris ton prénom, peux tu répéter ?"
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {}
+}

@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "Bonjour lucie, quel âge as-tu ?"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetAge",
+          "slots": {
+            "Age": {
+              "name": "Age"
+            }
+          }
+        },
+        "slotToElicit": "Age"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Je n'ai pas compris ton âge, peux tu répéter ?"
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "FirstName": "lucie"
+  }
+}

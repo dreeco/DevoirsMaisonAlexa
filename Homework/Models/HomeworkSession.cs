@@ -61,8 +61,11 @@ public class HomeworkSession : Dictionary<string, object>
 
   public DateTime? ExerciceStartTime
   {
-    get { return DateTime.TryParseExact(TryGetString(nameof(ExerciceStartTime)), "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var d) ? d.ToUniversalTime() : null; }
-    set { this[nameof(ExerciceStartTime)] = value?.ToString("o") ?? string.Empty; }
+    get {
+      var s = TryGetString(nameof(ExerciceStartTime));
+      return DateTime.TryParseExact(s, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var d) ? d.ToUniversalTime() : null; 
+    }
+    set { this[nameof(ExerciceStartTime)] = value?.ToString("o", CultureInfo.InvariantCulture) ?? string.Empty; }
   }
 
   private HomeworkExercisesTypes? GetExercice(string exerciceAsString)

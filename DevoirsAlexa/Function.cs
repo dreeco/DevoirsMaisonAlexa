@@ -84,16 +84,17 @@ public class Function
       return ResponseBuilder.Tell(new SsmlOutputSpeech() { Ssml = sentenceBuilder.ToString() });
     }
 
-    var nextStep = homeworkRunner.GetNextStep();
+    homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
+    context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
+    var nextStep = homeworkRunner.GetNextStep();
     context.Logger.LogInformation($"Next step is : {nextStep}");
 
-    var r = BuildAnswerFromCurrentStep(homeworkRunner, nextStep);
-    r.SessionAttributes = homeworkSession;
+    var response = BuildAnswerFromCurrentStep(homeworkRunner, nextStep);
+    response.SessionAttributes = homeworkSession;
 
-    SetNextIntentExpected(homeworkRunner, r, context.Logger);
-
-    return r;
+    SetNextIntentExpected(homeworkRunner, response, context.Logger);
+    return response;
   }
 
   private static void SetNextIntentExpected(ExerciceRunner homeworkRunner, SkillResponse r, ILambdaLogger logger)
@@ -124,12 +125,12 @@ public class Function
           var mainAnswerBuilder = new SentenceBuilder();
           var repromptBuilder = new SentenceBuilder();
 
-          runner.NextQuestion(mainAnswerBuilder);
+          var question = runner.NextQuestion(mainAnswerBuilder);
           repromptBuilder.AppendInterjection("Hmmmm");
           repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
           repromptBuilder.AppendSimpleText("Je n'ai pas compris ta réponse.");
           repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
-          repromptBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {mainAnswerBuilder.GetSimpleText()}");
+          repromptBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {question}");
 
           var reprompt = new Reprompt()
           {

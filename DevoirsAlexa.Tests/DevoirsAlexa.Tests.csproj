@@ -19,4 +19,12 @@
   <ItemGroup>
     <ProjectReference Include="..\DevoirsAlexa\DevoirsAlexa.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="RealSessions\Requests\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="RealSessions\Responses\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

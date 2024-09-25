@@ -37,7 +37,8 @@ public class ExerciceRunner
       return HomeworkStep.StartExercice;
   }
 
-  public void NextQuestion(SentenceBuilder sentenceBuilder)
+
+  public string NextQuestion(SentenceBuilder sentenceBuilder)
   {
     if (SessionData.Age == null)
       throw new ArgumentNullException(nameof(SessionData.Age));
@@ -51,7 +52,7 @@ public class ExerciceRunner
       var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
       sentenceBuilder.AppendSimpleText(" ");
       EndSession(sentenceBuilder, continueAfter: true);
-      return;
+      return string.Empty;
     }
 
     var question = exercice.NextQuestion(SessionData.Age.Value, SessionData.AlreadyAsked);
@@ -61,6 +62,8 @@ public class ExerciceRunner
       sentenceBuilder.AppendInterjection("C'est parti");
 
     sentenceBuilder.AppendSimpleText(" " + question.Text);
+    
+    return question.Text;
   }
 
   public void EndSession(SentenceBuilder sentenceBuilder, bool continueAfter) {

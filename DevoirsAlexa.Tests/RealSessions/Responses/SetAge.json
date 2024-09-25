@@ -1,0 +1,35 @@
+﻿{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetExercice",
+          "slots": {
+            "Exercice": {
+              "name": "Exercice"
+            }
+          }
+        },
+        "slotToElicit": "Exercice"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions."
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "FirstName": "lucie",
+    "Age": "8"
+  }
+}

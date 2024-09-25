@@ -1,0 +1,157 @@
+{
+  "version": "1.0",
+  "session": {
+    "new": false,
+    "sessionId": "amzn1.echo-api.session.3313d55a-d2a1-41d3-893d-db8e399eacd2",
+    "application": {
+      "applicationId": "amzn1.ask.skill.6249208d-9466-4fad-a506-185a440f51bf"
+    },
+    "attributes": {
+      "FirstName": "lucie",
+      "Age": "8"
+    },
+    "user": {
+      "userId": "amzn1.ask.account.AMAUQADG5X5UVLDGOGN326KEAB5DSDIJ2EUKUKOLDXY7ZVJ2LBXHSZNRDWNP43VLAVSI54HUYGD6BGIA6CWVGPQ6SUEEGL5URUFJFNVDIJ4RML45O7PNS2FLTXN52KTAMJE6645UQS6WTUTBTESWLGHG6ZAYOVFYBOSE6UH3FXYTM3B3VAI3OFXYN4V7EH52W4IDE3FXBN7SFL62VKNJFMQZDKQUACXUUVIKDATQF3ZQ"
+    },
+    "affiliatedResources": []
+  },
+  "context": {
+    "Viewports": [
+      {
+        "type": "APL",
+        "id": "medHub",
+        "shape": "RECTANGLE",
+        "dpi": 160,
+        "presentationType": "OVERLAY",
+        "canRotate": false,
+        "configuration": {
+          "current": {
+            "mode": "HUB",
+            "video": {
+              "codecs": [
+                "H_264_42",
+                "H_264_41"
+              ]
+            },
+            "size": {
+              "type": "DISCRETE",
+              "pixelWidth": 1280,
+              "pixelHeight": 800
+            }
+          }
+        }
+      }
+    ],
+    "Viewport": {
+      "experiences": [
+        {
+          "arcMinuteWidth": 221,
+          "arcMinuteHeight": 162,
+          "canRotate": false,
+          "canResize": false
+        }
+      ],
+      "mode": "HUB",
+      "shape": "RECTANGLE",
+      "pixelWidth": 1280,
+      "pixelHeight": 800,
+      "dpi": 160,
+      "currentPixelWidth": 1280,
+      "currentPixelHeight": 800,
+      "touch": [
+        "SINGLE"
+      ],
+      "keyboard": [
+        "DIRECTION"
+      ],
+      "video": {
+        "codecs": [
+          "H_264_42",
+          "H_264_41"
+        ]
+      }
+    },
+    "Extensions": {
+      "available": {
+        "aplext:backstack:10": {}
+      }
+    },
+    "Advertising": {
+      "advertisingId": "00000000-0000-0000-0000-000000000000",
+      "limitAdTracking": true
+    },
+    "System": {
+      "application": {
+        "applicationId": "amzn1.ask.skill.6249208d-9466-4fad-a506-185a440f51bf"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.AMAUQADG5X5UVLDGOGN326KEAB5DSDIJ2EUKUKOLDXY7ZVJ2LBXHSZNRDWNP43VLAVSI54HUYGD6BGIA6CWVGPQ6SUEEGL5URUFJFNVDIJ4RML45O7PNS2FLTXN52KTAMJE6645UQS6WTUTBTESWLGHG6ZAYOVFYBOSE6UH3FXYTM3B3VAI3OFXYN4V7EH52W4IDE3FXBN7SFL62VKNJFMQZDKQUACXUUVIKDATQF3ZQ"
+      },
+      "device": {
+        "deviceId": "amzn1.ask.device.AMAXR4EGOXBY7YJHVXYRMBBTSRPXDMCBSD4ZZBUI3L4T5IR5JZ67ZQMZIB6TESHUBPOK3CK6HKANSSJOFTNLSY5MY57MERHNFWWQ54AOMORZY73XQ3T2CPTJRNVCF3TCON4EDW3CUHR737VG2SDIF3744PUFVNE57BO7XTACAS2GDZ5JWZS6AUXOXV2OWBWIAUNANA6VFXLWKEWE",
+        "supportedInterfaces": {}
+      },
+      "apiEndpoint": "https://api.eu.amazonalexa.com",
+      "apiAccessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5ldS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLjYyNDkyMDhkLTk0NjYtNGZhZC1hNTA2LTE4NWE0NDBmNTFiZiIsImV4cCI6MTcyNzI5MjY0MiwiaWF0IjoxNzI3MjkyNTgyLCJuYmYiOjE3MjcyOTI1ODIsInByaXZhdGVDbGFpbXMiOnsiaXNGb3JSQSI6ImZhbHNlIiwiY29udGV4dCI6IkFBQUFBQUFBQVFDU1I1Wm94ZnFka2ZFMjVra0UxTlY2ZUFFQUFBQUFBQUQ1bHI2VGtZVVQ2ZlJCZXZodE9oYzUyMVFDRXV0S1VML2Z2MDV3RHdWOHZucU1jNnUrSUt4L2N0cDVRek1VZVYyZStpYjZKOG55Vm0rcStJVXUxeXliTlNrbG0vZmc0V1NrM0duSHlWbmZQNVFLalVGR3ZuVWIwNDV2eG4vUyt3NkE3Y1dXT2JMeDZ5VTJMSlY2RVFoWGhPUGgzREtmc3pjZWRZb01IQmtZTjVBaEM5blh6SjNTRGlPM1pJRXFmbFAydDI2ZXZlNkFvR1JXbytjaHBVeGJiY2ZRSHBxWWVNM2NLTUIyNmFoZW1idWt2dHh5L3JlN25iQ2kzWW1QR2R4SHFYYXppOWhUSkNkV0dQN1VpRUZoNU00UmJUQVNKZGx1c1JZNXNDZEVkS1k2aVVheEtDa2pic0hOSDN3bnBzclBLTjhEckFKNVlINkY1Vm5GY0RyN2E2UEExM2Q3ajZJTEUrTVBqS05HTlgvYjlaNHJPRmF6Y2NyRkFZUlNSVlhaQnA1L1l3VUtzY2RIcjF3TG5ueFREUnc1bHZiYlA0UEpEYXVSVUtRaWZub3J1eGZPQ2JPcjhNQVNQbEFjbno2cldxVFhIWmtBbWs0b0ZjK0kwcFJHcjZjUTZnclRqbDJ4dUtRamNzcWNvMGF6cld4a05NcGMiLCJkZXZpY2VJZCI6ImFtem4xLmFzay5kZXZpY2UuQU1BWFI0RUdPWEJZN1lKSFZYWVJNQkJUU1JQWERNQ0JTRDRaWkJVSTNMNFQ1SVI1Slo2N1pRTVpJQjZURVNIVUJQT0szQ0s2SEtBTlNTSk9GVE5MU1k1TVk1N01FUkhORldXUTU0QU9NT1JaWTczWFEzVDJDUFRKUk5WQ0YzVENPTjRFRFczQ1VIUjczN1ZHMlNESUYzNzQ0UFVGVk5FNTdCTzdYVEFDQVMyR0RaNUpXWlM2QVVYT1hWMk9XQldJQVVOQU5BNlZGWExXS0VXRSIsInVzZXJJZCI6ImFtem4xLmFzay5hY2NvdW50LkFNQVVRQURHNVg1VVZMREdPR04zMjZLRUFCNURTRElKMkVVS1VLT0xEWFk3WlZKMkxCWEhTWk5SRFdOUDQzVkxBVlNJNTRIVVlHRDZCR0lBNkNXVkdQUTZTVUVFR0w1VVJVRkpGTlZESUo0Uk1MNDVPN1BOUzJGTFRYTjUyS1RBTUpFNjY0NVVRUzZXVFVUQlRFU1dMR0hHNlpBWU9WRllCT1NFNlVIM0ZYWVRNM0IzVkFJM09GWFlONFY3RUg1Mlc0SURFM0ZYQk43U0ZMNjJWS05KRk1RWkRLUVVBQ1hVVVZJS0RBVFFGM1pRIn19.inOUVKxdfiNScaslzotif3rlKh0N0z7MhzaBV_N7QforzuvAn_XE5wMQxDz1NrGPjSakx7hstq0KSijof2ZX79PTX5-Rz85r79WphRiq9SVzRP_hshUMGmYLT1ugvZcixRf-gxpRl5K9pfilmS9jrk8MCjkI5Vrs0kh9uvn5Z3_aoHGeBwe-TayJmFdxWL7iDwESgjbpCKsxjp-oyFqtMfN_NP04-7hY1dJsQgdyQsXqywpor4LF9VUCp719UnCPNAD2T0JN5RUfrVJ1PQPjNISR27hQLLw9SphYdnsrAo2CmxklVNQT6eNjUetDk861tvPnUjVN-K4IRokP1dbWlQ"
+    }
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "amzn1.echo-api.request.59a7bce3-bad2-4912-91fd-4c356780ae7d",
+    "locale": "fr-FR",
+    "timestamp": "2024-09-25T19:29:42Z",
+    "intent": {
+      "name": "SetExercice",
+      "confirmationStatus": "NONE",
+      "slots": {
+        "Exercice": {
+          "name": "Exercice",
+          "value": "table d'additions",
+          "resolutions": {
+            "resolutionsPerAuthority": [
+              {
+                "authority": "amzn1.er-authority.echo-sdk.amzn1.ask.skill.6249208d-9466-4fad-a506-185a440f51bf.HomeworkExercice",
+                "status": {
+                  "code": "ER_SUCCESS_MATCH"
+                },
+                "values": [
+                  {
+                    "value": {
+                      "name": "Additions",
+                      "id": "d8d446ff6fcb768ad56a2db044945c4c"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "confirmationStatus": "NONE",
+          "source": "USER",
+          "slotValue": {
+            "type": "Simple",
+            "value": "table d'additions",
+            "resolutions": {
+              "resolutionsPerAuthority": [
+                {
+                  "authority": "amzn1.er-authority.echo-sdk.amzn1.ask.skill.6249208d-9466-4fad-a506-185a440f51bf.HomeworkExercice",
+                  "status": {
+                    "code": "ER_SUCCESS_MATCH"
+                  },
+                  "values": [
+                    {
+                      "value": {
+                        "name": "Additions",
+                        "id": "d8d446ff6fcb768ad56a2db044945c4c"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dialogState": "IN_PROGRESS"
+  }
+}

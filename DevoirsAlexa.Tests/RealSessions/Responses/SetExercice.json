@@ -1,0 +1,36 @@
+﻿{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "OK ! Et sur combien de questions souhaites-tu t'entraîner ?"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetNbExercice",
+          "slots": {
+            "NbExercice": {
+              "name": "NbExercice"
+            }
+          }
+        },
+        "slotToElicit": "NbExercice"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?"
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "Exercice": "table d'additions",
+    "FirstName": "lucie",
+    "Age": "8"
+  }
+}
