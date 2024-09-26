@@ -1,7 +1,6 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
-using DevoirsAlexa.Domain.ToRemove;
 
 namespace DevoirsAlexa.Domain.HomeworkExercisesRunner;
 
@@ -21,51 +20,47 @@ public class ExerciceRunner
     _dispatcher = new ExerciceDispatcher();
   }
 
-  public string NextQuestion(IExerciceSentenceBuilder exerciceSentenceBuilder, ISentenceBuilder sentenceBuilder)
+  public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {
     if (SessionData.Age == null)
       throw new ArgumentNullException(nameof(SessionData.Age));
+
     var exercice = GetExerciceQuestionsRunner();
 
-    if (!string.IsNullOrEmpty(SessionData.AlreadyAsked.LastOrDefault()))
-      ValidateAnswer(exerciceSentenceBuilder, sentenceBuilder, exercice, SessionData.LastAnswer);
+    var answerResult = new AnswerResult();
 
-    if (SessionData.QuestionAsked >= SessionData.NbExercice)
+    if (!isStopping && !string.IsNullOrEmpty(SessionData.AlreadyAsked.LastOrDefault()))
+      answerResult.Validation = ValidateAnswer(exercice);
+
+    if (isStopping || SessionData.QuestionAsked >= SessionData.NbExercice)
     {
       var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
-      sentenceBuilder.AppendSimpleText(" ");
-      EndSession(exerciceSentenceBuilder, sentenceBuilder, continueAfter: true);
-      return string.Empty;
+      answerResult.Exercice = new ExerciceResult
+      {
+        CorrectAnswers = SessionData.CorrectAnswers,
+        ElapsedTime = timeInSeconds,
+        TotalQuestions = SessionData.QuestionAsked
+      };
+
+      EndSession(isStopping);
+      return answerResult;
     }
 
-    var question = exercice.NextQuestion(SessionData.Age.Value, SessionData.AlreadyAsked);
-    AddNewQuestionToSession(question);
-
-    if (SessionData.QuestionAsked == 1)
-      sentenceBuilder.AppendInterjection("C'est parti");
-
-    sentenceBuilder.AppendSimpleText(" " + question.Text);
+    answerResult.Question = exercice.NextQuestion(SessionData.Age.Value, SessionData.AlreadyAsked);
+    AddNewQuestionToSession(answerResult.Question);
     
-    return question.Text;
+    return answerResult;
   }
 
-  public void EndSession(IExerciceSentenceBuilder exerciceSentenceBuilder, ISentenceBuilder sentenceBuilder, bool continueAfter) {
-    if (SessionData.QuestionAsked == 0)
+  private void EndSession(bool isStopping) 
+  {
+    if (isStopping)
     {
-      sentenceBuilder.AppendInterjection("Au revoir !");
-      return;
-    }
-
-    var timeSpan = (DateTime.UtcNow - SessionData.ExerciceStartTime) ?? TimeSpan.Zero;
-    exerciceSentenceBuilder.GetEndOfExerciceCompletionSentence(sentenceBuilder, SessionData.CorrectAnswers, SessionData.QuestionAsked, timeSpan);
-    if (continueAfter)
-    {
-      sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
-      ResetSessionAfterExercice();
+      SessionData.Clear();
     }
     else
     {
-      SessionData.Clear();
+      ResetSessionAfterExercice();
     }
   }
 
@@ -86,6 +81,7 @@ public class ExerciceRunner
       SessionData.AlreadyAsked = SessionData.AlreadyAsked.Add(question.Key);
 
     SessionData.QuestionAsked++;
+    question.Index = SessionData.QuestionAsked;
   }
 
   private void ResetSessionAfterExercice()
@@ -98,15 +94,15 @@ public class ExerciceRunner
     SessionData.ExerciceStartTime = null;
   }
 
-  private void ValidateAnswer(IExerciceSentenceBuilder exerciceSentenceBuilder, ISentenceBuilder sentenceBuilder, IExerciceQuestionsRunner exercice, string? answer)
+  private AnswerValidation ValidateAnswer(IExerciceQuestionsRunner exercice)
   {
     var lastAsked = SessionData.AlreadyAsked.Last();
-    var answerValidation = exercice.ValidateAnswer(lastAsked, answer ?? string.Empty);
+    var answerValidation = exercice.ValidateAnswer(lastAsked, SessionData.LastAnswer ?? string.Empty);
 
     if (answerValidation.IsValid)
       SessionData.CorrectAnswers++;
 
-    exerciceSentenceBuilder.GetExerciceAnswerSentence(sentenceBuilder, answerValidation.IsValid, answerValidation.CorrectAnswer);
+    return answerValidation;
   }
 
   public string GetCorrectAnswer(string questionKey)

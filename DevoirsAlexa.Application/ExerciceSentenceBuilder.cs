@@ -1,9 +1,12 @@
-﻿
-using DevoirsAlexa.Domain.ToRemove;
+﻿using DevoirsAlexa.Domain;
+using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.HomeworkExercisesRunner;
+using DevoirsAlexa.Domain.Models;
+using System.Text;
 
 namespace DevoirsAlexa.Application;
 
-public class ExerciceSentenceBuilder : IExerciceSentenceBuilder
+public static class ExerciceSentenceBuilder
 {
   private static Random _rand = new Random();
 
@@ -88,10 +91,97 @@ public class ExerciceSentenceBuilder : IExerciceSentenceBuilder
               ]
           }
       };
-  
-  public void GetExerciceAnswerSentence(ISentenceBuilder sentenceBuilder, bool isValidAnswer, string correctAnswer)
+
+  public static void FillPromptAndReprompt(ISentenceBuilder prompt, ISentenceBuilder reprompt, bool isStoppingSkill, IHomeworkSession session)
   {
-    if (isValidAnswer)
+    var nextStep = RequestRouting.GetNextStep(session);
+    switch (nextStep)
+    {
+      case HomeworkStep.GetFirstName:
+        prompt.AppendSimpleText("Quel est ton prénom ?");
+        reprompt.AppendSimpleText("Je n'ai pas compris ton prénom, peux tu répéter ?");
+        break;
+
+      case HomeworkStep.GetAge:
+        prompt.AppendSimpleText($"Bonjour {session.FirstName}, quel âge as-tu ?");
+        reprompt.AppendSimpleText("Je n'ai pas compris ton âge, peux tu répéter ?");
+        break;
+
+      case HomeworkStep.GetExercice:
+        prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?");
+        reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
+        break;
+
+      case HomeworkStep.GetNbExercice:
+        prompt.AppendSimpleText("OK ! Et sur combien de questions souhaites-tu t'entraîner ?");
+        reprompt.AppendSimpleText("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?");
+        break;
+
+      case HomeworkStep.StartExercice:
+        var runner = new ExerciceRunner(session);
+        var result = runner.ValidateAnswerAndGetNext(false);
+        GetPromptForQuestionResult(prompt, result, isStoppingSkill);
+
+        if (result.Question != null)
+        {
+          reprompt.AppendInterjection("Hmmmm");
+          reprompt.AppendPause(TimeSpan.FromMilliseconds(500));
+          reprompt.AppendSimpleText("Je n'ai pas compris ta réponse.");
+          reprompt.AppendPause(TimeSpan.FromMilliseconds(500));
+          reprompt.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
+        }
+        break;
+    }
+  }
+
+  private static void GetPromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result, bool isStoppingSkill)
+  {
+    if (result.Validation != null)
+    {
+      AddAnswerValidationText(sentenceBuilder, result.Validation);
+    }
+
+    sentenceBuilder.AppendSimpleText(" ");
+
+    if (result.Question != null)
+    {
+
+      if (result.Question.Index == 1) // First Question
+        sentenceBuilder.AppendInterjection("C'est parti");
+
+      sentenceBuilder.AppendSimpleText(result.Question.Text);
+    }
+    else if (result.Exercice != null)
+    {
+      if (result.Exercice.TotalQuestions == 0)
+      {
+        sentenceBuilder.AppendInterjection("Au revoir !");
+        return;
+      }
+
+      GetEndOfExerciceCompletionSentence(sentenceBuilder, result.Exercice);
+      if (!isStoppingSkill)
+      {
+        sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
+      }
+    }
+  }
+
+  public static void GetReprompt(ISentenceBuilder builder, AnswerResult result)
+  {
+    if (result.Question != null)
+    {
+      builder.AppendInterjection("Hmmmm");
+      builder.AppendPause(TimeSpan.FromMilliseconds(500));
+      builder.AppendSimpleText("Je n'ai pas compris ta réponse.");
+      builder.AppendPause(TimeSpan.FromMilliseconds(500));
+      builder.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
+    }
+  }
+
+  private static void AddAnswerValidationText(ISentenceBuilder sentenceBuilder, AnswerValidation answer)
+  {
+    if (answer.IsValid)
     {
       sentenceBuilder.AppendInterjection(PositiveFeedback[_rand.Next(0, PositiveFeedback.Length)]);
       sentenceBuilder.AppendSimpleText(" C'est une bonne réponse !");
@@ -101,26 +191,26 @@ public class ExerciceSentenceBuilder : IExerciceSentenceBuilder
       sentenceBuilder.AppendInterjection(NegativeFeedback[_rand.Next(0, NegativeFeedback.Length)]);
       sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
       sentenceBuilder.AppendPause();
-      sentenceBuilder.AppendSimpleText(correctAnswer + ".");
+      sentenceBuilder.AppendSimpleText(answer.CorrectAnswer + ".");
     }
   }
 
-  public void GetEndOfExerciceCompletionSentence(ISentenceBuilder sentenceBuilder, int nbCorrectAnswers, int nbQuestionAsked, TimeSpan totalTime)
+  private static void GetEndOfExerciceCompletionSentence(ISentenceBuilder sentenceBuilder, ExerciceResult result)
   {
-    var level = Math.Max(1, Math.Round((double)nbCorrectAnswers / (double)nbQuestionAsked * 5));
+    var level = Math.Max(1, Math.Round((double)result.CorrectAnswers / (double)result.TotalQuestions * 5));
 
     var assessmentsForLevel = LevelAssessment[(int)level];
     var assessment = assessmentsForLevel[_rand.Next(0, assessmentsForLevel.Length)];
-    
-    sentenceBuilder.AppendSimpleText($"Tu as {nbCorrectAnswers} ");
-    sentenceBuilder.AppendPossiblePlural("bonne", nbCorrectAnswers);
-    sentenceBuilder.AppendPossiblePlural(" réponse", nbCorrectAnswers);
-    sentenceBuilder.AppendSimpleText($" sur {nbQuestionAsked} ");
-    sentenceBuilder.AppendPossiblePlural("question", nbQuestionAsked);
 
-    if (totalTime.TotalSeconds > 0 && totalTime.TotalSeconds < 300)
+    sentenceBuilder.AppendSimpleText($"Tu as {result.CorrectAnswers} ");
+    sentenceBuilder.AppendPossiblePlural("bonne", result.CorrectAnswers);
+    sentenceBuilder.AppendPossiblePlural(" réponse", result.CorrectAnswers);
+    sentenceBuilder.AppendSimpleText($" sur {result.TotalQuestions} ");
+    sentenceBuilder.AppendPossiblePlural("question", result.TotalQuestions);
+
+    if (result.ElapsedTime.TotalSeconds > 0 && result.ElapsedTime.TotalSeconds < 300)
     {
-      var time = GetTimeSpanDescription(totalTime);
+      var time = GetTimeSpanDescription(result.ElapsedTime);
       sentenceBuilder.AppendSimpleText($", en moins de {time}. ");
     }
     else

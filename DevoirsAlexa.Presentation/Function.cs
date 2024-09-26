@@ -10,6 +10,7 @@ using DevoirsAlexa.Application;
 using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.Models;
+using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
 using DevoirsAlexa.Presentation;
 using System.Text.Json.Serialization;
@@ -77,21 +78,13 @@ public class Function
     var homeworkSession = new HomeworkSession(input.Session?.Attributes);
     var homeworkRunner = new ExerciceRunner(homeworkSession);
 
-    if (intentName == "AMAZON.StopIntent")
-    {
-      var sentenceBuilder = new SentenceBuilder();
-      var exerciceSentenceBuilder = new ExerciceSentenceBuilder();
-      homeworkRunner.EndSession(exerciceSentenceBuilder, sentenceBuilder, continueAfter: false);
-      return ResponseBuilder.Tell(new SsmlOutputSpeech() { Ssml = sentenceBuilder.ToString() });
-    }
-
     homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
     var nextStep = RequestRouting.GetNextStep(homeworkSession);
     context.Logger.LogInformation($"Next step is : {nextStep}");
 
-    var response = BuildAnswerFromCurrentStep(homeworkRunner, nextStep);
+    var response = BuildAnswerFromCurrentStep(homeworkSession, isStopping: intentName == "AMAZON.StopIntent");
     response.SessionAttributes = homeworkSession;
 
     SetNextIntentExpected(homeworkSession, response, context.Logger);
@@ -109,44 +102,17 @@ public class Function
     }
   }
 
-  private static SkillResponse BuildAnswerFromCurrentStep(ExerciceRunner runner, HomeworkStep nextStep)
+  private static SkillResponse BuildAnswerFromCurrentStep(IHomeworkSession session, bool isStopping)
   {
-    switch (nextStep)
-    {
-      case HomeworkStep.GetFirstName:
-        return ResponseBuilder.Ask("Quel est ton prénom ?", new Reprompt("Je n'ai pas compris ton prénom, peux tu répéter ?"));
-      case HomeworkStep.GetAge:
-        return ResponseBuilder.Ask($"Bonjour {runner.FirstName}, quel âge as-tu ?", new Reprompt("Je n'ai pas compris ton âge, peux tu répéter ?"));
-      case HomeworkStep.GetExercice:
-        return ResponseBuilder.Ask("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?", new Reprompt("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions."));
-      case HomeworkStep.GetNbExercice:
-        return ResponseBuilder.Ask("OK ! Et sur combien de questions souhaites-tu t'entraîner ?", new Reprompt("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?"));
-      case HomeworkStep.StartExercice:
-        {
-          var mainAnswerBuilder = new SentenceBuilder();
-          var repromptBuilder = new SentenceBuilder();
-          var exerciceSentenceBuilder = new ExerciceSentenceBuilder();
+    var prompt = new SentenceBuilder();
+    var reprompt = new SentenceBuilder();
 
-          var question = runner.NextQuestion(exerciceSentenceBuilder, mainAnswerBuilder);
-          repromptBuilder.AppendInterjection("Hmmmm");
-          repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
-          repromptBuilder.AppendSimpleText("Je n'ai pas compris ta réponse.");
-          repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
-          repromptBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {question}");
+    ExerciceSentenceBuilder.FillPromptAndReprompt(prompt, reprompt, isStopping, session);
 
-          var reprompt = new Reprompt()
-          {
-            OutputSpeech = new SsmlOutputSpeech()
-            {
-              Ssml = repromptBuilder.ToString()
-            }
-          };
-
-          return ResponseBuilder.Ask(new SsmlOutputSpeech() { Ssml = mainAnswerBuilder.ToString() }, reprompt);
-        }
-    }
-
-    return ResponseBuilder.Tell("OK");
+    if (reprompt.IsEmpty())
+      return ResponseBuilder.Tell(prompt.GetSpeech());
+    else
+      return ResponseBuilder.Ask(prompt.GetSpeech(), new Reprompt() { OutputSpeech = reprompt.GetSpeech() });
   }
 
   private static string? FillRequestSessionWithNewValues(SkillRequest input)

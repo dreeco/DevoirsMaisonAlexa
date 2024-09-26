@@ -42,29 +42,23 @@ namespace DevoirsAlexa.Tests.ExercisesTests.Runner
 
       var runner = new ExerciceRunner(_currentSession);
 
-      var exerciceSentenceBuilder = new ExerciceSentenceBuilder();
       for (var questionAskedLoopBegin = 0; questionAskedLoopBegin <= nbExercice; questionAskedLoopBegin++)
       {
-        var sb = new SentenceBuilder();
         ThereWasNQuestionAskedAndAnswered(questionAskedLoopBegin);
-        runner.NextQuestion(exerciceSentenceBuilder, sb);
+        var result = runner.ValidateAnswerAndGetNext(false);
         var questionAsked = questionAskedLoopBegin + 1;
-
-        var lastQuestionKey = runner.LastQuestionKey;
 
         var isLastRun = questionAskedLoopBegin == nbExercice;
         if (!isLastRun)
         {
           ThenIHaveANewCorrectAnswer(questionAskedLoopBegin);
-          Assert.NotNull(lastQuestionKey);
-          ThenTheQuestionAskedMatchesTheExpectedPatterns(lastQuestionKey, questionKeyPattern, questionTextPattern, runner, sb.ToString());
-          _currentSession.LastAnswer = runner.GetCorrectAnswer(lastQuestionKey);
+          Assert.NotNull(result.Question);
+          ThenTheQuestionAskedMatchesTheExpectedPatterns(result.Question.Key, questionKeyPattern, questionTextPattern, runner, result.Question.Text);
+          _currentSession.LastAnswer = runner.GetCorrectAnswer(result.Question.Key);
         }
         else
         {
-          Assert.Null(lastQuestionKey);
-
-          ThenTheQuestionDoesNotMatchExerciceQuestionPattern(questionTextPattern, sb.ToString());
+          Assert.Null(result.Question);
           ThenTheDataAreCleanedForNextExercice();
         }
       }
@@ -83,10 +77,6 @@ namespace DevoirsAlexa.Tests.ExercisesTests.Runner
       Assert.Equal(Math.Max(0, n - 1), _currentSession.CorrectAnswers);
     }
 
-    private static void ThenTheQuestionDoesNotMatchExerciceQuestionPattern(string questionTextPattern, string outputText)
-    {
-      Assert.DoesNotMatch(questionTextPattern, outputText);
-    }
 
     private static string ThenTheQuestionAskedMatchesTheExpectedPatterns(string questionKey, string questionKeyPattern, string questionTextPattern, ExerciceRunner runner, string outputText)
     {

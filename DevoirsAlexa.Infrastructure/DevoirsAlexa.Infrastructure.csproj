@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Alexa.NET" Version="1.22.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DevoirsAlexa.Domain\DevoirsAlexa.Domain.csproj" />
   </ItemGroup>
 
