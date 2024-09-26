@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "SSML",
+      "ssml": "<speak><say-as interpret-as=\"interjection\">Bien joué !</say-as> C'est une bonne réponse ! Combien font 18 plus 18 ?</speak>"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetAnswer",
+          "slots": {
+            "LastAnswer": {
+              "name": "LastAnswer"
+            }
+          }
+        },
+        "slotToElicit": "LastAnswer"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "SSML",
+        "ssml": "<speak><say-as interpret-as=\"interjection\">Hmmmm</say-as><break time='500ms'/>Je n'ai pas compris ta réponse.<break time='500ms'/>Peux tu répéter ? La question était : Combien font 18 plus 18 ?</speak>"
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "LastAnswer": "46",
+    "NbExercice": "10",
+    "Exercice": "addition",
+    "CorrectAnswers": "4",
+    "FirstName": "lucie",
+    "QuestionAsked": "6",
+    "Age": "8",
+    "ExerciceStartTime": "133718446661892534",
+    "AlreadyAsked": "10+17;26+17;4+15;29+17;22+29"
+  }
+}

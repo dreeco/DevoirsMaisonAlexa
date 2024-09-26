@@ -21,10 +21,9 @@ public class BaseFunctionTest
     _request.Session.Attributes = new HomeworkSession();
   }
 
-  protected static PlainTextOutputSpeech ThenThereIsAPlainTextOutputSpeech(SkillResponse response)
+  protected static T ThenThereIsAnOutputSpeech<T>(SkillResponse response) where T : class, IOutputSpeech
   {
-    Assert.Contains("PlainText", response.Response.OutputSpeech.Type, StringComparison.OrdinalIgnoreCase);
-    var speech = response.Response.OutputSpeech as PlainTextOutputSpeech;
+    var speech = response.Response.OutputSpeech as T;
     Assert.NotNull(speech);
     return speech;
   }

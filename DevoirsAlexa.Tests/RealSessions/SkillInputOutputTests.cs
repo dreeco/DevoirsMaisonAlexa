@@ -15,41 +15,48 @@ public class SkillInputOutputTests
   [InlineData("SetExercice")]
   [InlineData("AnswerAddition", true)]
   [InlineData("ExerciceEnd", true)]
-  public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName, bool stripAnswer = false)
+  [InlineData("SessionEndedRequest", true)]
+  public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName, bool hasUnpredictableElements = false)
   {
     var skillRequest = ReadRequestFile(fileName);
-    
+
     var response = await Function.FunctionHandler(skillRequest, new TestLambdaContext());
-    
+
     var responseObject = ReadResponseFile(fileName);
 
-    //Workaround randomness of questions
-    if (stripAnswer)
-    {
-      response.Response.OutputSpeech = null;
-      if (response.Response.Reprompt != null)
-        response.Response.Reprompt.OutputSpeech = null;
-      response.SessionAttributes["AlreadyAsked"] = null;
-
-      responseObject.Response.OutputSpeech = null;
-      if (responseObject.Response.Reprompt != null)
-        responseObject.Response.Reprompt.OutputSpeech = null;
-      responseObject.SessionAttributes["AlreadyAsked"] = null;
-    }
+    if (hasUnpredictableElements)
+      StripUnpredictableElementsFromBothObjects(response, responseObject);
 
     Assert.Equivalent(responseObject, response);
   }
 
+  private static void StripUnpredictableElementsFromBothObjects(SkillResponse response, SkillResponse responseObject)
+  {
+    response.Response.OutputSpeech = null;
+    if (response.Response.Reprompt != null)
+      response.Response.Reprompt.OutputSpeech = null;
+    response.SessionAttributes["AlreadyAsked"] = null;
+
+    responseObject.Response.OutputSpeech = null;
+    if (responseObject.Response.Reprompt != null)
+      responseObject.Response.Reprompt.OutputSpeech = null;
+    responseObject.SessionAttributes["AlreadyAsked"] = null;
+  }
+
   private static SkillResponse ReadResponseFile(string fileName)
   {
-    var text = File.ReadAllText($"./RealSessions/Responses/{fileName}.json", System.Text.Encoding.UTF8);
-    return JsonConvert.DeserializeObject<SkillResponse>(text) ?? throw new Exception($"Impossible to deserialize {fileName}.json");
+    return ReadSkillJsonFile<SkillResponse>("Responses", fileName);
   }
 
   private static SkillRequest ReadRequestFile(string fileName)
   {
-    var text = File.ReadAllText($"./RealSessions/Requests/{fileName}.json", System.Text.Encoding.UTF8);
-    return JsonConvert.DeserializeObject<SkillRequest>(text) ?? throw new Exception($"Impossible to deserialize {fileName}.json");
+    return ReadSkillJsonFile<SkillRequest>("Requests", fileName);
+  }
+
+  private static T ReadSkillJsonFile<T>(string subFolder, string fileName)
+  {
+    var text = File.ReadAllText($"./RealSessions/{subFolder}/{fileName}.json", System.Text.Encoding.UTF8);
+    return JsonConvert.DeserializeObject<T>(text) ?? throw new Exception($"Impossible to deserialize {fileName}.json");
 
   }
 }

@@ -21,7 +21,7 @@ public class FunctionTest : BaseFunctionTest
     SkillResponse response = await WhenIUseTheFollowingIntent("");
 
     //is plain text
-    PlainTextOutputSpeech? speech = ThenThereIsAPlainTextOutputSpeech(response);
+    PlainTextOutputSpeech? speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
 
     //Has given info
     ThenIHaveThisResponseText(expectedText, speech);
@@ -44,11 +44,31 @@ public class FunctionTest : BaseFunctionTest
     //Has given info
     if (!string.IsNullOrEmpty(expectedText))
     {      //is plain text
-      PlainTextOutputSpeech? speech = ThenThereIsAPlainTextOutputSpeech(response);
+      var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
       ThenIHaveThisResponseText(expectedText, speech);
     }
     ThenIHaveANewSessionAttributeWithTheSlotValue(intent, slots, response);
     ThenIReturnTheNextExpectedIntentInTheResponse(response, expectedNextIntent);
+  }
+
+  [Theory]
+  [InlineData("", "Au revoir !")]
+  [InlineData("FirstName=Lucie", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Age=8", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions,NbExercice=3", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question","Au revoir !")]
+  public async Task ShouldEndSession_GivenStopIntent(string context, params string[] expectedTextParts)
+  {
+    SetContextData(context);
+    SkillResponse response = await WhenIUseTheFollowingIntent(Function.StopIntent);
+
+    Assert.True(response.Response.ShouldEndSession);
+    var speech = ThenThereIsAnOutputSpeech<SsmlOutputSpeech>(response);
+    foreach (var expectedText in expectedTextParts)
+      ThenIHaveThisResponseText(expectedText, speech);
+
+    Assert.Empty(response.SessionAttributes);
   }
 
   private void ThenIReturnTheNextExpectedIntentInTheResponse(SkillResponse response, string expectedNextIntent)
@@ -85,5 +105,9 @@ public class FunctionTest : BaseFunctionTest
   private static void ThenIHaveThisResponseText(string expectedText, PlainTextOutputSpeech speech)
   {
     Assert.Contains(expectedText, speech.Text, StringComparison.InvariantCultureIgnoreCase);
+  }
+  private static void ThenIHaveThisResponseText(string expectedText, SsmlOutputSpeech speech)
+  {
+    Assert.Contains(expectedText, speech.Ssml, StringComparison.InvariantCultureIgnoreCase);
   }
 }

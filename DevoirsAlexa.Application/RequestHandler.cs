@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DevoirsAlexa.Application;
 
-public static class ExerciceSentenceBuilder
+public static class RequestHandler
 {
   private static Random _rand = new Random();
 
@@ -94,32 +94,32 @@ public static class ExerciceSentenceBuilder
 
   public static void FillPromptAndReprompt(ISentenceBuilder prompt, ISentenceBuilder reprompt, bool isStoppingSkill, IHomeworkSession session)
   {
-    var nextStep = RequestRouting.GetNextStep(session);
-    switch (nextStep)
+    switch (RequestRouting.GetNextStep(session), isStoppingSkill)
     {
-      case HomeworkStep.GetFirstName:
+      case (HomeworkStep.GetFirstName, false):
         prompt.AppendSimpleText("Quel est ton prénom ?");
         reprompt.AppendSimpleText("Je n'ai pas compris ton prénom, peux tu répéter ?");
         break;
 
-      case HomeworkStep.GetAge:
+      case (HomeworkStep.GetAge, false):
         prompt.AppendSimpleText($"Bonjour {session.FirstName}, quel âge as-tu ?");
         reprompt.AppendSimpleText("Je n'ai pas compris ton âge, peux tu répéter ?");
         break;
 
-      case HomeworkStep.GetExercice:
+      case (HomeworkStep.GetExercice, false):
         prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?");
         reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
         break;
 
-      case HomeworkStep.GetNbExercice:
+      case (HomeworkStep.GetNbExercice, false):
         prompt.AppendSimpleText("OK ! Et sur combien de questions souhaites-tu t'entraîner ?");
         reprompt.AppendSimpleText("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?");
         break;
 
-      case HomeworkStep.StartExercice:
+      case (HomeworkStep.StartExercice, false):
+      case (HomeworkStep.StartExercice, true):
         var runner = new ExerciceRunner(session);
-        var result = runner.ValidateAnswerAndGetNext(false);
+        var result = runner.ValidateAnswerAndGetNext(isStoppingSkill);
         GetPromptForQuestionResult(prompt, result, isStoppingSkill);
 
         if (result.Question != null)
@@ -131,6 +131,11 @@ public static class ExerciceSentenceBuilder
           reprompt.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
         }
         break;
+      default:
+        session.Clear();
+        prompt.AppendInterjection("Au revoir !");
+        break;
+
     }
   }
 
@@ -153,18 +158,15 @@ public static class ExerciceSentenceBuilder
     }
     else if (result.Exercice != null)
     {
-      if (result.Exercice.TotalQuestions == 0)
-      {
-        sentenceBuilder.AppendInterjection("Au revoir !");
-        return;
-      }
-
-      GetEndOfExerciceCompletionSentence(sentenceBuilder, result.Exercice);
+      if (result.Exercice.TotalQuestions > 0)
+        GetEndOfExerciceCompletionSentence(sentenceBuilder, result.Exercice);
 
       if (!isStoppingSkill)
       {
         sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
       }
+      else
+        sentenceBuilder.AppendInterjection("Au revoir !");
     }
   }
 

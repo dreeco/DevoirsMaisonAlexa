@@ -32,7 +32,7 @@ public class Function
         .RunAsync();
   }
 
-  private const string StopIntent = "AMAZON.StopIntent";
+  public const string StopIntent = "AMAZON.StopIntent";
 
 
   /// <summary>
@@ -70,7 +70,14 @@ public class Function
     homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
-    var response = BuildAnswerFromCurrentStep(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
+
+    if (input.Request is SessionEndedRequest sessionEnded)
+    {
+      if (sessionEnded.Reason == Reason.ExceededMaxReprompts)
+        homeworkSession.LastAnswer = "_";
+    }
+
+    var response = BuildAnswer(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
     
     
     response.SessionAttributes = homeworkSession.ToDictionary();
@@ -89,12 +96,12 @@ public class Function
     }
   }
 
-  private static SkillResponse BuildAnswerFromCurrentStep(IHomeworkSession session, bool isStopping)
+  private static SkillResponse BuildAnswer(IHomeworkSession session, bool isStopping)
   {
     var prompt = new SentenceBuilder();
     var reprompt = new SentenceBuilder();
 
-    ExerciceSentenceBuilder.FillPromptAndReprompt(prompt, reprompt, isStopping, session);
+    RequestHandler.FillPromptAndReprompt(prompt, reprompt, isStopping, session);
 
     if (reprompt.IsEmpty())
       return ResponseBuilder.Tell(prompt.GetSpeech());
@@ -105,7 +112,7 @@ public class Function
   private static HomeworkSession GetHomeworkSession(SkillRequest input)
   {
     if (input.Request is not IntentRequest intentRequest)
-      return new HomeworkSession();
+      return new HomeworkSession(input.Session?.Attributes);
 
     var intent = RequestRouting.GetIntent(intentRequest.Intent.Name);
     foreach (var slotName in intent?.Slots ?? [])
