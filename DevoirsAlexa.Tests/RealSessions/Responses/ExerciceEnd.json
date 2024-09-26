@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "SSML",
+      "ssml": "<speak><say-as interpret-as=\"interjection\">Parfait !</say-as> C'est une bonne réponse ! Tu as 3 bonnes réponses sur 3 questions, en moins de 30 secondes. Bravo, mission accomplie avec brio ! Quel exercice souhaites-tu faire désormais ?</speak>"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetExercice",
+          "slots": {
+            "Exercice": {
+              "name": "Exercice"
+            }
+          }
+        },
+        "slotToElicit": "Exercice"
+      }
+    ],
+    "shouldEndSession": true,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "LastAnswer": "",
+    "NbExercice": "0",
+    "Exercice": "",
+    "CorrectAnswers": "0",
+    "FirstName": "lucie",
+    "QuestionAsked": "0",
+    "Age": "8",
+    "ExerciceStartTime": "",
+    "AlreadyAsked": ""
+  }
+
+}

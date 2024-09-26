@@ -92,6 +92,7 @@ public class ExerciceRunner
     SessionData.Exercice = null;
     SessionData.NbExercice = 0;
     SessionData.ExerciceStartTime = null;
+    SessionData.LastAnswer = null;
   }
 
   private AnswerValidation ValidateAnswer(IExerciceQuestionsRunner exercice)

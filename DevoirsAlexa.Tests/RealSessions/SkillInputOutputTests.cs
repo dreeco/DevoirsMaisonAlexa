@@ -14,6 +14,7 @@ public class SkillInputOutputTests
   [InlineData("SetAge")]
   [InlineData("SetExercice")]
   [InlineData("AnswerAddition", true)]
+  [InlineData("ExerciceEnd", true)]
   public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName, bool stripAnswer = false)
   {
     var skillRequest = ReadRequestFile(fileName);
@@ -26,11 +27,13 @@ public class SkillInputOutputTests
     if (stripAnswer)
     {
       response.Response.OutputSpeech = null;
-      response.Response.Reprompt.OutputSpeech = null;
+      if (response.Response.Reprompt != null)
+        response.Response.Reprompt.OutputSpeech = null;
       response.SessionAttributes["AlreadyAsked"] = null;
 
       responseObject.Response.OutputSpeech = null;
-      responseObject.Response.Reprompt.OutputSpeech = null;
+      if (responseObject.Response.Reprompt != null)
+        responseObject.Response.Reprompt.OutputSpeech = null;
       responseObject.SessionAttributes["AlreadyAsked"] = null;
     }
 
