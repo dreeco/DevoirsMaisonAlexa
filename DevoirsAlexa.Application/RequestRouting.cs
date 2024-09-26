@@ -5,6 +5,24 @@ namespace DevoirsAlexa.Application
 {
   public class RequestRouting
   {
+    private static IntentData[] Intents = [
+    new IntentData("SetFirstName") { Slots = [nameof(IHomeworkSession.FirstName)], RelatedStep = HomeworkStep.GetFirstName },
+    new IntentData("SetAge") { Slots = [nameof(IHomeworkSession.Age)], RelatedStep = HomeworkStep.GetAge },
+    new IntentData("SetExercice") { Slots = [nameof(IHomeworkSession.Exercice)], RelatedStep = HomeworkStep.GetExercice },
+    new IntentData("SetNbExercice") { Slots = [nameof(IHomeworkSession.NbExercice)], RelatedStep = HomeworkStep.GetNbExercice },
+    new IntentData("SetAnswer") { Slots = [nameof(IHomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice },
+  ];
+
+    public static IntentData? GetNextExpectedIntent(IHomeworkSession session)
+    {
+      return Intents.FirstOrDefault(i => i.RelatedStep == GetNextStep(session));
+    }
+
+    public static IntentData? GetIntent(string name)
+    {
+      return Intents.FirstOrDefault(i => i.Name == name);
+    }
+
     public static HomeworkStep GetNextStep(IHomeworkSession session)
     {
       if (string.IsNullOrWhiteSpace(session.FirstName))

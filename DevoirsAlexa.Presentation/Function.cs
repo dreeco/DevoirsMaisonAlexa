@@ -7,12 +7,9 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using DevoirsAlexa.Application;
-using DevoirsAlexa.Domain.Enums;
-using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
-using DevoirsAlexa.Presentation;
 using System.Text.Json.Serialization;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -35,13 +32,8 @@ public class Function
         .RunAsync();
   }
 
-  public static Dictionary<string, IntentData> Intents = new Dictionary<string, IntentData> {
-    { "SetFirstName", new IntentData { Slots = [nameof(HomeworkSession.FirstName)], RelatedStep = HomeworkStep.GetFirstName } },
-    { "SetAge", new IntentData { Slots = [nameof(HomeworkSession.Age)], RelatedStep = HomeworkStep.GetAge} } ,
-    { "SetExercice", new IntentData { Slots = [nameof(HomeworkSession.Exercice)], RelatedStep = HomeworkStep.GetExercice}} ,
-    { "SetNbExercice", new IntentData { Slots = [nameof(HomeworkSession.NbExercice)], RelatedStep = HomeworkStep.GetNbExercice}} ,
-    { "SetAnswer", new IntentData { Slots = [nameof(HomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice}} ,
-  };
+  private const string StopIntent = "AMAZON.StopIntent";
+
 
   /// <summary>
   /// A simple function that takes a string and does a ToUpper.
@@ -72,19 +64,13 @@ public class Function
 
     await Task.Delay(0);
 
-    var intentName = FillRequestSessionWithNewValues(input);
+    var homeworkSession = GetHomeworkSession(input);    
     context.Logger.LogInformation($"Updated input: {System.Text.Json.JsonSerializer.Serialize(input)}");
-
-    var homeworkSession = new HomeworkSession(input.Session?.Attributes);
-    var homeworkRunner = new ExerciceRunner(homeworkSession);
 
     homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
-    var nextStep = RequestRouting.GetNextStep(homeworkSession);
-    context.Logger.LogInformation($"Next step is : {nextStep}");
-
-    var response = BuildAnswerFromCurrentStep(homeworkSession, isStopping: intentName == "AMAZON.StopIntent");
+    var response = BuildAnswerFromCurrentStep(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
     response.SessionAttributes = homeworkSession;
 
     SetNextIntentExpected(homeworkSession, response, context.Logger);
@@ -93,12 +79,11 @@ public class Function
 
   private static void SetNextIntentExpected(IHomeworkSession session, SkillResponse r, ILambdaLogger logger)
   {
-    var data = Intents.FirstOrDefault(i => i.Value.RelatedStep == RequestRouting.GetNextStep(session));
-    var nextIntentName = data.Key;
-    if (!string.IsNullOrEmpty(nextIntentName))
+    var data = RequestRouting.GetNextExpectedIntent(session);
+    if (data != null)
     {
-      r.Response.Directives.Add(new DialogElicitSlot(data.Value.Slots[0]) { UpdatedIntent = new Intent { Name = nextIntentName, Slots = data.Value.Slots.ToDictionary(s => s, s => new Slot() { Name = s }) } });
-      logger.LogInformation($"Expected Next intent is : {nextIntentName}");
+      r.Response.Directives.Add(new DialogElicitSlot(data.Slots[0]) { UpdatedIntent = new Intent { Name = data.Name, Slots = data.Slots.ToDictionary(s => s, s => new Slot() { Name = s }) } });
+      logger.LogInformation($"Expected Next intent is : {data.Name}");
     }
   }
 
@@ -115,28 +100,22 @@ public class Function
       return ResponseBuilder.Ask(prompt.GetSpeech(), new Reprompt() { OutputSpeech = reprompt.GetSpeech() });
   }
 
-  private static string? FillRequestSessionWithNewValues(SkillRequest input)
+  private static HomeworkSession GetHomeworkSession(SkillRequest input)
   {
     if (input.Request is not IntentRequest intentRequest)
-      return null;
+      return new HomeworkSession();
 
-    var name = intentRequest.Intent.Name;
-    foreach (var intent in Intents)
+    var intent = RequestRouting.GetIntent(intentRequest.Intent.Name);
+    foreach (var slotName in intent?.Slots ?? [])
     {
-      if (intent.Key == name)
-      {
-        foreach (var slotName in intent.Value.Slots)
-        {
-          intentRequest.Intent.Slots.TryGetValue(slotName, out var slot);
+      intentRequest.Intent.Slots.TryGetValue(slotName, out var slot);
 
-          var value = slot?.SlotValue.Value;
-          if (!string.IsNullOrEmpty(value))
-            input.Session.Attributes[slotName] = value;
-        }
-      }
+      var value = slot?.SlotValue.Value;
+      if (!string.IsNullOrEmpty(value))
+        input.Session.Attributes[slotName] = value;
     }
 
-    return intentRequest.Intent.Name;
+    return new HomeworkSession(input.Session?.Attributes);
   }
 }
 

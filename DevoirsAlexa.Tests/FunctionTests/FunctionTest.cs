@@ -3,6 +3,7 @@ using DevoirsAlexa.Tests.HomeworkTests;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using DevoirsAlexa.Infrastructure.Models;
+using DevoirsAlexa.Application;
 
 namespace DevoirsAlexa.Tests.FunctionTests;
 
@@ -67,7 +68,8 @@ public class FunctionTest : BaseFunctionTest
       return;
 
     var expectedValue = slots.Split('=')[1];
-    var slotActualValue = response.SessionAttributes[Function.Intents[intent].Slots[0]].ToString();
+    var slotName = RequestRouting.GetIntent(intent)?.Slots[0] ?? throw new Exception($"Could not find slots for intent {intent}");
+    var slotActualValue = response.SessionAttributes[slotName].ToString();
     if (expectedValue == "*")
       Assert.True(!string.IsNullOrEmpty(slotActualValue));
     else
