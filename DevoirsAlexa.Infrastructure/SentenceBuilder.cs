@@ -1,6 +1,7 @@
 ﻿using Alexa.NET.Response;
 using DevoirsAlexa.Domain;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DevoirsAlexa.Infrastructure;
 
@@ -50,10 +51,11 @@ public class SentenceBuilder : ISentenceBuilder
 
   public IOutputSpeech GetSpeech()
   {
-    var text = CurrentSentence.ToString();
-    
+    var text = CurrentSentence.ToString().Trim();
+    string output = Regex.Replace(text, @"\s+", " ");
+
     if (IsSSML)
-      return new SsmlOutputSpeech() { Ssml = $"<speak>{CurrentSentence.ToString()}</speak>" };
+      return new SsmlOutputSpeech() { Ssml = $"<speak>{text}</speak>" };
 
     return new PlainTextOutputSpeech(text);
   }

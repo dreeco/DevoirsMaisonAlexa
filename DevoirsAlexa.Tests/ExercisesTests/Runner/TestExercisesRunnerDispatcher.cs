@@ -6,9 +6,9 @@ using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure.Models;
 using Xunit;
 
-namespace DevoirsAlexa.Tests.ExercisesTests.Runner
+namespace DevoirsAlexa.Tests.Domain
 {
-  public class TestExercisesRunnerDispatcher
+  public class ExerciceRunnerTests
   {
     public IHomeworkSession? _currentSession { get; private set; }
 

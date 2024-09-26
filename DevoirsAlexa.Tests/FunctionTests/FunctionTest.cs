@@ -5,7 +5,7 @@ using Alexa.NET.Response.Directive;
 using DevoirsAlexa.Infrastructure.Models;
 using DevoirsAlexa.Application;
 
-namespace DevoirsAlexa.Tests.FunctionTests;
+namespace DevoirsAlexa.Tests.Presentation;
 
 public class FunctionTest : BaseFunctionTest
 {

@@ -71,7 +71,9 @@ public class Function
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
     var response = BuildAnswerFromCurrentStep(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
-    response.SessionAttributes = homeworkSession;
+    
+    
+    response.SessionAttributes = homeworkSession.ToDictionary();
 
     SetNextIntentExpected(homeworkSession, response, context.Logger);
     return response;

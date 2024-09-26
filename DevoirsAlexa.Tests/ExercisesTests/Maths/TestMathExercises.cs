@@ -3,9 +3,9 @@ using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using Xunit;
 
-namespace DevoirsAlexa.Tests.ExercisesTests.Maths;
+namespace DevoirsAlexa.Tests.Domain;
 
-public class TestMathExercises
+public class MathExercisesTests
 {
   private IExerciceQuestionsRunner? exercice;
   private IExerciceQuestionsRunner Exercice => exercice ?? throw new Exception("Exercice question runner should not be null.");

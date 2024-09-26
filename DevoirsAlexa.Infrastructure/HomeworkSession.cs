@@ -2,6 +2,7 @@
 using DevoirsAlexa.Domain.Models;
 using System.Collections.Immutable;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DevoirsAlexa.Infrastructure.Models;
 
@@ -64,9 +65,11 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
   {
     get {
       var s = TryGetString(nameof(ExerciceStartTime));
-      return DateTime.TryParseExact(s, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var d) ? d.ToUniversalTime() : null; 
+      return long.TryParse(s, out var d) ? DateTime.FromFileTimeUtc(d) : null;
+      //return DateTime.TryParseExact(s, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var d) ? d.ToUniversalTime() : null; 
     }
-    set { this[nameof(ExerciceStartTime)] = value?.ToString("o", CultureInfo.InvariantCulture) ?? string.Empty; }
+    //set { this[nameof(ExerciceStartTime)] = value?.ToString("o", CultureInfo.InvariantCulture) ?? string.Empty; }
+    set { this[nameof(ExerciceStartTime)] = value?.ToFileTimeUtc().ToString() ?? string.Empty; }
   }
 
   private HomeworkExercisesTypes? GetExercice(string exerciceAsString)

@@ -4,33 +4,49 @@ using Amazon.Lambda.TestUtilities;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace DevoirsAlexa.Tests.RealSessions;
+namespace DevoirsAlexa.Tests.Presentation;
 
-public class RealSessionsTests
+public class SkillInputOutputTests
 {
   [Theory]
   [InlineData("StartSkill")]
   [InlineData("SetFirstName")]
   [InlineData("SetAge")]
   [InlineData("SetExercice")]
-  public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName)
+  [InlineData("AnswerAddition", true)]
+  public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName, bool stripAnswer = false)
   {
-    var requestFileContent = ReadRequestFile(fileName);
-    var skillRequest = JsonConvert.DeserializeObject<SkillRequest>(requestFileContent) ?? throw new Exception($"Impossible to deserialize {fileName}.json");
+    var skillRequest = ReadRequestFile(fileName);
     
     var response = await Function.FunctionHandler(skillRequest, new TestLambdaContext());
     
-    var responseFileContent = ReadResponseFile(fileName);
-    Assert.Equivalent(JsonConvert.DeserializeObject<SkillResponse>(responseFileContent), response);
+    var responseObject = ReadResponseFile(fileName);
+
+    //Workaround randomness of questions
+    if (stripAnswer)
+    {
+      response.Response.OutputSpeech = null;
+      response.Response.Reprompt.OutputSpeech = null;
+      response.SessionAttributes["AlreadyAsked"] = null;
+
+      responseObject.Response.OutputSpeech = null;
+      responseObject.Response.Reprompt.OutputSpeech = null;
+      responseObject.SessionAttributes["AlreadyAsked"] = null;
+    }
+
+    Assert.Equivalent(responseObject, response);
   }
 
-  private static string ReadResponseFile(string fileName)
+  private static SkillResponse ReadResponseFile(string fileName)
   {
-    return File.ReadAllText($"./RealSessions/Responses/{fileName}.json", System.Text.Encoding.UTF8);
+    var text = File.ReadAllText($"./RealSessions/Responses/{fileName}.json", System.Text.Encoding.UTF8);
+    return JsonConvert.DeserializeObject<SkillResponse>(text) ?? throw new Exception($"Impossible to deserialize {fileName}.json");
   }
 
-  private static string ReadRequestFile(string fileName)
+  private static SkillRequest ReadRequestFile(string fileName)
   {
-    return File.ReadAllText($"./RealSessions/Requests/{fileName}.json", System.Text.Encoding.UTF8);
+    var text = File.ReadAllText($"./RealSessions/Requests/{fileName}.json", System.Text.Encoding.UTF8);
+    return JsonConvert.DeserializeObject<SkillRequest>(text) ?? throw new Exception($"Impossible to deserialize {fileName}.json");
+
   }
 }

@@ -3,9 +3,9 @@ using DevoirsAlexa.Application;
 using DevoirsAlexa.Infrastructure.Models;
 using DevoirsAlexa.Domain.Enums;
 
-namespace DevoirsAlexa.Tests.ExercisesTests.Runner;
+namespace DevoirsAlexa.Tests.Application;
 
-public class TestSteps
+public class RoutingNextStepTests
 {
     [Theory]
     [InlineData("", HomeworkStep.GetFirstName)]

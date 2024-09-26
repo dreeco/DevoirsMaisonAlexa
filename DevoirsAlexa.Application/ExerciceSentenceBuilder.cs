@@ -11,14 +11,14 @@ public static class ExerciceSentenceBuilder
   private static Random _rand = new Random();
 
   private readonly static string[] PositiveFeedback = [
-    "Bien joué !", "Super", "Génial !", "Saperlipopette !", "Pas mal !", "Fantastique !",
-    "Bravo", "Magnifique !", "Parfait !", "Excellent !", "Impressionant !", "Top !", "Ok",
+    "Bien joué !", "Super !", "Génial !", "Saperlipopette !", "Pas mal !", "Fantastique !",
+    "Bravo !", "Magnifique !", "Parfait !", "Excellent !", "Impressionant !", "Top !", "Ok !",
     "Chapeau !", "Sensass !", "Extraordinaire !", "Bazinga !", "Bingo !", "Houra !", "Kaboom !", "Mamma mia !",
-    "Okey dokey !", "Ouah !", "Ouf ", "Oui !", "Ta da !", "Voilà !", "Waouh !", "Woo hoo !", "Yay !", "Youpi !", "Ça alors !"
+    "Okey dokey !", "Ouah !", "Ouf !", "Oui !", "Ta da !", "Voilà !", "Waouh !", "Woo hoo !", "Yay !", "Youpi !", "Ça alors !"
     ];
 
   private readonly static string[] NegativeFeedback = [
-    "Dommage...", "Noooon", "Raté", "Faux...", "Erreur...", "Zut.", "Zut alors.", "Aïe...", "Oh là là.", "Oh mince.",
+    "Dommage...", "Noooon.", "Raté.", "Faux...", "Erreur...", "Zut.", "Zut alors.", "Aïe...", "Oh là là.", "Oh mince.",
     "Oups...", "Manqué...", "Hélas.", "Désolé...", "Oh non.", "Aouch...", "Bof.", "Boo hoo.", "C'est la vie.",
     "Eeeeh non.", "Huh huh.", "Mince.", "Olah.", "Oooh.", "Oulah.", "Oups.", "Outch.", "Pas facile, hein ?", "Patatras.",
     "Punaise.", "Tralala."
@@ -147,7 +147,7 @@ public static class ExerciceSentenceBuilder
     {
 
       if (result.Question.Index == 1) // First Question
-        sentenceBuilder.AppendInterjection("C'est parti");
+        sentenceBuilder.AppendInterjection("C'est parti ! ");
 
       sentenceBuilder.AppendSimpleText(result.Question.Text);
     }
@@ -160,6 +160,7 @@ public static class ExerciceSentenceBuilder
       }
 
       GetEndOfExerciceCompletionSentence(sentenceBuilder, result.Exercice);
+
       if (!isStoppingSkill)
       {
         sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
