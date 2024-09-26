@@ -1,4 +1,4 @@
-﻿namespace Homework.Enums;
+﻿namespace DevoirsAlexa.Domain.Enums;
 
 public enum HomeworkExercisesTypes
 {
@@ -21,7 +21,7 @@ public enum HomeworkExercisesTypes
 }
 
 [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-sealed class TextRepresentationsAttribute : Attribute
+public sealed class TextRepresentationsAttribute : Attribute
 {
   public string[] StringValue { get; }
 

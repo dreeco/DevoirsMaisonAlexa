@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="DevoirsAlexa.Tests"/>
+    <InternalsVisibleTo Include="DevoirsAlexa.Tests" />
   </ItemGroup>
   
   <ItemGroup>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Presentation\Presentation.csproj" />
+    <ProjectReference Include="..\Presentation\DevoirsAlexa.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

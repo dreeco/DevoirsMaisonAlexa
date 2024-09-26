@@ -1,8 +1,9 @@
-﻿using Presentation;
+﻿
+using DevoirsAlexa.Domain.ToRemove;
 
-namespace Homework.ExercisesRunner;
+namespace DevoirsAlexa.Application;
 
-internal class ExerciceSentenceBuilder
+public class ExerciceSentenceBuilder : IExerciceSentenceBuilder
 {
   private static Random _rand = new Random();
 
@@ -88,7 +89,7 @@ internal class ExerciceSentenceBuilder
           }
       };
   
-  internal static void GetExerciceAnswerSentence(SentenceBuilder sentenceBuilder, bool isValidAnswer, string correctAnswer)
+  public void GetExerciceAnswerSentence(ISentenceBuilder sentenceBuilder, bool isValidAnswer, string correctAnswer)
   {
     if (isValidAnswer)
     {
@@ -104,7 +105,7 @@ internal class ExerciceSentenceBuilder
     }
   }
 
-  internal static void GetEndOfExerciceCompletionSentence(SentenceBuilder sentenceBuilder, int nbCorrectAnswers, int nbQuestionAsked, TimeSpan totalTime)
+  public void GetEndOfExerciceCompletionSentence(ISentenceBuilder sentenceBuilder, int nbCorrectAnswers, int nbQuestionAsked, TimeSpan totalTime)
   {
     var level = Math.Max(1, Math.Round((double)nbCorrectAnswers / (double)nbQuestionAsked * 5));
 
@@ -137,10 +138,5 @@ internal class ExerciceSentenceBuilder
     string secondText = seconds > 0 ? $"{seconds} seconde{(seconds > 1 ? "s" : "")}" : "";
     string inBetween = minutes > 0 && seconds > 0 ? " et " : " ";
     return $"{minuteText}{inBetween}{secondText}".Trim();
-  }
-
-  internal static void GetEndOfExerciceCompletionSentence(object sentenceBuilder, int v1, int v2, TimeSpan timeSpan)
-  {
-    throw new NotImplementedException();
   }
 }

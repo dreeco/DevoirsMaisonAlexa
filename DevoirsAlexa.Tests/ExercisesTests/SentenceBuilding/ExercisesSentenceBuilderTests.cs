@@ -1,6 +1,5 @@
-﻿using Presentation;
+﻿using DevoirsAlexa.Application;
 using Xunit;
-using Homework.ExercisesRunner;
 
 namespace DevoirsAlexa.Tests.ExercisesTests.SentenceBuilding;
 
@@ -19,7 +18,7 @@ public class ExercisesSentenceBuilderTests
   [InlineData(122, "en moins de 2 minutes et 2 secondes.")]
   public void ShouldIncludeTime_WhenAskingForExerciceCompletionSentence(int seconds, string expectedText) {
 
-    ExerciceSentenceBuilder.GetEndOfExerciceCompletionSentence(sentenceBuilder, 0, 5, TimeSpan.FromSeconds(seconds));
+    new ExerciceSentenceBuilder().GetEndOfExerciceCompletionSentence(sentenceBuilder, 0, 5, TimeSpan.FromSeconds(seconds));
 
     Assert.Contains(expectedText, sentenceBuilder.ToString());
   }

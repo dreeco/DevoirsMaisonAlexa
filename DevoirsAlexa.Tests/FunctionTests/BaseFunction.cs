@@ -4,7 +4,7 @@ using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 
-using Homework.Models;
+using DevoirsAlexa.Infrastructure.Models;
 
 namespace DevoirsAlexa.Tests.HomeworkTests;
 

@@ -1,4 +1,4 @@
-﻿namespace Homework.Enums;
+﻿namespace DevoirsAlexa.Domain.Enums;
 
   public enum HomeworkStep
   {

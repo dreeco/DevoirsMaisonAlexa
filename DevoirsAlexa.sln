@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa", "DevoirsAlexa\DevoirsAlexa.csproj", "{0B74EAE6-C71A-4CA0-A96D-ED51B2375B48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Presentation", "DevoirsAlexa.Presentation\DevoirsAlexa.Presentation.csproj", "{0B74EAE6-C71A-4CA0-A96D-ED51B2375B48}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Tests", "DevoirsAlexa.Tests\DevoirsAlexa.Tests.csproj", "{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Homework", "Homework\Homework.csproj", "{426201CC-2D29-4EB7-94A8-07387254D039}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevoirsAlexa.Application", "DevoirsAlexa.Application\DevoirsAlexa.Application.csproj", "{13CFEDE8-A313-44E3-B385-101EB4C97C6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{13CFEDE8-A313-44E3-B385-101EB4C97C6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevoirsAlexa.Domain", "DevoirsAlexa.Domain\DevoirsAlexa.Domain.csproj", "{55458675-AE08-4499-A0C9-4D8E68E1973A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevoirsAlexa.Infrastructure", "DevoirsAlexa.Infrastructure\DevoirsAlexa.Infrastructure.csproj", "{30E83893-2568-475B-9364-9F44F1EC672C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +27,18 @@ Global
 		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{426201CC-2D29-4EB7-94A8-07387254D039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{426201CC-2D29-4EB7-94A8-07387254D039}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{426201CC-2D29-4EB7-94A8-07387254D039}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{426201CC-2D29-4EB7-94A8-07387254D039}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55458675-AE08-4499-A0C9-4D8E68E1973A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55458675-AE08-4499-A0C9-4D8E68E1973A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55458675-AE08-4499-A0C9-4D8E68E1973A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55458675-AE08-4499-A0C9-4D8E68E1973A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30E83893-2568-475B-9364-9F44F1EC672C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E83893-2568-475B-9364-9F44F1EC672C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E83893-2568-475B-9364-9F44F1EC672C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E83893-2568-475B-9364-9F44F1EC672C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

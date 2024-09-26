@@ -1,6 +1,6 @@
-﻿using Homework.Enums;
+﻿using DevoirsAlexa.Domain.Enums;
 
-namespace DevoirsAlexa;
+namespace DevoirsAlexa.Presentation;
 
 public class IntentData
 {

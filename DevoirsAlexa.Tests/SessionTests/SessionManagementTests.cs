@@ -1,4 +1,4 @@
-﻿using Homework.Models;
+﻿using DevoirsAlexa.Infrastructure.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.SessionTests;

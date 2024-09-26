@@ -1,6 +1,6 @@
-﻿using Homework.HomeworkExercises;
-using Homework.HomeworkExercises.MathExercices;
-using Homework.Models;
+﻿using DevoirsAlexa.Domain.HomeworkExercises;
+using DevoirsAlexa.Domain.MathExercices;
+using DevoirsAlexa.Domain.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.ExercisesTests.Maths;

@@ -1,8 +1,8 @@
 using Xunit;
 using DevoirsAlexa.Tests.HomeworkTests;
 using Alexa.NET.Response;
-using Homework.Models;
 using Alexa.NET.Response.Directive;
+using DevoirsAlexa.Infrastructure.Models;
 
 namespace DevoirsAlexa.Tests.FunctionTests;
 

@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using DevoirsAlexa.Domain.ToRemove;
+using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Presentation;
+namespace DevoirsAlexa.Application;
 
-public class SentenceBuilder
+public class SentenceBuilder : ISentenceBuilder
 {
   private StringBuilder CurrentSentence { get; set; }
 

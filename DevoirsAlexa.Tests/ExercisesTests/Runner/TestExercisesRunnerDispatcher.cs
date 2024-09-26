@@ -1,15 +1,16 @@
-﻿using Homework.Enums;
-using Homework.HomeworkExercises.MathExercices;
-using Homework.HomeworkExercisesRunner;
-using Homework.Models;
-using Presentation;
+﻿using DevoirsAlexa.Application;
+using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.HomeworkExercisesRunner;
+using DevoirsAlexa.Domain.MathExercices;
+using DevoirsAlexa.Domain.Models;
+using DevoirsAlexa.Infrastructure.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.ExercisesTests.Runner
 {
   public class TestExercisesRunnerDispatcher
   {
-    public HomeworkSession? _currentSession { get; private set; }
+    public IHomeworkSession? _currentSession { get; private set; }
 
     [Theory]
     [InlineData(HomeworkExercisesTypes.Unknown, null)]
@@ -41,11 +42,12 @@ namespace DevoirsAlexa.Tests.ExercisesTests.Runner
 
       var runner = new ExerciceRunner(_currentSession);
 
+      var exerciceSentenceBuilder = new ExerciceSentenceBuilder();
       for (var questionAskedLoopBegin = 0; questionAskedLoopBegin <= nbExercice; questionAskedLoopBegin++)
       {
         var sb = new SentenceBuilder();
         ThereWasNQuestionAskedAndAnswered(questionAskedLoopBegin);
-        runner.NextQuestion(sb);
+        runner.NextQuestion(exerciceSentenceBuilder, sb);
         var questionAsked = questionAskedLoopBegin + 1;
 
         var lastQuestionKey = runner.LastQuestionKey;

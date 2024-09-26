@@ -1,13 +1,12 @@
-﻿using Homework.HomeworkExercisesRunner;
-using Homework.Enums;
-using Homework.Models;
-using Xunit;
+﻿using Xunit;
+using DevoirsAlexa.Application;
+using DevoirsAlexa.Infrastructure.Models;
+using DevoirsAlexa.Domain.Enums;
 
 namespace DevoirsAlexa.Tests.ExercisesTests.Runner;
 
 public class TestSteps
 {
-
     [Theory]
     [InlineData("", HomeworkStep.GetFirstName)]
     [InlineData("FirstName=Lucie", HomeworkStep.GetAge)]
@@ -43,9 +42,7 @@ public class TestSteps
     public void ShouldReturnExpectedStep_WhenGettingNextStep_GivenSpecificData(string serializedData, HomeworkStep expectedStep)
     {
         var data = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(serializedData);
-        var homeworkRunner = new ExerciceRunner(data);
 
-        Assert.Equal(expectedStep, homeworkRunner.GetNextStep());
-
+        Assert.Equal(expectedStep, RequestRouting.GetNextStep(data));
     }
 }

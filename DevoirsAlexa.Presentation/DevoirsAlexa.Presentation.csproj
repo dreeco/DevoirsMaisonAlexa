@@ -29,6 +29,7 @@
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Homework\Homework.csproj" />
+    <ProjectReference Include="..\DevoirsAlexa.Infrastructure\DevoirsAlexa.Infrastructure.csproj" />
+    <ProjectReference Include="..\DevoirsAlexa.Application\DevoirsAlexa.Application.csproj" />
   </ItemGroup>
 </Project>

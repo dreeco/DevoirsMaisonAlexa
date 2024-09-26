@@ -6,10 +6,12 @@ using Alexa.NET.Response.Directive;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
-using Homework.Enums;
-using Homework.HomeworkExercisesRunner;
-using Homework.Models;
-using Presentation;
+using DevoirsAlexa.Application;
+using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.HomeworkExercisesRunner;
+using DevoirsAlexa.Domain.Models;
+using DevoirsAlexa.Infrastructure.Models;
+using DevoirsAlexa.Presentation;
 using System.Text.Json.Serialization;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -18,8 +20,6 @@ namespace DevoirsAlexa;
 
 public class Function
 {
-
-
   /// <summary>
   /// The main entry point for the Lambda function. The main function is called once during the Lambda init phase. It
   /// initializes the .NET Lambda runtime client passing in the function handler to invoke for each Lambda event and
@@ -80,26 +80,27 @@ public class Function
     if (intentName == "AMAZON.StopIntent")
     {
       var sentenceBuilder = new SentenceBuilder();
-      homeworkRunner.EndSession(sentenceBuilder, continueAfter: false);
+      var exerciceSentenceBuilder = new ExerciceSentenceBuilder();
+      homeworkRunner.EndSession(exerciceSentenceBuilder, sentenceBuilder, continueAfter: false);
       return ResponseBuilder.Tell(new SsmlOutputSpeech() { Ssml = sentenceBuilder.ToString() });
     }
 
     homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
-    var nextStep = homeworkRunner.GetNextStep();
+    var nextStep = RequestRouting.GetNextStep(homeworkSession);
     context.Logger.LogInformation($"Next step is : {nextStep}");
 
     var response = BuildAnswerFromCurrentStep(homeworkRunner, nextStep);
     response.SessionAttributes = homeworkSession;
 
-    SetNextIntentExpected(homeworkRunner, response, context.Logger);
+    SetNextIntentExpected(homeworkSession, response, context.Logger);
     return response;
   }
 
-  private static void SetNextIntentExpected(ExerciceRunner homeworkRunner, SkillResponse r, ILambdaLogger logger)
+  private static void SetNextIntentExpected(IHomeworkSession session, SkillResponse r, ILambdaLogger logger)
   {
-    var data = Intents.FirstOrDefault(i => i.Value.RelatedStep == homeworkRunner.GetNextStep());
+    var data = Intents.FirstOrDefault(i => i.Value.RelatedStep == RequestRouting.GetNextStep(session));
     var nextIntentName = data.Key;
     if (!string.IsNullOrEmpty(nextIntentName))
     {
@@ -124,8 +125,9 @@ public class Function
         {
           var mainAnswerBuilder = new SentenceBuilder();
           var repromptBuilder = new SentenceBuilder();
+          var exerciceSentenceBuilder = new ExerciceSentenceBuilder();
 
-          var question = runner.NextQuestion(mainAnswerBuilder);
+          var question = runner.NextQuestion(exerciceSentenceBuilder, mainAnswerBuilder);
           repromptBuilder.AppendInterjection("Hmmmm");
           repromptBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
           repromptBuilder.AppendSimpleText("Je n'ai pas compris ta réponse.");
