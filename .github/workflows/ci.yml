@@ -25,4 +25,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore /p:ConsoleEncoding=UTF8
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger "trx;logfilename=testResults.trx" --collect:"XPlat Code Coverage" /p:ConsoleEncoding=UTF8
+      run: dotnet test --no-build --verbosity normal --logger "trx;logfilename=testResults.trx" /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov /p:ConsoleEncoding=UTF8
