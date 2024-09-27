@@ -7,7 +7,7 @@ namespace DevoirsAlexa.Domain.MathExercices;
 [Exercice(HomeworkExercisesTypes.Additions)]
 public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
-  public AdditionsExercises() : base('+', "plus") { }
+  public AdditionsExercises() : base(Operations.Addition, "plus") { }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {

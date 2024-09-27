@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using DevoirsAlexa.Tests.HomeworkTests;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using DevoirsAlexa.Infrastructure.Models;

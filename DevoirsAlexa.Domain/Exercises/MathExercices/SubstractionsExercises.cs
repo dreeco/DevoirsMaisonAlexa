@@ -7,7 +7,7 @@ namespace DevoirsAlexa.Domain.MathExercices;
 [Exercice(HomeworkExercisesTypes.Substractions)]
 public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
-  public SubstractionsExercises() : base('-', "moins") { }
+  public SubstractionsExercises() : base(Operations.Substraction, "moins") { }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {

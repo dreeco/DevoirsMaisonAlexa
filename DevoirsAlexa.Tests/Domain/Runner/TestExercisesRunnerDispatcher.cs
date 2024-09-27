@@ -1,5 +1,4 @@
-﻿using DevoirsAlexa.Application;
-using DevoirsAlexa.Domain.Enums;
+﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
@@ -29,9 +28,7 @@ namespace DevoirsAlexa.Tests.Domain
         Assert.Equal(expectedType, exerciceInstance?.GetType());
     }
 
-
     [Theory]
-    //[InlineData(HomeworkExercises.Unknown, null)]
     [InlineData("FirstName=Alix,Level=CP,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
     [InlineData("FirstName=Elio,Level=CE1,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
     [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]

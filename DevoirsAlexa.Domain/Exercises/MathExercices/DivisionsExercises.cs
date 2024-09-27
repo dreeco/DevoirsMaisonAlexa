@@ -7,7 +7,7 @@ namespace DevoirsAlexa.Domain.MathExercices;
 [Exercice(HomeworkExercisesTypes.Divisions)]
 public class DivisionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
-  public DivisionsExercises() : base('/', "divisé par") { }
+  public DivisionsExercises() : base(Operations.Division, "divisé par") { }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {

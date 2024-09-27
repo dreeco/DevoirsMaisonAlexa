@@ -1,5 +1,4 @@
-﻿
-namespace DevoirsAlexa.Domain;
+﻿namespace DevoirsAlexa.Domain;
 
 public interface ISentenceBuilder
 {

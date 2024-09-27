@@ -19,7 +19,13 @@
         "slotToElicit": "Exercice"
       }
     ],
-    "shouldEndSession": true,
+    "reprompt": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions."
+      }
+    },
+    "shouldEndSession": false,
     "type": "_DEFAULT_RESPONSE"
   },
   "sessionAttributes": {
