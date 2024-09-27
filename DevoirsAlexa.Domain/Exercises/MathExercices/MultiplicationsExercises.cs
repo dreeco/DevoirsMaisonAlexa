@@ -7,7 +7,7 @@ namespace DevoirsAlexa.Domain.MathExercices;
 [Exercice(HomeworkExercisesTypes.Multiplications)]
 public class MultiplicationsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
-  public MultiplicationsExercises() : base('*', "multiplié par") { }
+  public MultiplicationsExercises() : base(Operations.Multiplication, "multiplié par") { }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {

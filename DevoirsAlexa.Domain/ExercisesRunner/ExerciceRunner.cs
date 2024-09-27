@@ -9,11 +9,6 @@ public class ExerciceRunner
   private IHomeworkSession SessionData { get; }
   private ExerciceDispatcher _dispatcher { get; }
 
-  public string FirstName => SessionData?.FirstName ?? string.Empty;
-  public Levels? Level => SessionData?.Level;
-
-  public string? LastQuestionKey => SessionData?.AlreadyAsked.LastOrDefault();
-
   public ExerciceRunner(IHomeworkSession sessionData)
   {
     SessionData = sessionData;
@@ -22,10 +17,14 @@ public class ExerciceRunner
 
   public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {
-    if (SessionData.Level == null)
-      throw new ArgumentNullException(nameof(SessionData.Level));
+    IExerciceQuestionsRunner exercice;
 
-    var exercice = GetExerciceQuestionsRunner();
+    if (SessionData.Level == null ||
+      SessionData.Exercice == null ||
+      SessionData.NbExercice == null || 
+      (exercice = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null)
+      return new AnswerResult { CouldNotStart = true };
+
 
     var answerResult = new AnswerResult();
 
@@ -48,11 +47,11 @@ public class ExerciceRunner
 
     answerResult.Question = exercice.NextQuestion(SessionData.Level.Value, SessionData.AlreadyAsked);
     AddNewQuestionToSession(answerResult.Question);
-    
+
     return answerResult;
   }
 
-  private void EndSession(bool isStopping) 
+  private void EndSession(bool isStopping)
   {
     if (isStopping)
     {
@@ -64,12 +63,9 @@ public class ExerciceRunner
     }
   }
 
-  private IExerciceQuestionsRunner GetExerciceQuestionsRunner()
+  private IExerciceQuestionsRunner GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
   {
-    if (SessionData.Exercice == null || SessionData.Exercice == HomeworkExercisesTypes.Unknown)
-      throw new ArgumentNullException(nameof(SessionData.Exercice));
-
-    return _dispatcher.GetExerciceQuestionsRunner(SessionData.Exercice.Value) ?? throw new ArgumentNullException(nameof(SessionData.Exercice));
+    return _dispatcher.GetExerciceQuestionsRunner(exercice) ?? throw new ArgumentNullException(nameof(SessionData.Exercice));
   }
 
   private void AddNewQuestionToSession(Question question)
@@ -106,8 +102,8 @@ public class ExerciceRunner
     return answerValidation;
   }
 
-  public string GetCorrectAnswer(string questionKey)
+  public string GetCorrectAnswer(HomeworkExercisesTypes exercice, string questionKey)
   {
-    return GetExerciceQuestionsRunner().ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
+    return GetExerciceQuestionsRunner(exercice).ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
   }
 }

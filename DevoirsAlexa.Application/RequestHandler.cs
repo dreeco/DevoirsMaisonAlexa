@@ -2,7 +2,6 @@
 using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.Models;
-using System.Text;
 
 namespace DevoirsAlexa.Application;
 
@@ -121,15 +120,9 @@ public static class RequestHandler
         var runner = new ExerciceRunner(session);
         var result = runner.ValidateAnswerAndGetNext(isStoppingSkill);
         GetPromptForQuestionResult(prompt, result, isStoppingSkill);
+        GetRepromptForQuestionResult(reprompt, result, isStoppingSkill);
 
-        if (result.Question != null)
-        {
-          reprompt.AppendInterjection("Hmmmm");
-          reprompt.AppendPause(TimeSpan.FromMilliseconds(500));
-          reprompt.AppendSimpleText("Je n'ai pas compris ta réponse.");
-          reprompt.AppendPause(TimeSpan.FromMilliseconds(500));
-          reprompt.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
-        }
+      
         break;
       default:
         session.Clear();
@@ -139,6 +132,21 @@ public static class RequestHandler
     }
   }
 
+  private static void GetRepromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result, bool isStoppingSkill)
+  {
+    if (result.Question != null)
+    {
+      sentenceBuilder.AppendInterjection("Hmmmm. ");
+      sentenceBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
+      sentenceBuilder.AppendSimpleText("Je n'ai pas compris ta réponse. ");
+      sentenceBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
+      sentenceBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
+    }
+    else if (!isStoppingSkill)
+    { 
+        sentenceBuilder.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
+    }
+  }
   private static void GetPromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result, bool isStoppingSkill)
   {
     if (result.Validation != null)
@@ -192,13 +200,18 @@ public static class RequestHandler
     else
     {
       sentenceBuilder.AppendInterjection(NegativeFeedback[_rand.Next(0, NegativeFeedback.Length)]);
-      sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
-      sentenceBuilder.AppendPause();
-      sentenceBuilder.AppendSimpleText(answer.CorrectAnswer + ".");
+      if (!string.IsNullOrEmpty(answer.CorrectAnswer))
+      {
+        sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
+        sentenceBuilder.AppendPause();
+        sentenceBuilder.AppendSimpleText(answer.CorrectAnswer + ".");
+      }
+      else
+        sentenceBuilder.AppendSimpleText(" Ce n'est pas la bonne réponse.");
     }
   }
 
-  private static void GetEndOfExerciceCompletionSentence(ISentenceBuilder sentenceBuilder, ExerciceResult result)
+  public static void GetEndOfExerciceCompletionSentence(ISentenceBuilder sentenceBuilder, ExerciceResult result)
   {
     var level = Math.Max(1, Math.Round((double)result.CorrectAnswers / (double)result.TotalQuestions * 5));
 

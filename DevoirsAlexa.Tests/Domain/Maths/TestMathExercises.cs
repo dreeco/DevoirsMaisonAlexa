@@ -79,6 +79,15 @@ public class MathExercisesTests
     ThenIHaveAtLeast75PercentDifferentQuestions(min, max, alreadyAsked, loopSize);
   }
 
+  [Theory]
+  [InlineData("", "", "")]
+  public void ShouldReturnInvalidAnswer_GivenIncorrectData(string questionKey, string answer, string expectedCorrectAnswer) {
+
+    var exercice = new AdditionsExercises();
+    var result = exercice.ValidateAnswer(questionKey, answer);
+    Assert.False(result.IsValid);
+    Assert.Equal(expectedCorrectAnswer, result.CorrectAnswer);
+  }
   private Question WhenIGetTheNextQuestion(Levels level, List<string> alreadyAsked)
   {
     return Exercice.NextQuestion(level, alreadyAsked);
