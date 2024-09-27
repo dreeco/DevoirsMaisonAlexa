@@ -200,9 +200,14 @@ public static class RequestHandler
     else
     {
       sentenceBuilder.AppendInterjection(NegativeFeedback[_rand.Next(0, NegativeFeedback.Length)]);
-      sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
-      sentenceBuilder.AppendPause();
-      sentenceBuilder.AppendSimpleText(answer.CorrectAnswer + ".");
+      if (!string.IsNullOrEmpty(answer.CorrectAnswer))
+      {
+        sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
+        sentenceBuilder.AppendPause();
+        sentenceBuilder.AppendSimpleText(answer.CorrectAnswer + ".");
+      }
+      else
+        sentenceBuilder.AppendSimpleText(" Ce n'est pas la bonne réponse.");
     }
   }
 

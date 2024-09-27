@@ -5,4 +5,6 @@ public class AnswerResult
   public AnswerValidation? Validation { get; set; }
   public Question? Question { get; set; }
   public ExerciceResult? Exercice { get; set; }
+
+  public bool CouldNotStart { get; set; }
 }

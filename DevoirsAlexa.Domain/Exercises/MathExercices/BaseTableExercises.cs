@@ -49,7 +49,8 @@ public abstract class BaseTableExercises
     var parts = questionKey.Split(OperationChar);
     int? previous = null;
 
-    foreach (var current in parts.Select(p => int.Parse(p)))
+    var numbers = parts.Where(p => int.TryParse(p, out var d)).Select(p => int.Parse(p));
+    foreach (var current in numbers)
     {
       if (previous == null)
       {
@@ -57,18 +58,18 @@ public abstract class BaseTableExercises
         continue;
       }
 
-      switch (OperationChar)
+      switch (Operation)
       {
-        case '+':
+        case Operations.Addition:
           previous += current;
           break;
-        case '*':
+        case Operations.Multiplication:
           previous *= current;
           break;
-        case '/':
+        case Operations.Division:
           previous /= current;
           break;
-        case '-':
+        case Operations.Substraction:
           previous -= current;
           break;
       }
@@ -79,13 +80,9 @@ public abstract class BaseTableExercises
   public AnswerValidation ValidateAnswer(string questionKey, string answer)
   {
     var resultNumber = GetCorrectAnswer(questionKey);
-    if (resultNumber == null)
-      return new AnswerValidation(false, "Impossible de calculer la bonne réponse");
 
     if (!int.TryParse(answer, out var answerNumber))
-#pragma warning disable CS8604 // The if null prevents null.
-      return new AnswerValidation(false, resultNumber.ToString());
-#pragma warning restore CS8604
+      return new AnswerValidation(false, resultNumber?.ToString() ?? string.Empty);
 
     return new AnswerValidation(resultNumber == answerNumber, resultNumber?.ToString() ?? string.Empty);
   }

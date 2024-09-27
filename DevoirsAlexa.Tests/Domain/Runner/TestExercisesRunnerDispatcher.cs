@@ -32,10 +32,12 @@ namespace DevoirsAlexa.Tests.Domain
     [InlineData("FirstName=Alix,Level=CP,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
     [InlineData("FirstName=Elio,Level=CE1,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
     [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
+    [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,AlreadyAsked=2-2,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
     public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern)
     {
       session += nbExercice.ToString();
       _currentSession = new HomeworkSession(session);
+      Assert.NotNull(_currentSession.Exercice);
 
       var runner = new ExerciceRunner(_currentSession);
 
@@ -43,6 +45,8 @@ namespace DevoirsAlexa.Tests.Domain
       {
         ThereWasNQuestionAskedAndAnswered(questionAskedLoopBegin);
         var result = runner.ValidateAnswerAndGetNext(false);
+        Assert.False(result.CouldNotStart);
+
         var questionAsked = questionAskedLoopBegin + 1;
 
         var isLastRun = questionAskedLoopBegin == nbExercice;
@@ -51,7 +55,7 @@ namespace DevoirsAlexa.Tests.Domain
           ThenIHaveANewCorrectAnswer(questionAskedLoopBegin);
           Assert.NotNull(result.Question);
           ThenTheQuestionAskedMatchesTheExpectedPatterns(result.Question.Key, questionKeyPattern, questionTextPattern, runner, result.Question.Text);
-          _currentSession.LastAnswer = runner.GetCorrectAnswer(result.Question.Key);
+          _currentSession.LastAnswer = runner.GetCorrectAnswer(_currentSession.Exercice.Value, result.Question.Key);
         }
         else
         {
@@ -59,6 +63,23 @@ namespace DevoirsAlexa.Tests.Domain
           ThenTheDataAreCleanedForNextExercice();
         }
       }
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("FirstName=Alix")]
+    [InlineData("FirstName=Alix,Level=CE2")]
+    [InlineData("FirstName=Alix,Level=CE2,Exercice=Additions")]
+    [InlineData("FirstName=Alix,Level=CE2,NbExercices=5")]
+    [InlineData("FirstName=Alix,Level=WTF,Exercice=Additions,NbExercices=5")]
+    [InlineData("FirstName=Alix,Level=CE2,Exercice=Unknown,NbExercices=5")]
+    public void ShouldReturnCouldNotStart_GivenIncompleteSessionData(string sessionData)
+    {
+      _currentSession = new HomeworkSession(sessionData);
+
+      var runner = new ExerciceRunner(_currentSession);
+
+      Assert.True(runner.ValidateAnswerAndGetNext(false).CouldNotStart);      
     }
 
     private void ThenIHaveANewCorrectAnswer(int n)

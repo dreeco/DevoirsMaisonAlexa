@@ -1,8 +1,6 @@
-﻿using Alexa.NET.Response;
-using DevoirsAlexa.Application;
+﻿using DevoirsAlexa.Application;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
-using System.Text.RegularExpressions;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.Application
@@ -24,6 +22,9 @@ namespace DevoirsAlexa.Tests.Application
     [InlineData(false, "FirstName=Adrien,Level=CE1,Exercice=Multiplications", "OK ! Et sur combien de questions souhaites-tu t'entraîner ?", "Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?")]
     [InlineData(false, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2", @"Combien font", "Hmmmm. Je n'ai pas compris ta réponse. Peux tu répéter ? La question était : Combien font ")]
     [InlineData(false, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2,LastAnswer=2,AlreadyAsked=2*2;2*1,CorrectAnswers=1,QuestionAsked=2", @"Tu as 2 bonnes réponses sur 2 questions, en moins de 30 secondes", "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.", 30)]
+    [InlineData(false, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2,LastAnswer=2,AlreadyAsked=2*2;2*1,CorrectAnswers=1,QuestionAsked=2", @"C'est une bonne réponse !", "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.", 30)]
+    [InlineData(false, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2,LastAnswer=3,AlreadyAsked=2*2;2*1,CorrectAnswers=1,QuestionAsked=2", @"La bonne réponse était 2", "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.", 30)]
+    [InlineData(false, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2,LastAnswer=2,AlreadyAsked=2*2;2_1,CorrectAnswers=1,QuestionAsked=2", @"Ce n'est pas la bonne réponse", "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.", 30)]
     public void ShouldSetPromptAndReprompt_GivenSpecificContext(bool isStoppingSkill, string sessionString, string promptMatch, string? repromptMatch, int? startedXSecondsAgo = null) {
       var prompt = new SentenceBuilder();
       var reprompt = new SentenceBuilder();
