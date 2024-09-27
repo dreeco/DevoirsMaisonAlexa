@@ -57,7 +57,7 @@ public class Function
   /// <returns></returns>
   public static async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
   {
-    context.Logger.LogInformation($"Skill received the following input: {System.Text.Json.JsonSerializer.Serialize(input)}");
+    LogInputData(input, context);
 
     if (input == null)
       return ResponseBuilder.Tell("Une erreur inattendue est survenue, merci de relancer la skill");
@@ -65,7 +65,7 @@ public class Function
     await Task.Delay(0);
 
     var homeworkSession = GetHomeworkSession(input);
-    context.Logger.LogInformation($"Updated input: {System.Text.Json.JsonSerializer.Serialize(input)}");
+    context.Logger.LogInformation($"Updated session: {System.Text.Json.JsonSerializer.Serialize(input.Session)}");
 
     homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
@@ -81,6 +81,29 @@ public class Function
     response.SessionAttributes = homeworkSession.ToDictionary();
     SetNextIntentExpected(homeworkSession, response, context.Logger);
     return response;
+  }
+
+  private static void LogInputData(SkillRequest input, ILambdaContext context)
+  {
+    context.Logger.LogInformation($"Skill received the following session: {System.Text.Json.JsonSerializer.Serialize(input.Session)}");
+
+    string requestSerialized;
+    switch (input.Request.Type)
+    {
+      case "IntentRequest":
+        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as IntentRequest);
+        break;
+      case "LaunchRequest":
+        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as LaunchRequest);
+        break;
+      case "SessionEndedRequest":
+        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as SessionEndedRequest);
+        break;
+      default:
+        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request);
+        break;
+    }
+    context.Logger.LogInformation($"Skill received the following Intent: {requestSerialized}");
   }
 
   private static void SetNextIntentExpected(IHomeworkSession session, SkillResponse r, ILambdaLogger logger)

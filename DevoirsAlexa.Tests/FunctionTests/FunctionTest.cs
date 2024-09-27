@@ -13,6 +13,7 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("", "Quel est ton prénom ?")]
   [InlineData("FirstName=Lucie", "en quelle classe es tu ?")]
   [InlineData("FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
   [InlineData("FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
   public async Task ShouldAskNextQuestion_WhenUsingTheSkill_GivenSpecificContext(string context, string expectedText)
   {

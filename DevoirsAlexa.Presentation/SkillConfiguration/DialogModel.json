@@ -66,7 +66,7 @@
             }
           ],
           "samples": [
-            "m'entrainer � {Exercice}",
+            "m'entrainer à {Exercice}",
             "Revoir mes {Exercice}",
             "Faire une {Exercice}",
             "Reviser mes {Exercice}",
@@ -89,7 +89,7 @@
           "samples": [
             "{NbExercice}",
             "en faire {NbExercice}",
-            "Une s�rie de {NbExercice}",
+            "Une série de {NbExercice}",
             "{NbExercice} exercices",
             "Faire {NbExercice} exercices"
           ]
@@ -103,13 +103,27 @@
             }
           ],
           "samples": [
-            "la r�ponse est {LastAnswer}",
-            "ma r�ponse est {LastAnswer}",
+            "la réponse est {LastAnswer}",
+            "ma réponse est {LastAnswer}",
             "c'est {LastAnswer}",
-            "le r�sultat est {LastAnswer}",
+            "le résultat est {LastAnswer}",
             "{LastAnswer}",
-            "�a fait {LastAnswer}",
+            "ça fait {LastAnswer}",
             "Cela fait {LastAnswer}"
+          ]
+        },
+        {
+          "name": "SetLevel",
+          "slots": [
+            {
+              "name": "Level",
+              "type": "LevelType"
+            }
+          ],
+          "samples": [
+            "en {Level}",
+            "{Level}",
+            "je suis en {Level}"
           ]
         }
       ],
@@ -119,9 +133,9 @@
           "values": [
             {
               "name": {
-                "value": "Dict�e",
+                "value": "Dictée",
                 "synonyms": [
-                  "mots de la dict�e"
+                  "mots de la dictée"
                 ]
               }
             },
@@ -174,6 +188,84 @@
               }
             }
           ]
+        },
+        {
+          "name": "LevelType",
+          "values": [
+            {
+              "name": {
+                "value": "CM2",
+                "synonyms": [
+                  "c m 2",
+                  "cm2",
+                  "c.m.2",
+                  "CM 2",
+                  "C M 2",
+                  "C.M.2",
+                  "Cours moyen 2",
+                  "cours moyen 2"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "CM1",
+                "synonyms": [
+                  "c.m.1",
+                  "c m 1",
+                  "cm1",
+                  "C M 1",
+                  "CM 1",
+                  "C.M.1",
+                  "cours moyen 1",
+                  "Cours moyen 1"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "CE2",
+                "synonyms": [
+                  "c e 2",
+                  "c.e.2",
+                  "ce2",
+                  "C E 2",
+                  "CE 2",
+                  "C.E.2",
+                  "Cours élémentaire 2",
+                  "cours élémentaire 2"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "CE1",
+                "synonyms": [
+                  "c.e.1",
+                  "ce1",
+                  "c e 1",
+                  "C E 1",
+                  "CE 1",
+                  "C.E.1",
+                  "Cours élémentaire 1",
+                  "cours élémentaire 1"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "CP",
+                "synonyms": [
+                  "c.p",
+                  "c p",
+                  "cp",
+                  "C P",
+                  "C.P",
+                  "cours préparatoire"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -187,15 +279,16 @@
             {
               "name": "FirstName",
               "type": "AMAZON.FirstName",
-              "elicitationRequired": true,
               "confirmationRequired": false,
+              "elicitationRequired": true,
               "prompts": {
                 "elicitation": "Elicit.Slot.FirstName"
               }
             }
           ]
         }
-      ]
+      ],
+      "delegationStrategy": "SKILL_RESPONSE"
     },
     "prompts": [
       {
@@ -203,7 +296,7 @@
         "variations": [
           {
             "type": "PlainText",
-            "value": "Quel est ton pr�nom ?"
+            "value": "Quel est ton prénom ?"
           }
         ]
       }
