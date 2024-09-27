@@ -1,8 +1,6 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.Models;
 using System.Collections.Immutable;
-using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DevoirsAlexa.Infrastructure.Models;
 
@@ -18,10 +16,10 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
     set { this[nameof(FirstName)] = value ?? string.Empty; } 
   }
 
-  public int? Age
+  public Levels? Level
   {
-    get { return int.TryParse(TryGetString(nameof(Age)), out var n) ? n : null; }
-    set { this[nameof(Age)] = value?.ToString() ?? string.Empty; }
+    get { return TryGetString(nameof(Level)).GetEnumFromTextRepresentations<Levels>(); }
+    set { this[nameof(Level)] = value?.ToString() ?? string.Empty; }
   }
 
   public int? NbExercice
@@ -51,7 +49,7 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
 
   public HomeworkExercisesTypes? Exercice
   {
-    get { return GetExercice(TryGetString(nameof(Exercice))); }
+    get { return TryGetString(nameof(Exercice)).GetEnumFromTextRepresentations<HomeworkExercisesTypes>(); }
     set { this[nameof(Exercice)] = value?.ToString() ?? string.Empty; }
   }
 
@@ -66,31 +64,8 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
     get {
       var s = TryGetString(nameof(ExerciceStartTime));
       return long.TryParse(s, out var d) ? DateTime.FromFileTimeUtc(d) : null;
-      //return DateTime.TryParseExact(s, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var d) ? d.ToUniversalTime() : null; 
     }
-    //set { this[nameof(ExerciceStartTime)] = value?.ToString("o", CultureInfo.InvariantCulture) ?? string.Empty; }
     set { this[nameof(ExerciceStartTime)] = value?.ToFileTimeUtc().ToString() ?? string.Empty; }
-  }
-
-  private HomeworkExercisesTypes? GetExercice(string exerciceAsString)
-  {
-    if (Enum.TryParse<HomeworkExercisesTypes>(exerciceAsString, ignoreCase: true, out var exercice))
-      return exercice;
-
-
-    foreach (var e in Enum.GetValues<HomeworkExercisesTypes>())
-    {
-      if (exerciceAsString.Contains(e.ToString(), StringComparison.InvariantCultureIgnoreCase))
-        return e;
-
-      var textRepresentations = e.GetType()?.GetField(e.ToString())?.GetCustomAttributes(typeof(TextRepresentationsAttribute), false).FirstOrDefault() as TextRepresentationsAttribute;
-      foreach (var representation in textRepresentations?.StringValue ?? [])
-      {
-        if (exerciceAsString.Contains(representation, StringComparison.InvariantCultureIgnoreCase))
-          return e;
-      }
-    }
-    return null;
   }
 
   public static HomeworkSession CreateSessionFromCommaSeparatedKeyValues(string? str)

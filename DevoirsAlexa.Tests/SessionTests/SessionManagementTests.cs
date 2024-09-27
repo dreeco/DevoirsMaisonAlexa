@@ -24,12 +24,12 @@ public class SessionPersistenceTests
     Assert.Equal(d, session.FirstName);
   }
   [Fact]
-  public void ShouldReturnAgeChosen_WhenUsingSession()
+  public void ShouldReturnLevelChosen_WhenUsingSession()
   {
     var session = new HomeworkSession();
-    var d = 8;
-    session.Age = d;
-    Assert.Equal(d, session.Age);
+    var d = Levels.CP;
+    session.Level = d;
+    Assert.Equal(d, session.Level);
   }
   [Fact]
   public void ShouldReturnExerciceChosen_WhenUsingSession()

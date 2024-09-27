@@ -101,9 +101,9 @@ public static class RequestHandler
         reprompt.AppendSimpleText("Je n'ai pas compris ton prénom, peux tu répéter ?");
         break;
 
-      case (HomeworkStep.GetAge, false):
-        prompt.AppendSimpleText($"Bonjour {session.FirstName}, quel âge as-tu ?");
-        reprompt.AppendSimpleText("Je n'ai pas compris ton âge, peux tu répéter ?");
+      case (HomeworkStep.GetLevel, false):
+        prompt.AppendSimpleText($"Bonjour {session.FirstName}, en quelle classe es tu ?");
+        reprompt.AppendSimpleText("Je n'ai pas compris ta classe, peux tu répéter ?");
         break;
 
       case (HomeworkStep.GetExercice, false):

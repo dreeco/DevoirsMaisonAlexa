@@ -10,7 +10,7 @@ public class ExerciceRunner
   private ExerciceDispatcher _dispatcher { get; }
 
   public string FirstName => SessionData?.FirstName ?? string.Empty;
-  public int? Age => SessionData?.Age;
+  public Levels? Level => SessionData?.Level;
 
   public string? LastQuestionKey => SessionData?.AlreadyAsked.LastOrDefault();
 
@@ -22,8 +22,8 @@ public class ExerciceRunner
 
   public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {
-    if (SessionData.Age == null)
-      throw new ArgumentNullException(nameof(SessionData.Age));
+    if (SessionData.Level == null)
+      throw new ArgumentNullException(nameof(SessionData.Level));
 
     var exercice = GetExerciceQuestionsRunner();
 
@@ -46,7 +46,7 @@ public class ExerciceRunner
       return answerResult;
     }
 
-    answerResult.Question = exercice.NextQuestion(SessionData.Age.Value, SessionData.AlreadyAsked);
+    answerResult.Question = exercice.NextQuestion(SessionData.Level.Value, SessionData.AlreadyAsked);
     AddNewQuestionToSession(answerResult.Question);
     
     return answerResult;

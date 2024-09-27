@@ -29,13 +29,13 @@
     "type": "_DEFAULT_RESPONSE"
   },
   "sessionAttributes": {
-    "LastAnswer": "46",
+    "LastAnswer": "_",
     "NbExercice": "10",
     "Exercice": "addition",
     "CorrectAnswers": "4",
     "FirstName": "lucie",
     "QuestionAsked": "6",
-    "Age": "8",
+    "Level": "CE2",
     "ExerciceStartTime": "133718446661892534",
     "AlreadyAsked": "10+17;26+17;4+15;29+17;22+29"
   }

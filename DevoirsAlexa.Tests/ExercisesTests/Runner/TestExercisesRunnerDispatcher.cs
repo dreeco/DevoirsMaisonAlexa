@@ -32,9 +32,9 @@ namespace DevoirsAlexa.Tests.Domain
 
     [Theory]
     //[InlineData(HomeworkExercises.Unknown, null)]
-    [InlineData("FirstName=Alix,Age=6,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
-    [InlineData("FirstName=Elio,Age=4,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
-    [InlineData("FirstName=Jonathan,Age=47,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
+    [InlineData("FirstName=Alix,Level=CP,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
+    [InlineData("FirstName=Elio,Level=CE1,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
+    [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
     public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern)
     {
       session += nbExercice.ToString();

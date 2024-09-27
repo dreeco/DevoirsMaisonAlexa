@@ -1,4 +1,5 @@
-﻿using DevoirsAlexa.Domain.HomeworkExercises;
+﻿using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using Xunit;
@@ -12,40 +13,40 @@ public class MathExercisesTests
 
 
   [Theory]
-  [InlineData(1, 1, 4, 45, '+')]
-  [InlineData(5, 0, 10, 45, '+')]
-  [InlineData(8, 0, 30, 45, '+')]
+  [InlineData(Levels.CP, 1, 4, 45, '+')]
+  [InlineData(Levels.CE1, 0, 10, 45, '+')]
+  [InlineData(Levels.CE2, 0, 30, 45, '+')]
 
-  [InlineData(1, 1, 4, 5, '+')]
-  [InlineData(5, 0, 10, 5, '+')]
-  [InlineData(8, 0, 30, 5, '+')]
+  [InlineData(Levels.CP, 1, 4, 5, '+')]
+  [InlineData(Levels.CE1, 0, 10, 5, '+')]
+  [InlineData(Levels.CE2, 0, 30, 5, '+')]
 
 
-  [InlineData(1, 1, 4, 45, '*')]
-  [InlineData(5, 0, 10, 45, '*')]
-  [InlineData(8, 0, 30, 45, '*')]
+  [InlineData(Levels.CP, 1, 4, 45, '*')]
+  [InlineData(Levels.CE1, 0, 10, 45, '*')]
+  [InlineData(Levels.CE2, 0, 30, 45, '*')]
 
-  [InlineData(1, 1, 4, 5, '*')]
-  [InlineData(5, 0, 10, 5, '*')]
-  [InlineData(8, 0, 30, 5, '*')]
+  [InlineData(Levels.CP, 1, 4, 5, '*')]
+  [InlineData(Levels.CE1, 0, 10, 5, '*')]
+  [InlineData(Levels.CE2, 0, 30, 5, '*')]
 
-  [InlineData(1, 1, 4, 45, '-')]
-  [InlineData(5, 0, 10, 45, '-')]
-  [InlineData(8, 0, 30, 45, '-')]
+  [InlineData(Levels.CP, 1, 4, 45, '-')]
+  [InlineData(Levels.CE1, 0, 10, 45, '-')]
+  [InlineData(Levels.CE2, 0, 30, 45, '-')]
 
-  [InlineData(1, 1, 4, 5, '-')]
-  [InlineData(5, 0, 10, 5, '-')]
-  [InlineData(8, 0, 30, 5, '-')]
+  [InlineData(Levels.CP, 1, 4, 5, '-')]
+  [InlineData(Levels.CE1, 0, 10, 5, '-')]
+  [InlineData(Levels.CE2, 0, 30, 5, '-')]
 
-  [InlineData(1, 1, 4, 45, '/')]
-  [InlineData(5, 0, 10, 45, '/')]
-  [InlineData(8, 0, 30, 45, '/')]
+  [InlineData(Levels.CP, 1, 4, 45, '/')]
+  [InlineData(Levels.CE1, 0, 10, 45, '/')]
+  [InlineData(Levels.CE2, 0, 30, 45, '/')]
 
-  [InlineData(1, 1, 4, 5, '/')]
-  [InlineData(5, 0, 10, 5, '/')]
-  [InlineData(8, 0, 30, 5, '/')]
+  [InlineData(Levels.CP, 1, 4, 5, '/')]
+  [InlineData(Levels.CE1, 0, 10, 5, '/')]
+  [InlineData(Levels.CE2, 0, 30, 5, '/')]
 
-  public void ShouldAskForDifferentQuestionAfterAge_WhenGettingNewQuestions(int age, int min, int max, int loopSize, char operation)
+  public void ShouldAskForDifferentQuestionAfterLevel_WhenGettingNewQuestions(Levels level, int min, int max, int loopSize, char operation)
   {
     switch (operation) {
       case '+':
@@ -65,12 +66,12 @@ public class MathExercisesTests
     var alreadyAsked = new List<string>();
     for (var n = 0; n < loopSize; n++)
     {
-      Question question = WhenIGetTheNextQuestion(age, alreadyAsked);
+      Question question = WhenIGetTheNextQuestion(level, alreadyAsked);
 
       ThenIHaveAQuestion(question);
       ThenTheQuestionKeyIsProperlyFormatted(question, operation);
       ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(question, operation.ToString());
-      ThenTheMinMaxForAgeIsRespected(min, max, question, operation);
+      ThenTheMinMaxForLevelIsRespected(min, max, question, operation);
       alreadyAsked.Add(question.Key);
       ThenTheAnswerValidationIsCorrect(question, operation);
     }
@@ -78,9 +79,9 @@ public class MathExercisesTests
     ThenIHaveAtLeast75PercentDifferentQuestions(min, max, alreadyAsked, loopSize);
   }
 
-  private Question WhenIGetTheNextQuestion(int age, List<string> alreadyAsked)
+  private Question WhenIGetTheNextQuestion(Levels level, List<string> alreadyAsked)
   {
-    return Exercice.NextQuestion(age, alreadyAsked);
+    return Exercice.NextQuestion(level, alreadyAsked);
   }
 
   private static void ThenIHaveAtLeast75PercentDifferentQuestions(int min, int max, List<string> alreadyAsked, int loopSize)
@@ -92,7 +93,7 @@ public class MathExercisesTests
     Assert.True(minDifferentQuestion <= foundDifferentQuestions, $"Expected a minimum of {minDifferentQuestion} different questions but was {foundDifferentQuestions}");
   }
 
-  private static void ThenTheMinMaxForAgeIsRespected(int min, int max, Question question, char operation)
+  private static void ThenTheMinMaxForLevelIsRespected(int min, int max, Question question, char operation)
   {
     var parts = question.Key.Split(operation);
     foreach (var part in parts)

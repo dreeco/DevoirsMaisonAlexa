@@ -100,17 +100,17 @@
     "locale": "fr-FR",
     "timestamp": "2024-09-25T19:29:11Z",
     "intent": {
-      "name": "SetAge",
+      "name": "SetLevel",
       "confirmationStatus": "NONE",
       "slots": {
-        "Age": {
-          "name": "Age",
-          "value": "8",
+        "Level": {
+          "name": "Level",
+          "value": "CE2",
           "confirmationStatus": "NONE",
           "source": "USER",
           "slotValue": {
             "type": "Simple",
-            "value": "8"
+            "value": "CE2"
           }
         }
       }

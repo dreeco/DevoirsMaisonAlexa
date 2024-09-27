@@ -64,24 +64,21 @@ public class Function
 
     await Task.Delay(0);
 
-    var homeworkSession = GetHomeworkSession(input);    
+    var homeworkSession = GetHomeworkSession(input);
     context.Logger.LogInformation($"Updated input: {System.Text.Json.JsonSerializer.Serialize(input)}");
 
     homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
     context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
-
     if (input.Request is SessionEndedRequest sessionEnded)
     {
-      if (sessionEnded.Reason == Reason.ExceededMaxReprompts)
-        homeworkSession.LastAnswer = "_";
+      //Prevent false positive answers if user does not respond and previous answer is valid
+      homeworkSession.LastAnswer = "_";
     }
 
     var response = BuildAnswer(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
-    
-    
-    response.SessionAttributes = homeworkSession.ToDictionary();
 
+    response.SessionAttributes = homeworkSession.ToDictionary();
     SetNextIntentExpected(homeworkSession, response, context.Logger);
     return response;
   }

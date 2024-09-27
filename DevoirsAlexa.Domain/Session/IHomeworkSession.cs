@@ -6,7 +6,7 @@ namespace DevoirsAlexa.Domain.Models;
 public interface IHomeworkSession : IDictionary<string, object>
 {
   public string? FirstName { get; set; }
-  public int? Age { get; set; }
+  public Levels? Level { get; set; }
   public int? NbExercice { get; set; }
   public int QuestionAsked { get; set; }
   public int CorrectAnswers { get; set; }

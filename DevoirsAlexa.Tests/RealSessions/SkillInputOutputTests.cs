@@ -11,7 +11,7 @@ public class SkillInputOutputTests
   [Theory]
   [InlineData("StartSkill")]
   [InlineData("SetFirstName")]
-  [InlineData("SetAge")]
+  [InlineData("SetLevel")]
   [InlineData("SetExercice")]
   [InlineData("AnswerAddition", true)]
   [InlineData("ExerciceEnd", true)]

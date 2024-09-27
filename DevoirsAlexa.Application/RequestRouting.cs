@@ -7,7 +7,7 @@ namespace DevoirsAlexa.Application
   {
     private static IntentData[] Intents = [
     new IntentData("SetFirstName") { Slots = [nameof(IHomeworkSession.FirstName)], RelatedStep = HomeworkStep.GetFirstName },
-    new IntentData("SetAge") { Slots = [nameof(IHomeworkSession.Age)], RelatedStep = HomeworkStep.GetAge },
+    new IntentData("SetLevel") { Slots = [nameof(IHomeworkSession.Level)], RelatedStep = HomeworkStep.GetLevel },
     new IntentData("SetExercice") { Slots = [nameof(IHomeworkSession.Exercice)], RelatedStep = HomeworkStep.GetExercice },
     new IntentData("SetNbExercice") { Slots = [nameof(IHomeworkSession.NbExercice)], RelatedStep = HomeworkStep.GetNbExercice },
     new IntentData("SetAnswer") { Slots = [nameof(IHomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice },
@@ -27,8 +27,8 @@ namespace DevoirsAlexa.Application
     {
       if (string.IsNullOrWhiteSpace(session.FirstName))
         return HomeworkStep.GetFirstName;
-      else if (session.Age == null)
-        return HomeworkStep.GetAge;
+      else if (session.Level == null || session.Level == Levels.Unknown)
+        return HomeworkStep.GetLevel;
       else if (session.Exercice == null || session.Exercice == HomeworkExercisesTypes.Unknown)
         return HomeworkStep.GetExercice;
       else if (session.NbExercice == null || session.NbExercice < 1 || session.NbExercice > 20)

@@ -19,14 +19,3 @@ public enum HomeworkExercisesTypes
   [TextRepresentations("dictée")]
   Dictation
 }
-
-[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-public sealed class TextRepresentationsAttribute : Attribute
-{
-  public string[] StringValue { get; }
-
-  public TextRepresentationsAttribute(params string[] stringValue)
-  {
-    StringValue = stringValue;
-  }
-}

@@ -7,29 +7,37 @@ namespace DevoirsAlexa.Domain.MathExercices;
 [Exercice(HomeworkExercisesTypes.Additions)]
 public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
-    public AdditionsExercises() : base('+', "plus") { }
+  public AdditionsExercises() : base('+', "plus") { }
 
-    public Question NextQuestion(int age, IEnumerable<string> alreadyAsked)
+  public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
+  {
+    var min = 0;
+    var max = 1000;
+
+    switch (level)
     {
-        var min = 0;
-        var max = 1000;
-
-        switch (age)
-        {
-            case < 4:
-                min = 1;
-                max = 4;
-                break;
-            case < 8:
-                min = 0;
-                max = 10;
-                break;
-            case <= 10:
-                min = 0;
-                max = 30;
-                break;
-        }
-
-        return NextQuestion(min, max, alreadyAsked);
+      case Levels.CP:
+        min = 1;
+        max = 4;
+        break;
+      case Levels.CE1:
+        min = 0;
+        max = 10;
+        break;
+      case Levels.CE2:
+        min = 0;
+        max = 30;
+        break;
+      case Levels.CM1:
+        min = 0;
+        max = 60;
+        break;
+      case Levels.CM2:
+        min = 0;
+        max = 100;
+        break;
     }
+
+    return NextQuestion(min, max, alreadyAsked);
+  }
 }

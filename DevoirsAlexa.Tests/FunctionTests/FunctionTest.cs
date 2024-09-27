@@ -11,9 +11,9 @@ public class FunctionTest : BaseFunctionTest
 {
   [Theory]
   [InlineData("", "Quel est ton prénom ?")]
-  [InlineData("FirstName=Lucie", "Quel âge as-tu ?")]
-  [InlineData("FirstName=Lucie,Age=8", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData("FirstName=Lucie", "en quelle classe es tu ?")]
+  [InlineData("FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
   public async Task ShouldAskNextQuestion_WhenUsingTheSkill_GivenSpecificContext(string context, string expectedText)
   {
     SetContextData(context);
@@ -30,11 +30,11 @@ public class FunctionTest : BaseFunctionTest
 
   [Theory]
   [InlineData("", "", "", "Quel est ton prénom ?", "SetFirstName")]
-  [InlineData("", "SetFirstName", "FirstName=Lucie", "Quel âge as-tu ?", "SetAge")]
-  [InlineData("FirstName=Lucie", "SetAge", "Age=1", "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ?", "SetExercice")]
-  [InlineData("FirstName=Lucie,Age=8", "SetExercice", "Exercice=Additions", "OK ! Et sur combien de questions souhaites-tu t'entraîner ?", "SetNbExercice")]
-  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions", "SetNbExercice", "NbExercice=5", null, "SetAnswer")]
-  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions,NbExercice=3", "SetAnswer", "LastAnswer=*", null, "SetAnswer")]
+  [InlineData("", "SetFirstName", "FirstName=Lucie", "en quelle classe es tu ?", "SetLevel")]
+  [InlineData("FirstName=Lucie", "SetLevel", "Level=CP", "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ?", "SetExercice")]
+  [InlineData("FirstName=Lucie,Level=CE1", "SetExercice", "Exercice=Additions", "OK ! Et sur combien de questions souhaites-tu t'entraîner ?", "SetNbExercice")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "SetNbExercice", "NbExercice=5", null, "SetAnswer")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "SetAnswer", "LastAnswer=*", null, "SetAnswer")]
   public async Task ShouldFillCustomData_WhenUsingTheSkill_GivenIntentAnswer(string context, string intent, string slots, string? expectedText, string expectedNextIntent)
   {
     SetContextData(context);
@@ -54,10 +54,10 @@ public class FunctionTest : BaseFunctionTest
   [Theory]
   [InlineData("", "Au revoir !")]
   [InlineData("FirstName=Lucie", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Age=8", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions,NbExercice=3", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Age=8,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question","Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question","Au revoir !")]
   public async Task ShouldEndSession_GivenStopIntent(string context, params string[] expectedTextParts)
   {
     SetContextData(context);

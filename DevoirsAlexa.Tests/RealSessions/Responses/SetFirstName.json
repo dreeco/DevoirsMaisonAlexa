@@ -3,26 +3,26 @@
   "response": {
     "outputSpeech": {
       "type": "PlainText",
-      "text": "Bonjour lucie, quel âge as-tu ?"
+      "text": "Bonjour lucie, en quelle classe es tu ?"
     },
     "directives": [
       {
         "type": "Dialog.ElicitSlot",
         "updatedIntent": {
-          "name": "SetAge",
+          "name": "SetLevel",
           "slots": {
-            "Age": {
-              "name": "Age"
+            "Level": {
+              "name": "Level"
             }
           }
         },
-        "slotToElicit": "Age"
+        "slotToElicit": "Level"
       }
     ],
     "reprompt": {
       "outputSpeech": {
         "type": "PlainText",
-        "text": "Je n'ai pas compris ton âge, peux tu répéter ?"
+        "text": "Je n'ai pas compris ta classe, peux tu répéter ?"
       }
     },
     "shouldEndSession": false,
