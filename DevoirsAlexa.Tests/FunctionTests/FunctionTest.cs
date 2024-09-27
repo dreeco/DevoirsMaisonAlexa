@@ -1,4 +1,4 @@
-using Xunit;
+ï»¿using Xunit;
 using DevoirsAlexa.Tests.HomeworkTests;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
@@ -10,11 +10,11 @@ namespace DevoirsAlexa.Tests.Presentation;
 public class FunctionTest : BaseFunctionTest
 {
   [Theory]
-  [InlineData("", "Quel est ton prénom ?")]
+  [InlineData("", "Quel est ton prÃ©nom ?")]
   [InlineData("FirstName=Lucie", "en quelle classe es tu ?")]
   [InlineData("FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
   [InlineData("FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData("FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData("FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraÃ®ner ?")]
   public async Task ShouldAskNextQuestion_WhenUsingTheSkill_GivenSpecificContext(string context, string expectedText)
   {
     SetContextData(context);
@@ -30,10 +30,10 @@ public class FunctionTest : BaseFunctionTest
 
 
   [Theory]
-  [InlineData("", "", "", "Quel est ton prénom ?", "SetFirstName")]
+  [InlineData("", "", "", "Quel est ton prÃ©nom ?", "SetFirstName")]
   [InlineData("", "SetFirstName", "FirstName=Lucie", "en quelle classe es tu ?", "SetLevel")]
-  [InlineData("FirstName=Lucie", "SetLevel", "Level=CP", "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ?", "SetExercice")]
-  [InlineData("FirstName=Lucie,Level=CE1", "SetExercice", "Exercice=Additions", "OK ! Et sur combien de questions souhaites-tu t'entraîner ?", "SetNbExercice")]
+  [InlineData("FirstName=Lucie", "SetLevel", "Level=CP", "TrÃ¨s bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ?", "SetExercice")]
+  [InlineData("FirstName=Lucie,Level=CE1", "SetExercice", "Exercice=Additions", "OK ! Et sur combien de questions souhaites-tu t'entraÃ®ner ?", "SetNbExercice")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "SetNbExercice", "NbExercice=5", null, "SetAnswer")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "SetAnswer", "LastAnswer=*", null, "SetAnswer")]
   public async Task ShouldFillCustomData_WhenUsingTheSkill_GivenIntentAnswer(string context, string intent, string slots, string? expectedText, string expectedNextIntent)
@@ -58,7 +58,7 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("FirstName=Lucie,Level=CE1", "Au revoir !")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Au revoir !")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question","Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne rÃ©ponse sur 1 question","Au revoir !")]
   public async Task ShouldEndSession_GivenStopIntent(string context, params string[] expectedTextParts)
   {
     SetContextData(context);
