@@ -7,11 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Presentation",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Tests", "DevoirsAlexa.Tests\DevoirsAlexa.Tests.csproj", "{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevoirsAlexa.Application", "DevoirsAlexa.Application\DevoirsAlexa.Application.csproj", "{13CFEDE8-A313-44E3-B385-101EB4C97C6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Application", "DevoirsAlexa.Application\DevoirsAlexa.Application.csproj", "{13CFEDE8-A313-44E3-B385-101EB4C97C6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevoirsAlexa.Domain", "DevoirsAlexa.Domain\DevoirsAlexa.Domain.csproj", "{55458675-AE08-4499-A0C9-4D8E68E1973A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Domain", "DevoirsAlexa.Domain\DevoirsAlexa.Domain.csproj", "{55458675-AE08-4499-A0C9-4D8E68E1973A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevoirsAlexa.Infrastructure", "DevoirsAlexa.Infrastructure\DevoirsAlexa.Infrastructure.csproj", "{30E83893-2568-475B-9364-9F44F1EC672C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevoirsAlexa.Infrastructure", "DevoirsAlexa.Infrastructure\DevoirsAlexa.Infrastructure.csproj", "{30E83893-2568-475B-9364-9F44F1EC672C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5587F612-4A83-4512-87A3-893046522184}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
