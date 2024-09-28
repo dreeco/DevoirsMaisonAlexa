@@ -13,8 +13,8 @@ public enum HomeworkExercisesTypes
   [TextRepresentations("soustraction", "substraction")]
   Substractions,
 
-  [TextRepresentations("division")]
-  Divisions,
+  //[TextRepresentations("division")]
+  //Divisions,
 
   [TextRepresentations("dictée")]
   Dictation

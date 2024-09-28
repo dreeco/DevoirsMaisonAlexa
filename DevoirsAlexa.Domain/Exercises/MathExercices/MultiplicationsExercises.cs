@@ -1,4 +1,5 @@
 ﻿using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.Exercises;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
 
@@ -7,37 +8,28 @@ namespace DevoirsAlexa.Domain.MathExercices;
 [Exercice(HomeworkExercisesTypes.Multiplications)]
 public class MultiplicationsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
-  public MultiplicationsExercises() : base(Operations.Multiplication, "multiplié par") { }
+  private IDictionary<Levels, int> LevelsBoundaries { get; set; }
+
+  public MultiplicationsExercises() : base(Operations.Multiplication, "multiplié par")
+  {
+    LevelsBoundaries = new Dictionary<Levels, int>() {
+      { Levels.CP, 4},
+      { Levels.CE1, 5},
+      { Levels.CE2, 10},
+      { Levels.CM1, 20},
+      { Levels.CM2, 50},
+    };
+
+    ExercisesRulesByLevel = LevelsBoundaries.ToDictionary(l => l.Key, l => GetMultiplicationRules(LevelsBoundaries[l.Key]));
+  }
+
+  private ExerciceRule[] GetMultiplicationRules(int boundary)
+  {
+    return [GetRuleForNoComplicatedNumberAbove(boundary)];
+  }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {
-    var min = 0;
-    var max = 1000;
-
-    switch (level)
-    {
-      case Levels.CP:
-        min = 1;
-        max = 4;
-        break;
-      case Levels.CE1:
-        min = 0;
-        max = 10;
-        break;
-      case Levels.CE2:
-        min = 0;
-        max = 10;
-        break;
-      case Levels.CM1:
-        min = 0;
-        max = 20;
-        break;
-      case Levels.CM2:
-        min = 0;
-        max = 50;
-        break;
-    }
-
-    return NextQuestion(min, max, alreadyAsked);
+    return NextQuestion(() => GetRandomNumbersBothBetween(1, LevelsBoundaries[level]), ExercisesRulesByLevel[level], alreadyAsked);
   }
 }

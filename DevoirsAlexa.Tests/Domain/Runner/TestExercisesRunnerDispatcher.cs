@@ -16,7 +16,7 @@ namespace DevoirsAlexa.Tests.Domain
     [InlineData(HomeworkExercisesTypes.Additions, typeof(AdditionsExercises))]
     [InlineData(HomeworkExercisesTypes.Substractions, typeof(SubstractionsExercises))]
     [InlineData(HomeworkExercisesTypes.Multiplications, typeof(MultiplicationsExercises))]
-    [InlineData(HomeworkExercisesTypes.Divisions, typeof(DivisionsExercises))]
+    //[InlineData(HomeworkExercisesTypes.Divisions, typeof(DivisionsExercises))]
     public void ShouldReturnType_GivenSpecificExercice(HomeworkExercisesTypes exercice, Type? expectedType)
     {
       var dispatcher = new ExerciceDispatcher();

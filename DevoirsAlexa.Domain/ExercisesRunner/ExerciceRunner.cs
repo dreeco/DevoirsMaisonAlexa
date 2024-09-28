@@ -18,15 +18,16 @@ public class ExerciceRunner
   public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {
     IExerciceQuestionsRunner exercice;
+    var answerResult = new AnswerResult();
 
     if (SessionData.Level == null ||
       SessionData.Exercice == null ||
-      SessionData.NbExercice == null || 
+      SessionData.NbExercice == null ||
       (exercice = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null)
-      return new AnswerResult { CouldNotStart = true };
-
-
-    var answerResult = new AnswerResult();
+    {
+      answerResult.CouldNotStart = true;
+      return answerResult;
+    }
 
     if (!isStopping && !string.IsNullOrEmpty(SessionData.AlreadyAsked.LastOrDefault()))
       answerResult.Validation = ValidateAnswer(exercice);

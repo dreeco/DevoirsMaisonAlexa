@@ -2,7 +2,7 @@
 
 ## Description
 
-La skill **Devoirs Maison** aide les enfants à s'entraîner sur différents exercices scolaires, comme les additions, soustractions, multiplications et divisions.
+La skill **Devoirs Maison** aide les enfants à s'entraîner sur différents exercices scolaires, comme les additions, soustractions et multiplications.
 L'enfant peut choisir le type d'exercice, le nombre d'exercices à faire, et la difficulté sera adaptée en fonction de sa classe.
 
 ## Démarrer la skill
@@ -39,7 +39,7 @@ Pendant l'interaction, voici quelques exemples de commandes que vous pouvez util
 1. **Choisir l'exercice** :
     - Alexa vous demande quel type d'exercice vous souhaitez faire. Vous pouvez dire quelque chose comme : `Des additions.`
     - Si vous n'indiquez pas le type d'exercice, Alexa vous le re-demandera.
-    - Les types d'exercices supportés sont : `Additions`, `Multiplications`, `Divisions`, `Soustractions`
+    - Les types d'exercices supportés sont : `Additions`, `Multiplications`, `Soustractions`
 
 2. **Indiquer le nombre d'exercices** :
     - Vous pouvez spécifier combien de questions vous souhaitez faire, par exemple :
