@@ -81,6 +81,8 @@ public class MathExercisesTests
 
   [Theory]
   [InlineData("", "", "")]
+  [InlineData("2_2", "4", "")]
+  [InlineData("2-2", "4", "")]
   public void ShouldReturnInvalidAnswer_GivenIncorrectData(string questionKey, string answer, string expectedCorrectAnswer) {
 
     var exercice = new AdditionsExercises();
@@ -88,6 +90,7 @@ public class MathExercisesTests
     Assert.False(result.IsValid);
     Assert.Equal(expectedCorrectAnswer, result.CorrectAnswer);
   }
+
   private Question WhenIGetTheNextQuestion(Levels level, List<string> alreadyAsked)
   {
     return Exercice.NextQuestion(level, alreadyAsked);

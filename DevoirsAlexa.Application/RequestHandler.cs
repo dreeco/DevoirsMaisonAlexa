@@ -218,6 +218,8 @@ public static class RequestHandler
     var assessmentsForLevel = LevelAssessment[(int)level];
     var assessment = assessmentsForLevel[_rand.Next(0, assessmentsForLevel.Length)];
 
+    sentenceBuilder.AppendSimpleText($"{assessment}");
+
     sentenceBuilder.AppendSimpleText($"Tu as {result.CorrectAnswers} ");
     sentenceBuilder.AppendPossiblePlural("bonne", result.CorrectAnswers);
     sentenceBuilder.AppendPossiblePlural(" réponse", result.CorrectAnswers);
@@ -231,8 +233,6 @@ public static class RequestHandler
     }
     else
       sentenceBuilder.AppendSimpleText(". ");
-
-    sentenceBuilder.AppendSimpleText($"{assessment}");
   }
 
   private static string GetTimeSpanDescription(TimeSpan timeSpan)

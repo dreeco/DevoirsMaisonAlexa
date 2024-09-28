@@ -7,44 +7,65 @@ namespace DevoirsAlexa.Tests.Infrastructure;
 
 public class SessionPersistenceTests
 {
-  [Fact]
-  public void ShouldReturnDateChosen_WhenUsingSession()
+  [Theory]
+  [InlineData(false)]
+  [InlineData(true)]
+  public void ShouldReturnDateChosen_WhenUsingSession(bool setNull)
   {
     var session = new HomeworkSession();
-    var d = DateTime.UtcNow;
+    DateTime? d = setNull ? null : DateTime.UtcNow;
     session.ExerciceStartTime = d;
     Assert.Equal(d, session.ExerciceStartTime);
   }
-  [Fact]
-  public void ShouldReturnFirstNameChosen_WhenUsingSession()
+
+  [Theory]
+  [InlineData(false)]
+  [InlineData(true)]
+  public void ShouldReturnFirstNameChosen_WhenUsingSession(bool setNull)
   {
     var session = new HomeworkSession();
-    var d = "Lucie";
+    var d = setNull ? null : "Lucie";
     session.FirstName = d;
-    Assert.Equal(d, session.FirstName);
-  }
-  [Fact]
-  public void ShouldReturnLevelChosen_WhenUsingSession()
-  {
-    var session = new HomeworkSession();
-    var d = Levels.CP;
-    session.Level = d;
-    Assert.Equal(d, session.Level);
-  }
-  [Fact]
-  public void ShouldReturnExerciceChosen_WhenUsingSession()
-  {
-    var session = new HomeworkSession();
-    var d = HomeworkExercisesTypes.Additions;
-    session.Exercice = d;
-    Assert.Equal(d, session.Exercice);
+    Assert.Equal(setNull ? string.Empty : d, session.FirstName);
   }
 
-  [Fact]
-  public void ShouldReturnNbExerciceChosen_WhenUsingSession()
+  [Theory]
+  [InlineData(null)]
+  [InlineData(Levels.CP)]
+  [InlineData(Levels.CE1)]
+  [InlineData(Levels.CE2)]
+  [InlineData(Levels.CM1)]
+  [InlineData(Levels.CM2)]
+  public void ShouldReturnLevelChosen_WhenUsingSession(Levels? level)
   {
     var session = new HomeworkSession();
-    var d = 4;
+    session.Level = level;
+    Assert.Equal(level, session.Level);
+  }
+
+
+  [Theory]
+  [InlineData(null)]
+  [InlineData(HomeworkExercisesTypes.Additions)]
+  [InlineData(HomeworkExercisesTypes.Dictation)]
+  [InlineData(HomeworkExercisesTypes.Divisions)]
+  [InlineData(HomeworkExercisesTypes.Multiplications)]
+  [InlineData(HomeworkExercisesTypes.Unknown)]
+  [InlineData(HomeworkExercisesTypes.Substractions)]
+  public void ShouldReturnExerciceChosen_WhenUsingSession(HomeworkExercisesTypes? exercice)
+  {
+    var session = new HomeworkSession();
+    session.Exercice = exercice;
+    Assert.Equal(exercice, session.Exercice);
+  }
+
+  [Theory]
+  [InlineData(false)]
+  [InlineData(true)]
+  public void ShouldReturnNbExerciceChosen_WhenUsingSession(bool setNull)
+  {
+    var session = new HomeworkSession();
+    int? d = setNull ? null : 4;
     session.NbExercice = d;
     Assert.Equal(d, session.NbExercice);
   }
@@ -58,13 +79,15 @@ public class SessionPersistenceTests
     Assert.Equal(d, session.CorrectAnswers);
   }
 
-  [Fact]
-  public void ShouldReturnLastAnswerChosen_WhenUsingSession()
+  [Theory]
+  [InlineData(false)]
+  [InlineData(true)]
+  public void ShouldReturnLastAnswerChosen_WhenUsingSession(bool setNull)
   {
     var session = new HomeworkSession();
-    var d = "42";
+    var d = setNull ? null : "42";
     session.LastAnswer = d;
-    Assert.Equal(d, session.LastAnswer);
+    Assert.Equal(setNull ? string.Empty : d, session.LastAnswer);
   }
 
   [Fact]
