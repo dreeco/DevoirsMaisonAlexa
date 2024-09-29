@@ -3,6 +3,7 @@ using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using DevoirsAlexa.Infrastructure.Models;
 using DevoirsAlexa.Application;
+using Alexa.NET.Request.Type;
 
 namespace DevoirsAlexa.Tests.Presentation;
 
@@ -97,6 +98,15 @@ public class FunctionTest : BaseFunctionTest
     ThenIHaveThisResponseText("Une erreur inattendue est survenue, merci de relancer la skill.", speech);
   }
 
+  [Fact]
+  public async Task ShouldNotThrowErrorButAnswerGracefully_GivenWrongInputRequestType()
+  {
+
+    var response = await Function.FunctionHandler(new Alexa.NET.Request.SkillRequest { Request = new MyFakeRequest()}, _context);
+    Assert.NotNull(response);
+    var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
+  }
+
   private void ThenIReturnTheNextExpectedIntentInTheResponse(SkillResponse response, string expectedNextIntent)
   {
     Assert.NotEmpty(response.Response.Directives ?? []);
@@ -143,3 +153,5 @@ public class FunctionTest : BaseFunctionTest
     Assert.Contains(expectedText, speech.Ssml, StringComparison.InvariantCultureIgnoreCase);
   }
 }
+
+internal class MyFakeRequest : Request { }

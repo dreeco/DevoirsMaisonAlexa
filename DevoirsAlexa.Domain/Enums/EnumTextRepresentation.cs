@@ -25,7 +25,12 @@ public static class EnumHelper {
       if (str.Contains(e.ToString(), StringComparison.InvariantCultureIgnoreCase))
         return e;
 
-      var textRepresentations = e.GetType()?.GetField(e.ToString())?.GetCustomAttributes(typeof(TextRepresentationsAttribute), false).FirstOrDefault() as TextRepresentationsAttribute;
+      var textRepresentations = e
+        .GetType()
+        .GetField(e.ToString())?
+        .GetCustomAttributes(typeof(TextRepresentationsAttribute), false)
+        .FirstOrDefault() as TextRepresentationsAttribute;
+
       foreach (var representation in textRepresentations?.StringValue ?? [])
       {
         if (str.Contains(representation, StringComparison.InvariantCultureIgnoreCase))

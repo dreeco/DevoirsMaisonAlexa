@@ -23,10 +23,6 @@ public abstract class BaseTableExercises
   protected BaseTableExercises(Operations operation, string operationText)
   {
     Operation = operation;
-
-    if (string.IsNullOrWhiteSpace(operationText))
-      throw new ArgumentNullException(nameof(operationText));
-
     OperationText = operationText;
 
     ExercisesRulesByLevel = new Dictionary<Levels, ExerciceRule[]>();
@@ -72,7 +68,6 @@ public abstract class BaseTableExercises
         case Operations.Substraction:
           previous -= current;
           break;
-        default: throw new ArgumentException($"Unsupported operation {Operation}", nameof(Operation));
       }
     }
     return previous;
