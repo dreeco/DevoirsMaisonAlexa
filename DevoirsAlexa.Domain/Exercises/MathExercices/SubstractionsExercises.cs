@@ -26,8 +26,8 @@ public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunn
   private ExerciceRule[] GetSubstractionRules((int sumAtLeast, int numbersUpTo, int simpleNumbersUpTo) boundaries)
   {
     return [
-      GetRuleForMinSubOf(boundaries.sumAtLeast), 
-      GetRuleForNoComplicatedNumberAbove(boundaries.numbersUpTo), 
+      GetRuleForMinSubOf(boundaries.sumAtLeast),
+      GetRuleForNoComplicatedNumberAbove(boundaries.numbersUpTo),
       GetRuleForNoSimpleNumberAbove(boundaries.simpleNumbersUpTo)
     ];
   }
@@ -39,7 +39,11 @@ public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunn
 
     Func<(int left, int right)> func = subWithSimpleNumbers ?
       () => GetRandomSimpleNumbersWithSubBetween(boundaries.sumAtLeast, boundaries.simpleNumbersUpTo) :
-      () => GetRandomNumbersBothBetween(0, boundaries.numbersUpTo);
+      () =>
+      {
+        var numbers = GetRandomNumbersBothBetween(0, boundaries.numbersUpTo);
+        return numbers.left > numbers.right ? numbers : (numbers.right, numbers.left);
+      };
 
     return NextQuestion(func, ExercisesRulesByLevel[level], alreadyAsked);
   }

@@ -125,11 +125,10 @@ public class MathExercisesTests
 
   private static void ThenIHaveAtLeast75PercentDifferentQuestions(int nbDifferentAnswersPossible, List<string> alreadyAsked, int loopSize)
   {
-    var minDifferentQuestion = nbDifferentAnswersPossible * 0.75;
-    if (minDifferentQuestion > loopSize)
-      minDifferentQuestion = loopSize;
+    nbDifferentAnswersPossible = Math.Min(nbDifferentAnswersPossible, loopSize);
+    nbDifferentAnswersPossible = (int)Math.Floor(nbDifferentAnswersPossible * 0.9);
     var foundDifferentQuestions = alreadyAsked.Distinct().Count();
-    Assert.True(minDifferentQuestion <= foundDifferentQuestions, $"Expected a minimum of {minDifferentQuestion} different questions but was {foundDifferentQuestions}");
+    Assert.True(nbDifferentAnswersPossible <= foundDifferentQuestions, $"Expected a minimum of {nbDifferentAnswersPossible} different questions but was {foundDifferentQuestions}. {string.Join(';', alreadyAsked)}");
   }
 
   private void RunLoopTestForExercice(Levels level, Action<Question> questionRespectExerciceRules, int loopSize, int nbDifferentAnswersPossible)
@@ -159,7 +158,7 @@ public class MathExercisesTests
   {
     var parts = question.Key.Split(ExerciceAsBase.OperationChar).Select(int.Parse);
     var sum = parts.First() - parts.Skip(1).Sum();
-    Assert.True(sum >= sumAtLeast, $"Sum {sum} should be greater than {sumAtLeast}");
+    Assert.True(sum >= sumAtLeast, $"Sum {sum} should be greater than {sumAtLeast}. Operation : {question.Key}");
 
     foreach (var number in parts)
       Assert.True((number >= 1 && number <= numberUpTo) || (number % 5 == 0 && number < simpleNumberUpTo), $"Number {number} does not match substraction rules");
