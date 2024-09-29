@@ -1,5 +1,6 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.Exercises;
+using DevoirsAlexa.Domain.Exercises.MathExercices;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
 
@@ -25,17 +26,16 @@ public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 
   private ExerciceRule[] GetAdditionsRules((int numbersUpTo, int sumUpTo) boundaries)
   {
-    return [GetRuleForMaxSumOf(boundaries.sumUpTo), GetRuleForNoComplicatedNumberAbove(boundaries.numbersUpTo)];
+    return [MathHelper.GetRuleForMaxSumOf(boundaries.sumUpTo), MathHelper.GetRuleForNoComplicatedNumberAbove(boundaries.numbersUpTo)];
   }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {
-    var additionWithSimpleNumbers = _RandomGenerator.Next(0, 1) == 1;
     var boundaries = LevelsBoundaries[level];
     
-    Func<(int left, int right)> func = additionWithSimpleNumbers ? 
-      () => GetRandomSimpleNumbersWithSumUpTo(boundaries.sumSimpleNumbersUpTo) :
-      () => GetRandomNumbersBothBetween(1, boundaries.numbersUpTo);
+    Func<(int left, int right)> func = MathHelper.GetRandomBoolean() ? 
+      () => MathHelper.GetRandomSimpleNumbersWithSumUpTo(boundaries.sumSimpleNumbersUpTo) :
+      () => MathHelper.GetRandomNumbersBothBetween(1, boundaries.numbersUpTo);
     
     return NextQuestion(func, ExercisesRulesByLevel[level], alreadyAsked);
   }

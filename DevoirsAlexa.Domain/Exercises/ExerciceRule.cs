@@ -7,17 +7,10 @@ public class ExerciceRule
 
   public ExerciceRule(string name, Func<string, bool> validityChecker)
   {
-    Name = name ?? throw new ArgumentNullException(nameof(name));
+    if (string.IsNullOrWhiteSpace(name))
+      throw new ArgumentNullException(nameof(name));
+    
+    Name = name;
     IsValid = validityChecker;
   }
-
 }
-
-//public static void toto() {
-//  new ExerciceRule("Sum lower than 20", (string key) => key.Split('+').Select(p => int.Parse(p)).Sum() < 20);
-//  new ExerciceRule("Sum lower than 40", (string key) => key.Split('+').Select(p => int.Parse(p)).Sum() < 40);
-
-//  var t = 56;
-//  new ExerciceRule("Sum lower than 40", (string key) => key.Split('+').Select(p => int.Parse(p)).Sum() < t);
-
-//}

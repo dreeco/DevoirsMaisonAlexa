@@ -178,18 +178,6 @@ public static class RequestHandler
     }
   }
 
-  public static void GetReprompt(ISentenceBuilder builder, AnswerResult result)
-  {
-    if (result.Question != null)
-    {
-      builder.AppendInterjection("Hmmmm");
-      builder.AppendPause(TimeSpan.FromMilliseconds(500));
-      builder.AppendSimpleText("Je n'ai pas compris ta réponse.");
-      builder.AppendPause(TimeSpan.FromMilliseconds(500));
-      builder.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
-    }
-  }
-
   private static void AddAnswerValidationText(ISentenceBuilder sentenceBuilder, AnswerValidation answer)
   {
     if (answer.IsValid)

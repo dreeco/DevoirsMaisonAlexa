@@ -79,7 +79,8 @@ public class Function
       homeworkSession.LastAnswer = "_";
     }
 
-    var response = BuildAnswer(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
+    var isStopping = input.Request is IntentRequest intentRequest ? intentRequest.Intent.Name == StopIntent : false;
+    var response = BuildAnswer(homeworkSession, isStopping);
 
     response.SessionAttributes = homeworkSession.ToDictionary();
     SetNextIntentExpected(homeworkSession, response, context.Logger);
@@ -90,22 +91,14 @@ public class Function
   {
     context.Logger.LogInformation($"Skill received the following session: {System.Text.Json.JsonSerializer.Serialize(input.Session)}");
 
-    string requestSerialized;
-    switch (input.Request.Type)
+    string requestSerialized = input.Request switch
     {
-      case "IntentRequest":
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as IntentRequest);
-        break;
-      case "LaunchRequest":
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as LaunchRequest);
-        break;
-      case "SessionEndedRequest":
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as SessionEndedRequest);
-        break;
-      default:
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request);
-        break;
-    }
+      IntentRequest => System.Text.Json.JsonSerializer.Serialize(input.Request as IntentRequest),
+      LaunchRequest => System.Text.Json.JsonSerializer.Serialize(input.Request as LaunchRequest),
+      SessionEndedRequest => System.Text.Json.JsonSerializer.Serialize(input.Request as SessionEndedRequest),
+      _ => System.Text.Json.JsonSerializer.Serialize(input.Request),
+    };
+
     context.Logger.LogInformation($"Skill received the following Intent: {requestSerialized}");
   }
 

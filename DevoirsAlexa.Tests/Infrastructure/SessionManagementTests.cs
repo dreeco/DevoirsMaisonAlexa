@@ -48,7 +48,6 @@ public class SessionPersistenceTests
   [InlineData(null)]
   [InlineData(HomeworkExercisesTypes.Additions)]
   [InlineData(HomeworkExercisesTypes.Dictation)]
-  //[InlineData(HomeworkExercisesTypes.Divisions)]
   [InlineData(HomeworkExercisesTypes.Multiplications)]
   [InlineData(HomeworkExercisesTypes.Unknown)]
   [InlineData(HomeworkExercisesTypes.Substractions)]

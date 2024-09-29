@@ -1,5 +1,6 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.Exercises;
+using DevoirsAlexa.Domain.Exercises.MathExercices;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
 
@@ -25,11 +26,11 @@ public class MultiplicationsExercises : BaseTableExercises, IExerciceQuestionsRu
 
   private ExerciceRule[] GetMultiplicationRules(int boundary)
   {
-    return [GetRuleForNoComplicatedNumberAbove(boundary)];
+    return [MathHelper.GetRuleForNoComplicatedNumberAbove(boundary)];
   }
 
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {
-    return NextQuestion(() => GetRandomNumbersBothBetween(1, LevelsBoundaries[level]), ExercisesRulesByLevel[level], alreadyAsked);
+    return NextQuestion(() => MathHelper.GetRandomNumbersBothBetween(1, LevelsBoundaries[level]), ExercisesRulesByLevel[level], alreadyAsked);
   }
 }

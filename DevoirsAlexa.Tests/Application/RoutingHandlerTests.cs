@@ -7,7 +7,6 @@ namespace DevoirsAlexa.Tests.Application
 {
   public class RoutingHandlerTests
   {
-
     [Theory]
     [InlineData(true, "", @"Au revoir !", null)]
     [InlineData(true, "FirstName=Adrien", @"Au revoir !", null)]
