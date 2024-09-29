@@ -10,111 +10,152 @@ public class MathExercisesTests
 {
   private IExerciceQuestionsRunner? exercice;
   private IExerciceQuestionsRunner Exercice => exercice ?? throw new Exception("Exercice question runner should not be null.");
-
+  private BaseTableExercises ExerciceAsBase => Exercice as BaseTableExercises ?? throw new Exception("Exercice question runner should be child of BaseTableExercises.");
 
   [Theory]
-  [InlineData(Levels.CP, 1, 4, 45, '+')]
-  [InlineData(Levels.CE1, 0, 10, 45, '+')]
-  [InlineData(Levels.CE2, 0, 30, 45, '+')]
+  [InlineData(Levels.CP, 10, 50, 45, 20)]
+  [InlineData(Levels.CE1, 20, 100, 45, 35)]
+  [InlineData(Levels.CE2, 30, 1000, 45)]
+  [InlineData(Levels.CM1, 100, 10000, 45)]
+  [InlineData(Levels.CM2, 1000, 100000, 45)]
 
-  [InlineData(Levels.CP, 1, 4, 5, '+')]
-  [InlineData(Levels.CE1, 0, 10, 5, '+')]
-  [InlineData(Levels.CE2, 0, 30, 5, '+')]
-
-
-  [InlineData(Levels.CP, 1, 4, 45, '*')]
-  [InlineData(Levels.CE1, 0, 10, 45, '*')]
-  [InlineData(Levels.CE2, 0, 30, 45, '*')]
-
-  [InlineData(Levels.CP, 1, 4, 5, '*')]
-  [InlineData(Levels.CE1, 0, 10, 5, '*')]
-  [InlineData(Levels.CE2, 0, 30, 5, '*')]
-
-  [InlineData(Levels.CP, 1, 4, 45, '-')]
-  [InlineData(Levels.CE1, 0, 10, 45, '-')]
-  [InlineData(Levels.CE2, 0, 30, 45, '-')]
-
-  [InlineData(Levels.CP, 1, 4, 5, '-')]
-  [InlineData(Levels.CE1, 0, 10, 5, '-')]
-  [InlineData(Levels.CE2, 0, 30, 5, '-')]
-
-  [InlineData(Levels.CP, 1, 4, 45, '/')]
-  [InlineData(Levels.CE1, 0, 10, 45, '/')]
-  [InlineData(Levels.CE2, 0, 30, 45, '/')]
-
-  [InlineData(Levels.CP, 1, 4, 5, '/')]
-  [InlineData(Levels.CE1, 0, 10, 5, '/')]
-  [InlineData(Levels.CE2, 0, 30, 5, '/')]
-
-  public void ShouldAskForDifferentQuestionAfterLevel_WhenGettingNewQuestions(Levels level, int min, int max, int loopSize, char operation)
+  [InlineData(Levels.CP, 10, 50, 5)]
+  [InlineData(Levels.CE1, 20, 100, 5)]
+  [InlineData(Levels.CE2, 30, 1000, 5)]
+  [InlineData(Levels.CM1, 100, 10000, 5)]
+  [InlineData(Levels.CM2, 1000, 100000, 5)]
+  public void ShouldAskForAProperAddition_WhenGettingQuestionAfterLevel(Levels level, int numberUpTo, int sumSimpleNumberUpTo, int loopSize, int? minDifferentAtLeast = null)
   {
-    switch (operation) {
-      case '+':
-        exercice = new AdditionsExercises();
-        break;
-      case '-':
-        exercice = new SubstractionsExercises();
-        break;
-      case '*':
-        exercice = new MultiplicationsExercises();
-        break;
-      case '/':
-        exercice = new DivisionsExercises();
-        break;
-      default : throw new ArgumentException(nameof(operation));
-    }
-    var alreadyAsked = new List<string>();
-    for (var n = 0; n < loopSize; n++)
-    {
-      Question question = WhenIGetTheNextQuestion(level, alreadyAsked);
+    exercice = new AdditionsExercises();
+    var checkExerciceRules = (Question question) => { ThenAdditionRulesByLevelAreRespected(numberUpTo, sumSimpleNumberUpTo, question); };
+    RunLoopTestForExercice(level, checkExerciceRules, loopSize, minDifferentAtLeast);
+  }
 
-      ThenIHaveAQuestion(question);
-      ThenTheQuestionKeyIsProperlyFormatted(question, operation);
-      ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(question, operation.ToString());
-      ThenTheMinMaxForLevelIsRespected(min, max, question, operation);
-      alreadyAsked.Add(question.Key);
-      ThenTheAnswerValidationIsCorrect(question, operation);
-    }
+  [Theory]
+  [InlineData(Levels.CP, 4, 45)]
+  [InlineData(Levels.CE1, 5, 45)]
+  [InlineData(Levels.CE2, 10, 45)]
+  [InlineData(Levels.CM1, 20, 45)]
+  [InlineData(Levels.CM2, 50, 45)]
+  [InlineData(Levels.CP, 4, 5)]
+  [InlineData(Levels.CE1, 5, 5)]
+  [InlineData(Levels.CE2, 10, 5)]
+  [InlineData(Levels.CM1, 20, 5)]
+  [InlineData(Levels.CM2, 50, 5)]
 
-    ThenIHaveAtLeast75PercentDifferentQuestions(min, max, alreadyAsked, loopSize);
+  public void ShouldAskForAProperMultiplication_WhenGettingQuestionAfterLevel(Levels level, int numberUpTo, int loopSize)
+  {
+    exercice = new MultiplicationsExercises();
+    var nbDifferentAnswersPossible = (numberUpTo - 1) * (numberUpTo - 1);
+    var checkExerciceRules = (Question question) => { ThenMultiplicationRulesByLevelAreRespected(numberUpTo, question); };
+    RunLoopTestForExercice(level, checkExerciceRules, loopSize, nbDifferentAnswersPossible);
+  }
+
+  [Theory]
+  [InlineData(Levels.CP, 0, 10, 50, 45, 20)]
+  [InlineData(Levels.CE1, -10, 20, 100, 45)]
+  [InlineData(Levels.CE2, -30, 30, 1000, 45)]
+  [InlineData(Levels.CM1, -100, 100, 10000, 45)]
+  [InlineData(Levels.CM2, -1000, 1000, 100000, 45)]
+
+  [InlineData(Levels.CP, 0, 10, 50, 5, 3)]
+  [InlineData(Levels.CE1, -10, 20, 100, 5)]
+  [InlineData(Levels.CE2, -30, 30, 1000, 5)]
+  [InlineData(Levels.CM1, -100, 100, 10000, 5)]
+  [InlineData(Levels.CM2, -1000, 1000, 100000, 5)]
+  public void ShouldAskForAProperSubstraction_WhenGettingQuestionAfterLevel(Levels level, int sumAtLeast, int numberUpTo, int simpleNumbersUpTo, int loopSize, int? minDifferentAtLeast = null)
+  {
+    exercice = new SubstractionsExercises();
+    var checkExerciceRules = (Question question) => { ThenSubstractionRulesByLevelAreRespected(numberUpTo, simpleNumbersUpTo, sumAtLeast, question); };
+    RunLoopTestForExercice(level, checkExerciceRules, loopSize, minDifferentAtLeast ?? loopSize);
   }
 
   [Theory]
   [InlineData("", "", "")]
-  public void ShouldReturnInvalidAnswer_GivenIncorrectData(string questionKey, string answer, string expectedCorrectAnswer) {
-
+  [InlineData("2_2", "4", "")]
+  [InlineData("2-2", "4", "")]
+  public void ShouldReturnInvalidAnswer_GivenIncorrectData(string questionKey, string answer, string expectedCorrectAnswer)
+  {
     var exercice = new AdditionsExercises();
     var result = exercice.ValidateAnswer(questionKey, answer);
     Assert.False(result.IsValid);
     Assert.Equal(expectedCorrectAnswer, result.CorrectAnswer);
   }
+
+  private void ThenIHaveAProperlyBuiltQuestionWithAPossibleAnswer(List<string> alreadyAsked, Question question)
+  {
+    ThenIHaveAQuestion(question);
+    ThenTheQuestionKeyIsProperlyFormatted(question);
+    ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(question);
+    alreadyAsked.Add(question.Key);
+    ThenTheAnswerValidationIsCorrect(question);
+  }
+
   private Question WhenIGetTheNextQuestion(Levels level, List<string> alreadyAsked)
   {
     return Exercice.NextQuestion(level, alreadyAsked);
   }
 
-  private static void ThenIHaveAtLeast75PercentDifferentQuestions(int min, int max, List<string> alreadyAsked, int loopSize)
+  private static void ThenIHaveAtLeast75PercentDifferentQuestions(List<string> alreadyAsked, int expectedDifferentKeys)
   {
-    var minDifferentQuestion = (max - min) * (max - min) * 0.75;
-    if (minDifferentQuestion > loopSize)
-      minDifferentQuestion = loopSize;
     var foundDifferentQuestions = alreadyAsked.Distinct().Count();
-    Assert.True(minDifferentQuestion <= foundDifferentQuestions, $"Expected a minimum of {minDifferentQuestion} different questions but was {foundDifferentQuestions}");
+    Assert.True(expectedDifferentKeys <= foundDifferentQuestions, $"Expected a minimum of {expectedDifferentKeys} different questions but was {foundDifferentQuestions}. {string.Join(';', alreadyAsked)}");
   }
 
-  private static void ThenTheMinMaxForLevelIsRespected(int min, int max, Question question, char operation)
+  private void RunLoopTestForExercice(Levels level, Action<Question> questionRespectExerciceRules, int loopSize, int? nbDifferentAnswersPossible)
   {
-    var parts = question.Key.Split(operation);
-    foreach (var part in parts)
-      Assert.True(int.TryParse(part, out var number) && number >= min && number <= max);
+    var alreadyAsked = new List<string>();
+    for (var n = 0; n < loopSize; n++)
+    {
+      Question question = WhenIGetTheNextQuestion(level, alreadyAsked);
+
+      ThenIHaveAProperlyBuiltQuestionWithAPossibleAnswer(alreadyAsked, question);
+      questionRespectExerciceRules(question);
+    }
+
+    var loopSize90Percent = (int)Math.Floor(loopSize * 0.9);
+    nbDifferentAnswersPossible ??= loopSize90Percent;
+    nbDifferentAnswersPossible = Math.Min(nbDifferentAnswersPossible.Value, loopSize90Percent);
+    ThenIHaveAtLeast75PercentDifferentQuestions(alreadyAsked, nbDifferentAnswersPossible.Value);
   }
 
-  private void ThenTheAnswerValidationIsCorrect(Question question, char operation)
+  private void ThenAdditionRulesByLevelAreRespected(int numberUpTo, int sumSimpleNumberUpTo, Question question)
   {
-    var parts = question.Key.Split(operation);
+    var parts = question.Key.Split(ExerciceAsBase.OperationChar).Select(int.Parse);
+    var sum = parts.Sum();
+
+    foreach (var number in parts)
+      Assert.True(
+        (number >= 1 && number <= numberUpTo) || 
+        (number % 5 == 0 && sum <= sumSimpleNumberUpTo), 
+      $"Number {number} does not match addition rules. Should be between 1 and {numberUpTo} or divisible by 5 and < {sumSimpleNumberUpTo}");
+  }
+
+  private void ThenSubstractionRulesByLevelAreRespected(int numberUpTo, int simpleNumberUpTo, int sumAtLeast, Question question)
+  {
+    var parts = question.Key.Split(ExerciceAsBase.OperationChar).Select(int.Parse);
+    var sum = parts.First() - parts.Skip(1).Sum();
+    Assert.True(sum >= sumAtLeast, $"Sum {sum} should be greater than {sumAtLeast}. Operation : {question.Key}");
+
+    foreach (var number in parts)
+      Assert.True((number >= 1 && number <= numberUpTo) || (number % 5 == 0 && number < simpleNumberUpTo), $"Number {number} does not match substraction rules");
+  }
+
+  private void ThenMultiplicationRulesByLevelAreRespected(int numberUpTo, Question question)
+  {
+    var parts = question.Key.Split(ExerciceAsBase.OperationChar).Select(int.Parse);
+
+    foreach (var number in parts)
+      Assert.True(number >= 1 && number <= numberUpTo, $"Number {number} does not match multiplication rules");
+  }
+
+  private void ThenTheAnswerValidationIsCorrect(Question question)
+  {
+    var operationChar = ExerciceAsBase.OperationChar;
+    var parts = question.Key.Split(operationChar);
     var answer = 0;
     var first = true;
-    foreach (var part in parts.Select(p => int.Parse(p)))
+    foreach (var part in parts.Select(int.Parse))
     {
       if (first == true)
       {
@@ -123,7 +164,7 @@ public class MathExercisesTests
       }
       else
       {
-        switch (operation)
+        switch (operationChar)
         {
           case '+':
             answer += part;
@@ -150,16 +191,15 @@ public class MathExercisesTests
     Assert.Contains(answer.ToString(), invalidAnswer.CorrectAnswer);
   }
 
-  private static void ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(Question question, string operation)
+  private void ThenTheQuestionIsProperlyFormattedWithSameInfoAsKey(Question question)
   {
-    Assert.Matches($@"Combien font {question.Key.Replace(operation, @"\s[^\d]+\s")} ?", question.Text);
+    Assert.Matches($@"Combien font {question.Key.Replace(ExerciceAsBase.OperationChar.ToString(), $" {ExerciceAsBase.OperationText} ")} ?", question.Text);
   }
 
-  private static void ThenTheQuestionKeyIsProperlyFormatted(Question question, char operation)
+  private void ThenTheQuestionKeyIsProperlyFormatted(Question question)
   {
-    Assert.Matches($@"\d+\{operation}\d+", question.Key);
+    Assert.Matches($@"\d+\{ExerciceAsBase.OperationChar}\d+", question.Key);
   }
-
   private static void ThenIHaveAQuestion(Question question)
   {
     Assert.NotNull(question);

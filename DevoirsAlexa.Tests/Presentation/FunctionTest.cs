@@ -3,22 +3,37 @@ using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using DevoirsAlexa.Infrastructure.Models;
 using DevoirsAlexa.Application;
+using Alexa.NET.Request.Type;
 
 namespace DevoirsAlexa.Tests.Presentation;
 
 public class FunctionTest : BaseFunctionTest
 {
   [Theory]
-  [InlineData("", "Quel est ton prénom ?")]
-  [InlineData("FirstName=Lucie", "en quelle classe es tu ?")]
-  [InlineData("FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData("FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData("FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
-  public async Task ShouldAskNextQuestion_WhenUsingTheSkill_GivenSpecificContext(string context, string expectedText)
+  [InlineData("", "", "Quel est ton prénom ?")]
+  [InlineData("", "FirstName=Lucie", "en quelle classe es tu ?")]
+  [InlineData("", "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("", "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("", "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData("SetFirstName", "", "Quel est ton prénom ?")]
+  [InlineData("SetFirstName", "FirstName=Lucie", "en quelle classe es tu ?")]
+  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData(null, "", "Quel est ton prénom ?")]
+  [InlineData(null, "FirstName=Lucie", "en quelle classe es tu ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  public async Task ShouldAskNextQuestion_WhenUsingTheSkill_GivenSpecificContext(string? intent, string context, string expectedText)
   {
     SetContextData(context);
     // Invoke the lambda function and get status
-    SkillResponse response = await WhenIUseTheFollowingIntent("");
+    SkillResponse response;
+    if (intent == null)
+      response = await WhenIUseALaunchRequest();
+    else
+      response = await WhenIUseTheFollowingIntent(intent);
 
     //is plain text
     PlainTextOutputSpeech? speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
@@ -57,7 +72,7 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("FirstName=Lucie,Level=CE1", "Au revoir !")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Au revoir !")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question","Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question", "Au revoir !")]
   public async Task ShouldEndSession_GivenStopIntent(string context, params string[] expectedTextParts)
   {
     SetContextData(context);
@@ -69,6 +84,27 @@ public class FunctionTest : BaseFunctionTest
       ThenIHaveThisResponseText(expectedText, speech);
 
     Assert.Empty(response.SessionAttributes);
+  }
+
+  [Theory]
+  [InlineData(true, true)]
+  [InlineData(false, true)]
+  [InlineData(true, false)]
+  public async Task ShouldNotThrowErrorButAnswerGracefully_GivenWrongInput(bool nullInput, bool nullContext)
+  {
+    var response = await Function.FunctionHandler(nullInput ? null : _request, nullContext ? null : _context);
+    Assert.NotNull(response);
+    var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
+    ThenIHaveThisResponseText("Une erreur inattendue est survenue, merci de relancer la skill.", speech);
+  }
+
+  [Fact]
+  public async Task ShouldNotThrowErrorButAnswerGracefully_GivenWrongInputRequestType()
+  {
+
+    var response = await Function.FunctionHandler(new Alexa.NET.Request.SkillRequest { Request = new MyFakeRequest()}, _context);
+    Assert.NotNull(response);
+    var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
   }
 
   private void ThenIReturnTheNextExpectedIntentInTheResponse(SkillResponse response, string expectedNextIntent)
@@ -98,7 +134,13 @@ public class FunctionTest : BaseFunctionTest
 
   private async Task<SkillResponse> WhenIUseTheFollowingIntent(string intent, string? slots = null)
   {
-    BuildSkillRequest(intent, new HomeworkSession(slots));
+    BuildSkillRequestWithIntent(intent, new HomeworkSession(slots));
+    return await Function.FunctionHandler(_request, _context);
+  }
+
+  private async Task<SkillResponse> WhenIUseALaunchRequest(string? slots = null)
+  {
+    BuildSkillLaunchRequest();
     return await Function.FunctionHandler(_request, _context);
   }
 
@@ -111,3 +153,5 @@ public class FunctionTest : BaseFunctionTest
     Assert.Contains(expectedText, speech.Ssml, StringComparison.InvariantCultureIgnoreCase);
   }
 }
+
+internal class MyFakeRequest : Request { }

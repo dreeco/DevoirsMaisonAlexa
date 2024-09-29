@@ -10,6 +10,8 @@ using DevoirsAlexa.Application;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
+using System.CodeDom.Compiler;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -24,6 +26,7 @@ public class Function
   /// the JSON serializer to use for converting Lambda JSON format to the .NET types. 
   /// </summary>
 
+  [ExcludeFromCodeCoverage]
   private static async Task Main()
   {
     var handler = FunctionHandler;
@@ -55,12 +58,12 @@ public class Function
   /// <param name="input">The event for the Lambda function handler to process.</param>
   /// <param name="context">The ILambdaContext that provides methods for logging and describing the Lambda environment.</param>
   /// <returns></returns>
-  public static async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
+  public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
-    LogInputData(input, context);
+    if (input == null || context == null)
+      return ResponseBuilder.Tell("Une erreur inattendue est survenue, merci de relancer la skill.");
 
-    if (input == null)
-      return ResponseBuilder.Tell("Une erreur inattendue est survenue, merci de relancer la skill");
+    LogInputData(input, context);
 
     await Task.Delay(0);
 
@@ -76,7 +79,8 @@ public class Function
       homeworkSession.LastAnswer = "_";
     }
 
-    var response = BuildAnswer(homeworkSession, isStopping: (input.Request as IntentRequest)?.Intent?.Name == StopIntent);
+    var isStopping = input.Request is IntentRequest intentRequest ? intentRequest.Intent.Name == StopIntent : false;
+    var response = BuildAnswer(homeworkSession, isStopping);
 
     response.SessionAttributes = homeworkSession.ToDictionary();
     SetNextIntentExpected(homeworkSession, response, context.Logger);
@@ -87,22 +91,14 @@ public class Function
   {
     context.Logger.LogInformation($"Skill received the following session: {System.Text.Json.JsonSerializer.Serialize(input.Session)}");
 
-    string requestSerialized;
-    switch (input.Request.Type)
+    string requestSerialized = input.Request switch
     {
-      case "IntentRequest":
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as IntentRequest);
-        break;
-      case "LaunchRequest":
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as LaunchRequest);
-        break;
-      case "SessionEndedRequest":
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request as SessionEndedRequest);
-        break;
-      default:
-        requestSerialized = System.Text.Json.JsonSerializer.Serialize(input.Request);
-        break;
-    }
+      IntentRequest => System.Text.Json.JsonSerializer.Serialize(input.Request as IntentRequest),
+      LaunchRequest => System.Text.Json.JsonSerializer.Serialize(input.Request as LaunchRequest),
+      SessionEndedRequest => System.Text.Json.JsonSerializer.Serialize(input.Request as SessionEndedRequest),
+      _ => System.Text.Json.JsonSerializer.Serialize(input.Request),
+    };
+
     context.Logger.LogInformation($"Skill received the following Intent: {requestSerialized}");
   }
 
@@ -154,6 +150,7 @@ public class Function
 /// from the JSON serializer unable to find the serialization information for unknown types.
 /// </summary>
 [JsonSerializable(typeof(string))]
+[ExcludeFromCodeCoverage]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
   // By using this partial class derived from JsonSerializerContext, we can generate reflection free JSON Serializer code at compile time

@@ -178,18 +178,6 @@ public static class RequestHandler
     }
   }
 
-  public static void GetReprompt(ISentenceBuilder builder, AnswerResult result)
-  {
-    if (result.Question != null)
-    {
-      builder.AppendInterjection("Hmmmm");
-      builder.AppendPause(TimeSpan.FromMilliseconds(500));
-      builder.AppendSimpleText("Je n'ai pas compris ta réponse.");
-      builder.AppendPause(TimeSpan.FromMilliseconds(500));
-      builder.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
-    }
-  }
-
   private static void AddAnswerValidationText(ISentenceBuilder sentenceBuilder, AnswerValidation answer)
   {
     if (answer.IsValid)
@@ -218,6 +206,8 @@ public static class RequestHandler
     var assessmentsForLevel = LevelAssessment[(int)level];
     var assessment = assessmentsForLevel[_rand.Next(0, assessmentsForLevel.Length)];
 
+    sentenceBuilder.AppendSimpleText($"{assessment}");
+
     sentenceBuilder.AppendSimpleText($"Tu as {result.CorrectAnswers} ");
     sentenceBuilder.AppendPossiblePlural("bonne", result.CorrectAnswers);
     sentenceBuilder.AppendPossiblePlural(" réponse", result.CorrectAnswers);
@@ -231,8 +221,6 @@ public static class RequestHandler
     }
     else
       sentenceBuilder.AppendSimpleText(". ");
-
-    sentenceBuilder.AppendSimpleText($"{assessment}");
   }
 
   private static string GetTimeSpanDescription(TimeSpan timeSpan)

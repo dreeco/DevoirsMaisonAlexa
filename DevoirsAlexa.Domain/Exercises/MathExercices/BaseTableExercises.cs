@@ -1,4 +1,7 @@
-﻿using DevoirsAlexa.Domain.Models;
+﻿using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.Exercises;
+using DevoirsAlexa.Domain.Exercises.MathExercices;
+using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Domain.MathExercices;
 
@@ -7,49 +10,45 @@ public enum Operations
   Addition = '+',
   Multiplication = '*',
   Substraction = '-',
-  Division = '/',
 }
 
 public abstract class BaseTableExercises
 {
-  private Operations Operation { get; }
-  protected char OperationChar => (char)Operation;
-  private string OperationText { get; }
+  public Operations Operation { get; }
+  public char OperationChar => (char)Operation;
+  public string OperationText { get; }
+
+  public IDictionary<Levels, ExerciceRule[]> ExercisesRulesByLevel { get; set; }
 
   protected BaseTableExercises(Operations operation, string operationText)
   {
     Operation = operation;
-
-    if (string.IsNullOrWhiteSpace(operationText))
-      throw new ArgumentNullException(nameof(operationText));
-
     OperationText = operationText;
+
+    ExercisesRulesByLevel = new Dictionary<Levels, ExerciceRule[]>();
   }
 
-  public Question NextQuestion(int min, int max, IEnumerable<string> alreadyAsked)
+  protected Question NextQuestion(Func<(int left, int right)> getNewNumbers, IEnumerable<ExerciceRule> rules, IEnumerable<string> alreadyAsked)
   {
-    var random = new Random();
-    int x;
-    int y;
     string key;
     var n = 0;
+    var isValid = false;
     do
     {
-      x = random.Next(min, max);
-      y = random.Next(min, max);
-      key = $"{x}{OperationChar}{y}";
+      var numbers = getNewNumbers();
+      key = $"{numbers.left}{OperationChar}{numbers.right}";
+      isValid = n++ >= 1000 || (rules.All(r => r.IsValid(key)) && !alreadyAsked.Contains(key));
     }
-    while (n++ < 100 && alreadyAsked.Contains(key));
+    while (!isValid);
 
     return new Question(key, $"Combien font {key.Replace(OperationChar.ToString(), $" {OperationText} ")} ?");
   }
 
-  public int? GetCorrectAnswer(string questionKey)
+  private int? GetCorrectAnswer(string questionKey)
   {
-    var parts = questionKey.Split(OperationChar);
     int? previous = null;
+    var numbers = MathHelper.GetNumbersInQuestion(questionKey, OperationChar);
 
-    var numbers = parts.Where(p => int.TryParse(p, out var d)).Select(p => int.Parse(p));
     foreach (var current in numbers)
     {
       if (previous == null)
@@ -66,9 +65,6 @@ public abstract class BaseTableExercises
         case Operations.Multiplication:
           previous *= current;
           break;
-        case Operations.Division:
-          previous /= current;
-          break;
         case Operations.Substraction:
           previous -= current;
           break;
@@ -81,10 +77,9 @@ public abstract class BaseTableExercises
   {
     var resultNumber = GetCorrectAnswer(questionKey);
 
-    if (!int.TryParse(answer, out var answerNumber))
-      return new AnswerValidation(false, resultNumber?.ToString() ?? string.Empty);
-
-    return new AnswerValidation(resultNumber == answerNumber, resultNumber?.ToString() ?? string.Empty);
+    var isValid = int.TryParse(answer, out var answerNumber) && answerNumber == resultNumber;
+    var correctAnswer = resultNumber?.ToString() ?? string.Empty;
+    return new AnswerValidation(isValid, correctAnswer);
   }
 
 }

@@ -23,29 +23,34 @@ public class BaseFunctionTest
 
     protected static T ThenThereIsAnOutputSpeech<T>(SkillResponse response) where T : class, IOutputSpeech
     {
-        var speech = response.Response.OutputSpeech as T;
+        var speech = response.Response.OutputSpeech as T ?? throw new Exception($"Expected response of type {typeof(T)} but got {response.Response.OutputSpeech.GetType()}");
         Assert.NotNull(speech);
         return speech;
     }
 
-    protected void BuildSkillRequest(string intentName, HomeworkSession session)
+  protected void BuildSkillRequestWithIntent(string intentName, HomeworkSession session)
+  {
+    _request.Request = new IntentRequest()
     {
-        _request.Request = new IntentRequest()
-        {
-            Intent = new Intent()
-            {
-                Name = intentName,
-                Slots = session
-              .Where(s => !string.IsNullOrEmpty(s.Key))
-              .ToDictionary(
-                  s => s.Key,
-                  s => new Slot() { Value = s.Value.ToString(), SlotValue = new SlotValue() { Value = s.Value.ToString() } }
-              )
-            }
-        };
-    }
+      Intent = new Intent()
+      {
+        Name = intentName,
+        Slots = session
+          .Where(s => !string.IsNullOrEmpty(s.Key))
+          .ToDictionary(
+              s => s.Key,
+              s => new Slot() { Value = s.Value.ToString(), SlotValue = new SlotValue() { Value = s.Value.ToString() } }
+          )
+      }
+    };
+  }
 
-    protected void SetContextData(string context)
+  protected void BuildSkillLaunchRequest()
+  {
+    _request.Request = new LaunchRequest();
+  }
+
+  protected void SetContextData(string context)
     {
         _request.Session.Attributes = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
     }

@@ -16,8 +16,6 @@ public class RoutingNextStepTests
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=additions", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=Multiplications", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=multiplications", HomeworkStep.GetNbExercice)]
-    [InlineData("FirstName=Lucie,Level=CE2,Exercice=Divisions", HomeworkStep.GetNbExercice)]
-    [InlineData("FirstName=Lucie,Level=CE2,Exercice=divisions", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=Soustractions", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=soustractions", HomeworkStep.GetNbExercice)]
 
@@ -25,8 +23,6 @@ public class RoutingNextStepTests
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=table d' additions", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=table de Multiplications", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=table de multiplications", HomeworkStep.GetNbExercice)]
-    [InlineData("FirstName=Lucie,Level=CE2,Exercice=table de Divisions", HomeworkStep.GetNbExercice)]
-    [InlineData("FirstName=Lucie,Level=CE2,Exercice=table de divisions", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=table de Soustractions", HomeworkStep.GetNbExercice)]
     [InlineData("FirstName=Lucie,Level=CE2,Exercice=table de soustractions", HomeworkStep.GetNbExercice)]
 

@@ -44,11 +44,6 @@ public class SentenceBuilder : ISentenceBuilder
     return string.IsNullOrEmpty(CurrentSentence.ToString());
   }
 
-  public override string ToString()
-  {
-    return $"{CurrentSentence.ToString()}";
-  }
-
   public IOutputSpeech GetSpeech()
   {
     var text = CurrentSentence.ToString().Trim();
