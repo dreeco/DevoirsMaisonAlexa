@@ -64,6 +64,24 @@ namespace DevoirsAlexa.Tests.Domain
       }
     }
 
+    [Fact]
+    public void ShouldReturnNullAnswer_WhenCallingGetCorrectAnswer_GivenNoRunnerForExercice()
+    {
+      var answer = new ExerciceRunner(new HomeworkSession()).GetCorrectAnswer(HomeworkExercisesTypes.Unknown, "2+2");
+      Assert.Null(answer);
+    }
+
+    [Fact]
+    public void ShouldReturnNullAnswer_WhenCallingGetCorrectAnswer_GivenNoRunnerForExercice2()
+    {
+      var session = new HomeworkSession("FirstName=Lucie,Level=CE2,Exercice=Additions,AlreadyAsked=2+2,NbExercice=2");
+      var runner = new ExerciceRunner(session);
+      var answer = runner.ValidateAnswerAndGetNext(false);
+      Assert.NotNull(answer);
+      Assert.NotNull(answer.Validation);
+      Assert.False(answer.Validation.IsValid);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("FirstName=Alix")]
@@ -78,7 +96,7 @@ namespace DevoirsAlexa.Tests.Domain
 
       var runner = new ExerciceRunner(_currentSession);
 
-      Assert.True(runner.ValidateAnswerAndGetNext(false).CouldNotStart);      
+      Assert.True(runner.ValidateAnswerAndGetNext(false).CouldNotStart);
     }
 
     private void ThenIHaveANewCorrectAnswer(int n)

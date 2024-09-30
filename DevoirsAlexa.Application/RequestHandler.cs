@@ -1,5 +1,5 @@
-﻿using DevoirsAlexa.Domain;
-using DevoirsAlexa.Domain.Enums;
+﻿using DevoirsAlexa.Application.Enums;
+using DevoirsAlexa.Domain;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.Models;
 

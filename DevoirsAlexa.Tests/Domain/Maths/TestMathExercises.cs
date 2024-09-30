@@ -14,7 +14,7 @@ public class MathExercisesTests
 
   [Theory]
   [InlineData(Levels.CP, 10, 50, 45, 20)]
-  [InlineData(Levels.CE1, 20, 100, 45, 35)]
+  [InlineData(Levels.CE1, 20, 100, 45, 30)]
   [InlineData(Levels.CE2, 30, 1000, 45)]
   [InlineData(Levels.CM1, 100, 10000, 45)]
   [InlineData(Levels.CM2, 1000, 100000, 45)]
@@ -52,13 +52,13 @@ public class MathExercisesTests
   }
 
   [Theory]
-  [InlineData(Levels.CP, 0, 10, 50, 45, 20)]
+  [InlineData(Levels.CP, 0, 10, 50, 45, 18)]
   [InlineData(Levels.CE1, -10, 20, 100, 45)]
   [InlineData(Levels.CE2, -30, 30, 1000, 45)]
   [InlineData(Levels.CM1, -100, 100, 10000, 45)]
   [InlineData(Levels.CM2, -1000, 1000, 100000, 45)]
 
-  [InlineData(Levels.CP, 0, 10, 50, 5, 3)]
+  [InlineData(Levels.CP, 0, 10, 50, 5, 2)]
   [InlineData(Levels.CE1, -10, 20, 100, 5)]
   [InlineData(Levels.CE2, -30, 30, 1000, 5)]
   [InlineData(Levels.CM1, -100, 100, 10000, 5)]
@@ -74,6 +74,7 @@ public class MathExercisesTests
   [InlineData("", "", "")]
   [InlineData("2_2", "4", "")]
   [InlineData("2-2", "4", "")]
+  [InlineData("2*2", "2", "")]
   public void ShouldReturnInvalidAnswer_GivenIncorrectData(string questionKey, string answer, string expectedCorrectAnswer)
   {
     var exercice = new AdditionsExercises();
@@ -181,7 +182,6 @@ public class MathExercisesTests
         }
       }
     }
-
 
     var validAnswer = Exercice.ValidateAnswer(question.Key, answer.ToString());
     Assert.True(validAnswer.IsValid);

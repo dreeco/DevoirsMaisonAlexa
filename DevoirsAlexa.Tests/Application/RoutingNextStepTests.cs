@@ -1,7 +1,7 @@
 ﻿using Xunit;
 using DevoirsAlexa.Application;
 using DevoirsAlexa.Infrastructure.Models;
-using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Application.Enums;
 
 namespace DevoirsAlexa.Tests.Application;
 
