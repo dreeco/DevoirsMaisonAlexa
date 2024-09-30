@@ -46,13 +46,17 @@ public abstract class BaseTableExercises
 
   private int? GetCorrectAnswer(string questionKey)
   {
-    int? previous = null;
     var numbers = MathHelper.GetNumbersInQuestion(questionKey, OperationChar);
+    if (numbers.Count() < 2)
+      return null;
 
+    int previous = 0;
+    var first = true;
     foreach (var current in numbers)
     {
-      if (previous == null)
+      if (first)
       {
+        first = false;
         previous = current;
         continue;
       }

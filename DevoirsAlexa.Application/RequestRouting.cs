@@ -1,4 +1,5 @@
-﻿using DevoirsAlexa.Domain.Enums;
+﻿using DevoirsAlexa.Application.Enums;
+using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Application

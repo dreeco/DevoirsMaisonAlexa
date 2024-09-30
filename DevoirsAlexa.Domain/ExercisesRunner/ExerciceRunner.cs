@@ -20,14 +20,17 @@ public class ExerciceRunner
     IExerciceQuestionsRunner exercice;
     var answerResult = new AnswerResult();
 
+    IExerciceQuestionsRunner? e;
     if (SessionData.Level == null ||
       SessionData.Exercice == null ||
       SessionData.NbExercice == null ||
-      (exercice = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null)
+      (e = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null)
     {
       answerResult.CouldNotStart = true;
       return answerResult;
     }
+
+    exercice = e;
 
     if (!isStopping && !string.IsNullOrEmpty(SessionData.AlreadyAsked.LastOrDefault()))
       answerResult.Validation = ValidateAnswer(exercice);
@@ -64,9 +67,9 @@ public class ExerciceRunner
     }
   }
 
-  private IExerciceQuestionsRunner GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
+  private IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
   {
-    return _dispatcher.GetExerciceQuestionsRunner(exercice) ?? throw new ArgumentNullException(nameof(SessionData.Exercice));
+    return _dispatcher.GetExerciceQuestionsRunner(exercice);
   }
 
   private void AddNewQuestionToSession(Question question)
@@ -103,8 +106,8 @@ public class ExerciceRunner
     return answerValidation;
   }
 
-  public string GetCorrectAnswer(HomeworkExercisesTypes exercice, string questionKey)
+  public string? GetCorrectAnswer(HomeworkExercisesTypes exercice, string questionKey)
   {
-    return GetExerciceQuestionsRunner(exercice).ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
+    return GetExerciceQuestionsRunner(exercice)?.ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
   }
 }

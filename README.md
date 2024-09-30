@@ -1,5 +1,7 @@
 # Skill Alexa : Devoirs Maison
 
+![Présentation de la skill](./Resources/icon.svg)
+
 ## Description
 
 La skill **Devoirs Maison** aide les enfants à s'entraîner sur différents exercices scolaires, comme les additions, soustractions et multiplications.
@@ -67,3 +69,8 @@ Pendant l'interaction, voici quelques exemples de commandes que vous pouvez util
 7. **Arrêter** :
     - Vous pouvez à tout moment interrompre la session. Lorsque vous demandez `stop`, vous aurez tout de même le résumé de votre score si vous avez commencé l'exercice.
 
+
+## Présentation 
+![Présentation de la skill](./Resources/Presentation-1.png)
+![Présentation de la skill](./Resources/Presentation-2.png)
+![Présentation de la skill](./Resources/Presentation-3.png)

@@ -10,7 +10,7 @@ public enum HomeworkExercisesTypes
   [TextRepresentations("multiplication")]
   Multiplications,
 
-  [TextRepresentations("soustraction", "substraction")]
+  [TextRepresentations("soustraction", "substraction", "soustractions", "substractions")]
   Substractions,
 
   [TextRepresentations("dictée")]

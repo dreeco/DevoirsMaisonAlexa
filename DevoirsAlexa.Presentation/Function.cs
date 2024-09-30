@@ -60,7 +60,7 @@ public class Function
   /// <returns></returns>
   public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
-    if (input == null || context == null)
+    if (input?.Session == null || context?.Logger == null)
       return ResponseBuilder.Tell("Une erreur inattendue est survenue, merci de relancer la skill.");
 
     LogInputData(input, context);
@@ -128,7 +128,7 @@ public class Function
   private static HomeworkSession GetHomeworkSession(SkillRequest input)
   {
     if (input.Request is not IntentRequest intentRequest)
-      return new HomeworkSession(input.Session?.Attributes);
+      return new HomeworkSession(input.Session.Attributes);
 
     var intent = RequestRouting.GetIntent(intentRequest.Intent.Name);
     foreach (var slotName in intent?.Slots ?? [])
@@ -140,7 +140,7 @@ public class Function
         input.Session.Attributes[slotName] = value;
     }
 
-    return new HomeworkSession(input.Session?.Attributes);
+    return new HomeworkSession(input.Session.Attributes);
   }
 }
 

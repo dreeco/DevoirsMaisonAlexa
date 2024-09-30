@@ -3,7 +3,7 @@ using DevoirsAlexa.Domain.Exercises;
 using DevoirsAlexa.Domain.Exercises.MathExercices;
 using Xunit;
 
-namespace DevoirsAlexa.Tests.Domain.Maths;
+namespace DevoirsAlexa.Tests.Domain;
 
 public class MathHelperTests
 {

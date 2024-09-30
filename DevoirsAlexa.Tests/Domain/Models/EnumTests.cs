@@ -1,31 +1,59 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using Xunit;
 
-namespace DevoirsAlexa.Tests.Domain.Models;
+namespace DevoirsAlexa.Tests.Domain;
 
-public enum TestEnum {
+public enum TestEnum
+{
   Unknown,
+  
   [TextRepresentations("toto")]
-  WithTextRepresentation,
-  [TextRepresentations("tata")]
-  OtherWithTextRepresentation,
-  WithoutTextRepresentation
+  Toto,
+  
+  [TextRepresentations("tata", "tutu")]
+  TataOrTutu,
+  
+  Nothing
+}
+
+public enum TestEnum2
+{
 }
 
 public class EnumTests
 {
   [Theory]
-  [InlineData(TestEnum.WithTextRepresentation, "toto")]
-  [InlineData(TestEnum.OtherWithTextRepresentation, "tata")]
+  [InlineData(TestEnum.Toto, "toto")]
+  [InlineData(TestEnum.Toto, "I want toto")]
+  [InlineData(null, "to")]
+  [InlineData(null, "ta")]
+  [InlineData(TestEnum.TataOrTutu, "tata")]
+  [InlineData(TestEnum.TataOrTutu, "I want tata or tutu")]
+  [InlineData(TestEnum.TataOrTutu, "tutu")]
   [InlineData(null, "titi")]
   [InlineData(null, "")]
 
-  [InlineData(TestEnum.WithTextRepresentation, nameof(TestEnum.WithTextRepresentation))]
-  [InlineData(TestEnum.OtherWithTextRepresentation, nameof(TestEnum.OtherWithTextRepresentation))]
-  [InlineData(TestEnum.WithoutTextRepresentation, nameof(TestEnum.WithoutTextRepresentation))]
+  [InlineData(TestEnum.Toto, nameof(TestEnum.Toto))]
+  [InlineData(TestEnum.TataOrTutu, nameof(TestEnum.TataOrTutu))]
   [InlineData(TestEnum.Unknown, nameof(TestEnum.Unknown))]
+  [InlineData(TestEnum.Nothing, nameof(TestEnum.Nothing))]
 
-  public void ShouldReturnExpectedEnum_WhenGettingEnumByString_GivenMixOfTextRepresentation(TestEnum? expectedEnum, string s) {
+  [InlineData(TestEnum.TataOrTutu, "tataortutu")]
+  public void ShouldReturnExpectedEnum_WhenGettingEnumByString_GivenMixOfTextRepresentation(TestEnum? expectedEnum, string s)
+  {
     Assert.Equal(expectedEnum, EnumHelper.GetEnumFromTextRepresentations<TestEnum>(s));
   }
+
+  [Theory]
+  [InlineData(null, "")]
+  public void ShouldReturnnull_WhenGettingEnumByString_GivenEmptyEnum(TestEnum2? expectedEnum, string s)
+  {
+    Assert.Equal(expectedEnum, EnumHelper.GetEnumFromTextRepresentations<TestEnum2>(s));
+  }
+
+  //  [Fact]
+  //  public void ShouldReturnExpectedEnum_WhenGettingEnumByString_GivenMixOfTextRepresentation2()
+  //  {
+  //    Assert.Equal(expectedEnum, EnumHelper.GetEnumFromTextRepresentations<TestStruct>(""));
+  //  }
 }
