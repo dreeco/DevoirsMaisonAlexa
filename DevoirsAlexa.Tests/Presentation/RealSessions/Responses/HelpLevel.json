@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "SSML",
+      "ssml": "<speak>En quel niveau es-tu à l'école ? Je comprends les classes suivantes : <say-as interpret-as='spell-out'>CP</say-as>, <say-as interpret-as='spell-out'>CE1</say-as>, <say-as interpret-as='spell-out'>CE2</say-as>, <say-as interpret-as='spell-out'>CM1</say-as>, <say-as interpret-as='spell-out'>CM2</say-as>. Essaye de prononcer distinctement chaque lettre.</speak>"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetLevel",
+          "slots": {
+            "Level": {
+              "name": "Level"
+            }
+          }
+        },
+        "slotToElicit": "Level"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Je n'ai pas compris ta classe, peux tu répéter ?"
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "FirstName": "adrien"
+  }
+}

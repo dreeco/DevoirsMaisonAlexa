@@ -55,6 +55,7 @@ public static class RequestsHandler
     prompt.AppendSimpleText("OK ! Et sur combien de questions souhaites-tu t'entraîner ?");
     reprompt.AppendSimpleText("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?");
   }
+
   private static void HelpForNumberOfQuestions(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
   {
     prompt.AppendSimpleText("Je souhaite savoir combien de questions te poser sur cette session d'exercice.");
