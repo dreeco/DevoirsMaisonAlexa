@@ -1,7 +1,7 @@
 ﻿using Xunit;
-using DevoirsAlexa.Application;
 using DevoirsAlexa.Infrastructure.Models;
 using DevoirsAlexa.Application.Enums;
+using DevoirsAlexa.Application.Handlers;
 
 namespace DevoirsAlexa.Tests.Application;
 
@@ -39,6 +39,6 @@ public class RoutingNextStepTests
     {
         var data = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(serializedData);
 
-        Assert.Equal(expectedStep, RequestRouting.GetNextStep(data));
+        Assert.Equal(expectedStep, NextRequestRouting.GetNextStep(data));
     }
 }

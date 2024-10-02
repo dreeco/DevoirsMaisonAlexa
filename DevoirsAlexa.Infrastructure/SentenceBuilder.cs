@@ -22,10 +22,20 @@ public class SentenceBuilder : ISentenceBuilder
     CurrentSentence.Append(text);
   }
 
-  public void AppendInterjection(string text)
+  public void AppendSpelling(string text)
+  {
+    SayAs(text, "spell-out");
+  }
+
+  private void SayAs(string text, string method)
   {
     IsSSML = true;
-    CurrentSentence.Append($"<say-as interpret-as=\"interjection\">{text}</say-as>");
+    CurrentSentence.Append($"<say-as interpret-as='{method}'>{text}</say-as>");
+  }
+
+  public void AppendInterjection(string text)
+  {
+    SayAs(text, "interjection");
   }
 
   public void AppendPause(TimeSpan? timespan = null)

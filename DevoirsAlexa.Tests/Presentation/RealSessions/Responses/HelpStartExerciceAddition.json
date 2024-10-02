@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "La bonne réponse est entre 997 et 1003. La question était : Combien font 20 plus 980 ?"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetAnswer",
+          "slots": {
+            "LastAnswer": {
+              "name": "LastAnswer"
+            }
+          }
+        },
+        "slotToElicit": "LastAnswer"
+      }
+    ],
+    "reprompt": {
+      "outputSpeech": {
+        "type": "SSML",
+        "ssml": "<speak><say-as interpret-as='interjection'>Hmmmm. </say-as><break time='500ms'/>Je n'ai pas compris ta réponse. <break time='500ms'/>Peux tu répéter ? La question était : Combien font 20 plus 980 ?Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.</speak>"
+      }
+    },
+    "shouldEndSession": false,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {
+    "NbExercice": "2",
+    "Exercice": "additions",
+    "FirstName": "deux",
+    "Level": "CE2",
+    "QuestionAsked": "1",
+    "ExerciceStartTime": "133723590040503955",
+    "AlreadyAsked": "20+980"
+  }
+}

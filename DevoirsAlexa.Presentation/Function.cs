@@ -6,11 +6,11 @@ using Alexa.NET.Response.Directive;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
-using DevoirsAlexa.Application;
+using DevoirsAlexa.Application.Enums;
+using DevoirsAlexa.Application.Handlers;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
-using System.CodeDom.Compiler;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
@@ -36,27 +36,17 @@ public class Function
   }
 
   public const string StopIntent = "AMAZON.StopIntent";
-
+  public const string HelpIntent = "AMAZON.HelpIntent";
 
   /// <summary>
-  /// A simple function that takes a string and does a ToUpper.
-  ///
-  /// To use this handler to respond to an AWS event, reference the appropriate package from 
-  /// https://github.com/aws/aws-lambda-dotnet#events
-  /// and change the string input parameter to the desired event type. When the event type
-  /// is changed, the handler type registered in the main method needs to be updated and the LambdaFunctionJsonSerializerContext 
-  /// defined below will need the JsonSerializable updated. If the return type and event type are different then the 
-  /// LambdaFunctionJsonSerializerContext must have two JsonSerializable attributes, one for each type.
-  ///
-  // When using Native AOT extra testing with the deployed Lambda functions is required to ensure
-  // the libraries used in the Lambda function work correctly with Native AOT. If a runtime 
-  // error occurs about missing types or methods the most likely solution will be to remove references to trim-unsafe 
-  // code or configure trimming options. This sample defaults to partial TrimMode because currently the AWS 
-  // SDK for .NET does not support trimming. This will result in a larger executable size, and still does not 
-  // guarantee runtime trimming errors won't be hit. 
+  /// Handler called by the Alexa endpoints
+  /// Parse the request
+  /// Set the current session
+  /// call the request router
+  /// outputs the answer
   /// </summary>
-  /// <param name="input">The event for the Lambda function handler to process.</param>
-  /// <param name="context">The ILambdaContext that provides methods for logging and describing the Lambda environment.</param>
+  /// <param name="input">The SkillRequest object</param>
+  /// <param name="context">The AWS lambda context</param>
   /// <returns></returns>
   public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
@@ -79,8 +69,16 @@ public class Function
       homeworkSession.LastAnswer = "_";
     }
 
-    var isStopping = input.Request is IntentRequest intentRequest ? intentRequest.Intent.Name == StopIntent : false;
-    var response = BuildAnswer(homeworkSession, isStopping);
+    var intentRequest = input.Request as IntentRequest;
+
+    var state = intentRequest?.Intent.Name switch
+    {
+      StopIntent => RequestType.Stop,
+      HelpIntent => RequestType.Help,
+      _ => RequestType.Normal // LaunchRequest or any custom Intent request
+    };
+
+    var response = BuildAnswer(homeworkSession, state);
 
     response.SessionAttributes = homeworkSession.ToDictionary();
     SetNextIntentExpected(homeworkSession, response, context.Logger);
@@ -104,20 +102,26 @@ public class Function
 
   private static void SetNextIntentExpected(IHomeworkSession session, SkillResponse r, ILambdaLogger logger)
   {
-    var data = RequestRouting.GetNextExpectedIntent(session);
-    if (data != null)
+    var data = NextRequestRouting.GetNextExpectedIntent(session);
+
+    r.Response.Directives.Add(new DialogElicitSlot(data.Slots[0])
     {
-      r.Response.Directives.Add(new DialogElicitSlot(data.Slots[0]) { UpdatedIntent = new Intent { Name = data.Name, Slots = data.Slots.ToDictionary(s => s, s => new Slot() { Name = s }) } });
-      logger.LogInformation($"Expected Next intent is : {data.Name}");
-    }
+      UpdatedIntent = new Intent
+      {
+        Name = data.Name,
+        Slots = data.Slots.ToDictionary(s => s, s => new Slot() { Name = s })
+      }
+    });
+
+    logger.LogInformation($"Expected Next intent is : {data.Name}");
   }
 
-  private static SkillResponse BuildAnswer(IHomeworkSession session, bool isStopping)
+  private static SkillResponse BuildAnswer(IHomeworkSession session, RequestType state)
   {
     var prompt = new SentenceBuilder();
     var reprompt = new SentenceBuilder();
 
-    RequestHandler.FillPromptAndReprompt(prompt, reprompt, isStopping, session);
+    RequestsHandler.ExecuteRequest(prompt, reprompt, state, session);
 
     if (reprompt.IsEmpty())
       return ResponseBuilder.Tell(prompt.GetSpeech());
@@ -130,7 +134,7 @@ public class Function
     if (input.Request is not IntentRequest intentRequest)
       return new HomeworkSession(input.Session.Attributes);
 
-    var intent = RequestRouting.GetIntent(intentRequest.Intent.Name);
+    var intent = NextRequestRouting.GetIntent(intentRequest.Intent.Name);
     foreach (var slotName in intent?.Slots ?? [])
     {
       intentRequest.Intent.Slots.TryGetValue(slotName, out var slot);

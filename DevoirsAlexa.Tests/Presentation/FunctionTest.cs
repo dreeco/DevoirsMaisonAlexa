@@ -2,8 +2,9 @@
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using DevoirsAlexa.Infrastructure.Models;
-using DevoirsAlexa.Application;
 using Alexa.NET.Request.Type;
+using DevoirsAlexa.Application.Handlers;
+using Alexa.NET.Request;
 
 namespace DevoirsAlexa.Tests.Presentation;
 
@@ -87,6 +88,34 @@ public class FunctionTest : BaseFunctionTest
   }
 
   [Theory]
+  [InlineData("", "Comment t'appelles tu ?")]
+  [InlineData("FirstName=Lucie", "En quel niveau es-tu à l'école ? Je comprends les classes suivantes :")]
+  [InlineData("FirstName=Lucie,Level=CE1", "Je souhaite savoir quel exercice tu souhaites faire.")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
+  public async Task ShouldGiveHelp_GivenHelpIntent(string context, params string[] expectedTextParts)
+  {
+    SetContextData(context);
+    var h = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
+
+    SkillResponse response = await WhenIUseTheFollowingIntent(Function.HelpIntent);
+
+    Assert.False(response.Response.ShouldEndSession);
+    foreach (var expectedText in expectedTextParts)
+      ThenIHaveThisResponseText(expectedText, response.Response.OutputSpeech);
+
+    AssertSessionAttributeIsNotErased(h.FirstName, nameof(h.FirstName), response);
+    AssertSessionAttributeIsNotErased(h.Level?.ToString(), nameof(h.Level), response);
+    AssertSessionAttributeIsNotErased(h.Exercice?.ToString(), nameof(h.Exercice), response);
+    AssertSessionAttributeIsNotErased(h.NbExercice?.ToString(), nameof(h.NbExercice), response);
+  }
+
+  private static void AssertSessionAttributeIsNotErased(string? attr, string attrName, SkillResponse response)
+  {
+    if (!string.IsNullOrEmpty(attr))
+      Assert.Equal(attr, response.SessionAttributes[attrName]?.ToString());
+  }
+
+  [Theory]
   [InlineData(true, true)]
   [InlineData(false, true)]
   [InlineData(true, false)]
@@ -101,8 +130,7 @@ public class FunctionTest : BaseFunctionTest
   [Fact]
   public async Task ShouldNotThrowErrorButAnswerGracefully_GivenWrongInputRequestType()
   {
-
-    var response = await Function.FunctionHandler(new Alexa.NET.Request.SkillRequest { Request = new MyFakeRequest()}, _context);
+    var response = await Function.FunctionHandler(new SkillRequest { Request = new MyFakeRequest(), Session = new Session()}, _context);
     Assert.NotNull(response);
     var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
   }
@@ -124,7 +152,7 @@ public class FunctionTest : BaseFunctionTest
       return;
 
     var expectedValue = slots.Split('=')[1];
-    var slotName = RequestRouting.GetIntent(intent)?.Slots[0] ?? throw new Exception($"Could not find slots for intent {intent}");
+    var slotName = NextRequestRouting.GetIntent(intent)?.Slots[0] ?? throw new Exception($"Could not find slots for intent {intent}");
     var slotActualValue = response.SessionAttributes[slotName].ToString();
     if (expectedValue == "*")
       Assert.True(!string.IsNullOrEmpty(slotActualValue));
@@ -151,6 +179,16 @@ public class FunctionTest : BaseFunctionTest
   private static void ThenIHaveThisResponseText(string expectedText, SsmlOutputSpeech speech)
   {
     Assert.Contains(expectedText, speech.Ssml, StringComparison.InvariantCultureIgnoreCase);
+  }
+
+  private static void ThenIHaveThisResponseText(string expectedText, IOutputSpeech speech)
+  {
+    if (speech is SsmlOutputSpeech ssml)
+      ThenIHaveThisResponseText(expectedText, ssml);
+    else if (speech is PlainTextOutputSpeech plain)
+      ThenIHaveThisResponseText(expectedText, plain);
+    else
+      throw new Exception($"Unhandled output speech {speech}");
   }
 }
 

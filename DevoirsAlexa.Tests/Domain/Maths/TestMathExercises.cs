@@ -31,6 +31,25 @@ public class MathExercisesTests
     RunLoopTestForExercice(level, checkExerciceRules, loopSize, minDifferentAtLeast);
   }
 
+  [Fact]
+  public void ShouldGiveHelp_ForSimpleAddition()
+  {
+    exercice = new AdditionsExercises();
+    var help = exercice.Help("2+2");
+    Assert.NotNull(help);
+    Assert.Matches(@"La bonne réponse est entre [-\d]+ et [-\d]+.", help.Text);
+    Assert.Equal(@"Combien font 2 plus 2 ?", help.QuestionText);
+  }
+
+  [Fact]
+  public void ShouldNotGiveHelp_ForWrongAddition()
+  {
+    exercice = new AdditionsExercises();
+    var help = exercice.Help("2_2");
+    Assert.NotNull(help);
+    Assert.Equal("Impossible de calculer la bonne réponse.", help.Text);
+  }
+
   [Theory]
   [InlineData(Levels.CP, 4, 45)]
   [InlineData(Levels.CE1, 5, 45)]
@@ -51,6 +70,26 @@ public class MathExercisesTests
     RunLoopTestForExercice(level, checkExerciceRules, loopSize, nbDifferentAnswersPossible);
   }
 
+  [Fact]
+  public void ShouldGiveHelp_ForSimpleMultiplication()
+  {
+    exercice = new MultiplicationsExercises();
+    var help = exercice.Help("2*2");
+    Assert.NotNull(help);
+    Assert.Matches(@"La bonne réponse est entre [-\d]+ et [-\d]+.", help.Text);
+    Assert.Equal(@"Combien font 2 multiplié par 2 ?", help.QuestionText);
+  }
+
+  [Fact]
+  public void ShouldNotGiveHelp_ForWrongMultiplication()
+  {
+    exercice = new MultiplicationsExercises();
+    var help = exercice.Help("2_2");
+    Assert.NotNull(help);
+    Assert.Equal("Impossible de calculer la bonne réponse.", help.Text);
+  }
+
+
   [Theory]
   [InlineData(Levels.CP, 0, 10, 50, 45, 18)]
   [InlineData(Levels.CE1, -10, 20, 100, 45)]
@@ -69,6 +108,26 @@ public class MathExercisesTests
     var checkExerciceRules = (Question question) => { ThenSubstractionRulesByLevelAreRespected(numberUpTo, simpleNumbersUpTo, sumAtLeast, question); };
     RunLoopTestForExercice(level, checkExerciceRules, loopSize, minDifferentAtLeast ?? loopSize);
   }
+
+  [Fact]
+  public void ShouldGiveHelp_ForSimpleSubstraction()
+  {
+    exercice = new SubstractionsExercises();
+    var help = exercice.Help("2-2");
+    Assert.NotNull(help);
+    Assert.Matches(@"La bonne réponse est entre [-\d]+ et [-\d]+.", help.Text);
+    Assert.Equal(@"Combien font 2 moins 2 ?", help.QuestionText);
+  }
+
+  [Fact]
+  public void ShouldNotGiveHelp_ForWrongSubstraction()
+  {
+    exercice = new SubstractionsExercises();
+    var help = exercice.Help("2_2");
+    Assert.NotNull(help);
+    Assert.Equal("Impossible de calculer la bonne réponse.", help.Text);
+  }
+
 
   [Theory]
   [InlineData("", "", "")]

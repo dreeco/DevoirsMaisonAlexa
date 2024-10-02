@@ -1,6 +1,7 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace DevoirsAlexa.Domain.HomeworkExercisesRunner;
 
@@ -54,6 +55,18 @@ public class ExerciceRunner
 
     return answerResult;
   }
+
+  public AnswerResult Help()
+  {
+    IExerciceQuestionsRunner? e;
+
+    var key = SessionData.AlreadyAsked.LastOrDefault();
+    if (SessionData.Exercice == null || (e = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null || key == null)
+      return new AnswerResult { CouldNotStart = true };
+
+    return new AnswerResult { Help = e.Help(key) };
+  }
+
 
   private void EndSession(bool isStopping)
   {

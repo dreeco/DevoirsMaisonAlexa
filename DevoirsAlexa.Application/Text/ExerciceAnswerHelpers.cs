@@ -1,13 +1,10 @@
-﻿using DevoirsAlexa.Application.Enums;
+﻿using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Domain;
-using DevoirsAlexa.Domain.HomeworkExercisesRunner;
-using DevoirsAlexa.Domain.Models;
 
-namespace DevoirsAlexa.Application;
+namespace DevoirsAlexa.Application.Text;
 
-public static class RequestHandler
+public static class ExerciceAnswerHelpers
 {
-  private static Random _rand = new Random();
 
   private readonly static string[] PositiveFeedback = [
     "Bien joué !", "Super !", "Génial !", "Saperlipopette !", "Pas mal !", "Fantastique !",
@@ -90,104 +87,16 @@ public static class RequestHandler
               ]
           }
       };
-
-  public static void FillPromptAndReprompt(ISentenceBuilder prompt, ISentenceBuilder reprompt, bool isStoppingSkill, IHomeworkSession session)
-  {
-    switch (RequestRouting.GetNextStep(session), isStoppingSkill)
-    {
-      case (HomeworkStep.GetFirstName, false):
-        prompt.AppendSimpleText("Quel est ton prénom ?");
-        reprompt.AppendSimpleText("Je n'ai pas compris ton prénom, peux tu répéter ?");
-        break;
-
-      case (HomeworkStep.GetLevel, false):
-        prompt.AppendSimpleText($"Bonjour {session.FirstName}, en quelle classe es tu ?");
-        reprompt.AppendSimpleText("Je n'ai pas compris ta classe, peux tu répéter ?");
-        break;
-
-      case (HomeworkStep.GetExercice, false):
-        prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?");
-        reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
-        break;
-
-      case (HomeworkStep.GetNbExercice, false):
-        prompt.AppendSimpleText("OK ! Et sur combien de questions souhaites-tu t'entraîner ?");
-        reprompt.AppendSimpleText("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?");
-        break;
-
-      case (HomeworkStep.StartExercice, false):
-      case (HomeworkStep.StartExercice, true):
-        var runner = new ExerciceRunner(session);
-        var result = runner.ValidateAnswerAndGetNext(isStoppingSkill);
-        GetPromptForQuestionResult(prompt, result, isStoppingSkill);
-        GetRepromptForQuestionResult(reprompt, result, isStoppingSkill);
-
-      
-        break;
-      default:
-        session.Clear();
-        prompt.AppendInterjection("Au revoir !");
-        break;
-
-    }
-  }
-
-  private static void GetRepromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result, bool isStoppingSkill)
-  {
-    if (result.Question != null)
-    {
-      sentenceBuilder.AppendInterjection("Hmmmm. ");
-      sentenceBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
-      sentenceBuilder.AppendSimpleText("Je n'ai pas compris ta réponse. ");
-      sentenceBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
-      sentenceBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {result.Question.Text}");
-    }
-    else if (!isStoppingSkill)
-    { 
-        sentenceBuilder.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
-    }
-  }
-  private static void GetPromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result, bool isStoppingSkill)
-  {
-    if (result.Validation != null)
-    {
-      AddAnswerValidationText(sentenceBuilder, result.Validation);
-    }
-
-    sentenceBuilder.AppendSimpleText(" ");
-
-    if (result.Question != null)
-    {
-
-      if (result.Question.Index == 1) // First Question
-        sentenceBuilder.AppendInterjection("C'est parti ! ");
-
-      sentenceBuilder.AppendSimpleText(result.Question.Text);
-    }
-    else if (result.Exercice != null)
-    {
-      if (result.Exercice.TotalQuestions > 0)
-        GetEndOfExerciceCompletionSentence(sentenceBuilder, result.Exercice);
-
-      if (!isStoppingSkill)
-      {
-        sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
-      }
-      else
-        sentenceBuilder.AppendInterjection("Au revoir !");
-    }
-  }
-
-  private static void AddAnswerValidationText(ISentenceBuilder sentenceBuilder, AnswerValidation answer)
+  public static void AddAnswerValidationText(this AnswerValidation answer, ISentenceBuilder sentenceBuilder)
   {
     if (answer.IsValid)
     {
-      sentenceBuilder.AppendInterjection(PositiveFeedback[_rand.Next(0, PositiveFeedback.Length)]);
+      sentenceBuilder.AppendInterjection(PositiveFeedback[Random.Shared.Next(0, PositiveFeedback.Length)]);
       sentenceBuilder.AppendSimpleText(" C'est une bonne réponse !");
     }
     else
     {
-      sentenceBuilder.AppendInterjection(NegativeFeedback[_rand.Next(0, NegativeFeedback.Length)]);
+      sentenceBuilder.AppendInterjection(NegativeFeedback[Random.Shared.Next(0, NegativeFeedback.Length)]);
       if (!string.IsNullOrEmpty(answer.CorrectAnswer))
       {
         sentenceBuilder.AppendSimpleText(" La bonne réponse était ");
@@ -199,12 +108,12 @@ public static class RequestHandler
     }
   }
 
-  public static void GetEndOfExerciceCompletionSentence(ISentenceBuilder sentenceBuilder, ExerciceResult result)
+  public static void GetEndOfExerciceCompletionSentence(this ExerciceResult result, ISentenceBuilder sentenceBuilder)
   {
     var level = Math.Max(1, Math.Round((double)result.CorrectAnswers / (double)result.TotalQuestions * 5));
 
     var assessmentsForLevel = LevelAssessment[(int)level];
-    var assessment = assessmentsForLevel[_rand.Next(0, assessmentsForLevel.Length)];
+    var assessment = assessmentsForLevel[Random.Shared.Next(0, assessmentsForLevel.Length)];
 
     sentenceBuilder.AppendSimpleText($"{assessment}");
 
@@ -216,21 +125,9 @@ public static class RequestHandler
 
     if (result.ElapsedTime.TotalSeconds > 0 && result.ElapsedTime.TotalSeconds < 300)
     {
-      var time = GetTimeSpanDescription(result.ElapsedTime);
-      sentenceBuilder.AppendSimpleText($", en moins de {time}. ");
+      sentenceBuilder.AppendSimpleText($", en moins de {result.ElapsedTime.GetTimeAsText()}. ");
     }
     else
       sentenceBuilder.AppendSimpleText(". ");
-  }
-
-  private static string GetTimeSpanDescription(TimeSpan timeSpan)
-  {
-    int minutes = timeSpan.Minutes;
-    int seconds = timeSpan.Seconds;
-
-    string minuteText = minutes > 0 ? $"{minutes} minute{(minutes > 1 ? "s" : "")}" : "";
-    string secondText = seconds > 0 ? $"{seconds} seconde{(seconds > 1 ? "s" : "")}" : "";
-    string inBetween = minutes > 0 && seconds > 0 ? " et " : " ";
-    return $"{minuteText}{inBetween}{secondText}".Trim();
   }
 }

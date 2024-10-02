@@ -71,6 +71,17 @@ namespace DevoirsAlexa.Tests.Domain
       Assert.Null(answer);
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("FirstName=Lucie,Level=CE2,Exercice=Additions,NbExercice=2")]
+    public void ShouldReturnNullAnswer_WhenCallingHelp_GivenNoRunnerForExercice(string session)
+    {
+      var answer = new ExerciceRunner(new HomeworkSession(session)).Help();
+      Assert.NotNull(answer);
+      Assert.True(answer.CouldNotStart);
+      Assert.Null(answer.Help);
+    }
+
     [Fact]
     public void ShouldReturnNullAnswer_WhenCallingGetCorrectAnswer_GivenNoRunnerForExercice2()
     {

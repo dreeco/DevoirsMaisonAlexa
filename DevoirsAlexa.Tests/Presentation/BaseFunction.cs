@@ -10,23 +10,23 @@ namespace DevoirsAlexa.Tests.Presentation;
 
 public class BaseFunctionTest
 {
-    protected TestLambdaContext _context;
-    protected SkillRequest _request;
+  protected TestLambdaContext _context;
+  protected SkillRequest _request;
 
-    public BaseFunctionTest()
-    {
-        _context = new TestLambdaContext() { ClientContext = new TestClientContext() { Custom = new Dictionary<string, string>() } };
-        _request = new SkillRequest();
-        _request.Session = new Session();
-        _request.Session.Attributes = new HomeworkSession();
-    }
+  public BaseFunctionTest()
+  {
+    _context = new TestLambdaContext() { ClientContext = new TestClientContext() { Custom = new Dictionary<string, string>() } };
+    _request = new SkillRequest();
+    _request.Session = new Session();
+    _request.Session.Attributes = new HomeworkSession();
+  }
 
-    protected static T ThenThereIsAnOutputSpeech<T>(SkillResponse response) where T : class, IOutputSpeech
-    {
-        var speech = response.Response.OutputSpeech as T ?? throw new Exception($"Expected response of type {typeof(T)} but got {response.Response.OutputSpeech.GetType()}");
-        Assert.NotNull(speech);
-        return speech;
-    }
+  protected static T ThenThereIsAnOutputSpeech<T>(SkillResponse response) where T : class, IOutputSpeech
+  {
+    var speech = response.Response.OutputSpeech as T ?? throw new Exception($"Expected response of type {typeof(T)} but got {response.Response.OutputSpeech.GetType()}");
+    Assert.NotNull(speech);
+    return speech;
+  }
 
   protected void BuildSkillRequestWithIntent(string intentName, HomeworkSession session)
   {
@@ -51,8 +51,8 @@ public class BaseFunctionTest
   }
 
   protected void SetContextData(string context)
-    {
-        _request.Session.Attributes = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
-    }
+  {
+    _request.Session.Attributes = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
+  }
 
 }
