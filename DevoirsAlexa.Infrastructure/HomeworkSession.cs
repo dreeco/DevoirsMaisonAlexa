@@ -90,7 +90,7 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
     value = string.Empty;
     if (!this.TryGetValue(key, out var valueObject))
       return false;
-    value = (valueObject is string ? valueObject as string : valueObject.ToString()) ?? string.Empty;
+    value = valueObject.ToString() ?? string.Empty;
     return true;
 
   }

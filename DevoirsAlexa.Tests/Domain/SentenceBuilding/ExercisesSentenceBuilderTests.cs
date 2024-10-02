@@ -1,4 +1,5 @@
 ﻿using DevoirsAlexa.Application;
+using DevoirsAlexa.Application.Text;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure;
 using Xunit;
@@ -21,12 +22,14 @@ public class ExercisesSentenceBuilderTests
   {
 
     var prompt = new SentenceBuilder();
-    RequestHandler.GetEndOfExerciceCompletionSentence(prompt, new ExerciceResult
+    var exercice = new ExerciceResult
     {
       CorrectAnswers = 2,
       ElapsedTime = TimeSpan.FromSeconds(seconds),
       TotalQuestions = 2
-    });
+    };
+
+    exercice.GetEndOfExerciceCompletionSentence(prompt);
 
     Assert.Contains(expectedText, prompt.GetPromptAsText());
   }
@@ -37,14 +40,14 @@ public class ExercisesSentenceBuilderTests
   [InlineData(2, 2, "2 bonnes réponses sur 2 questions,")]
   public void ShouldIncludeGoodAnswers_WhenAskingForExerciceCompletionSentence(int correctAnswers, int totalAnswers, string expectedText)
   {
-
     var prompt = new SentenceBuilder();
-    RequestHandler.GetEndOfExerciceCompletionSentence(prompt, new ExerciceResult
+    var exercice = new ExerciceResult
     {
       CorrectAnswers = correctAnswers,
       ElapsedTime = TimeSpan.FromSeconds(30),
       TotalQuestions = totalAnswers
-    });
+    };
+    exercice.GetEndOfExerciceCompletionSentence(prompt);
 
     Assert.Contains(expectedText, prompt.GetPromptAsText());
   }

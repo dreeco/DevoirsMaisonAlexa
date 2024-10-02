@@ -86,4 +86,15 @@ public abstract class BaseTableExercises
     return new AnswerValidation(isValid, correctAnswer);
   }
 
+  public HelpResult Help(string questionKey)
+  {
+    var text = $"Combien font {questionKey.Replace(OperationChar.ToString(), $" {OperationText} ")} ?";
+    var resultNumber = GetCorrectAnswer(questionKey);
+    if (resultNumber == null)
+      return new HelpResult("Impossible de calculer la bonne réponse.", text);
+
+    int n = resultNumber.Value;
+    return new HelpResult($"La bonne réponse est entre {MathHelper.GetRandomNumberBetween(n - 10, n)} et {MathHelper.GetRandomNumberBetween(n, n + 10)}.", text);
+  }
+
 }

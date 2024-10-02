@@ -2,8 +2,6 @@
 
 public enum Levels
 {
-  Unknown,
-
   [TextRepresentations("C.P", "CP", "cours préparatoire")]
   CP,
 

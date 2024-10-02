@@ -97,4 +97,19 @@ public class SessionPersistenceTests
     session.AlreadyAsked = d;
     Assert.Equivalent(d, session.AlreadyAsked);
   }
+
+  [Fact]
+  public void ShouldReturnDefaultValues_WhenUsingEmptySession()
+  {
+    var session = new HomeworkSession();
+
+    Assert.Equivalent(string.Empty, session.FirstName);
+    Assert.Equivalent(string.Empty, session.LastAnswer);
+    Assert.Equivalent(0, session.CorrectAnswers);
+    Assert.Equivalent(null, session.NbExercice);
+    Assert.Equivalent(null, session.Exercice);
+    Assert.Equivalent(null, session.Level);
+    Assert.Equivalent(0, session.QuestionAsked);
+    Assert.Equivalent(new string[0].ToImmutableArray(), session.AlreadyAsked);
+  }
 }
