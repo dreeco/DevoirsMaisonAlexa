@@ -1,8 +1,11 @@
 ﻿using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.Exercises.MathExercices;
+using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure.Models;
+using System.Reflection;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.Domain
@@ -16,6 +19,7 @@ namespace DevoirsAlexa.Tests.Domain
     [InlineData(HomeworkExercisesTypes.Additions, typeof(AdditionsExercises))]
     [InlineData(HomeworkExercisesTypes.Substractions, typeof(SubstractionsExercises))]
     [InlineData(HomeworkExercisesTypes.Multiplications, typeof(MultiplicationsExercises))]
+    [InlineData(HomeworkExercisesTypes.SortNumbers, typeof(SortExercises))]
     public void ShouldReturnType_GivenSpecificExercice(HomeworkExercisesTypes exercice, Type? expectedType)
     {
       var dispatcher = new ExerciceDispatcher();
@@ -25,6 +29,24 @@ namespace DevoirsAlexa.Tests.Domain
         Assert.Null(exerciceInstance);
       else
         Assert.Equal(expectedType, exerciceInstance?.GetType());
+    }
+
+    [Fact]
+    public void ShouldHaveAProperExerciceTypeListConfigured()
+    {
+      var exercises = typeof(IExerciceQuestionsRunner).Assembly
+      .GetTypes()
+      .Where(type => typeof(IExerciceQuestionsRunner).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+      .Select(t => Activator.CreateInstance(t) as IExerciceQuestionsRunner);
+      Assert.True(exercises.Select(e => e?.Type).Distinct().Count() == exercises.Count(), $"There should be exactly one implementation of IExerciceQuestionRunner by ExerciceType");
+      Assert.True(exercises.All(e => e != null), $"All classes implementing IExerciceQuestionRunner should be able to create an instance");
+      foreach (HomeworkExercisesTypes e in Enum.GetValues(typeof(HomeworkExercisesTypes)))
+      {
+        if (e == HomeworkExercisesTypes.Unknown)
+          continue;
+
+        Assert.NotNull(exercises.SingleOrDefault(t => t?.Type == e));
+      }
     }
 
     [Theory]
@@ -83,7 +105,7 @@ namespace DevoirsAlexa.Tests.Domain
     }
 
     [Fact]
-    public void ShouldReturnNullAnswer_WhenCallingGetCorrectAnswer_GivenNoRunnerForExercice2()
+    public void ShouldReturnIsValidFalse_WhenCallingGetCorrectAnswer_GivenNoAnswer()
     {
       var session = new HomeworkSession("FirstName=Lucie,Level=CE2,Exercice=Additions,AlreadyAsked=2+2,NbExercice=2");
       var runner = new ExerciceRunner(session);
