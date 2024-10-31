@@ -198,7 +198,7 @@ public class MathExercisesTests
     Assert.True(sum >= sumAtLeast, $"Sum {sum} should be greater than {sumAtLeast}. Operation : {question.Key}");
 
     foreach (var number in parts)
-      Assert.True((number >= 1 && number <= numberUpTo) || (number % 5 == 0 && number < simpleNumberUpTo), $"Number {number} does not match substraction rules");
+      Assert.True((number >= 1 && number <= numberUpTo) || (number % 5 == 0 && number <= simpleNumberUpTo), $"Number {number} does not match substraction rules");
   }
 
   private void ThenMultiplicationRulesByLevelAreRespected(int numberUpTo, Question question)

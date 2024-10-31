@@ -14,5 +14,8 @@ public enum HomeworkExercisesTypes
   Substractions,
 
   [TextRepresentations("dictée")]
-  Dictation
+  Dictation,
+
+  [TextRepresentations("tri", "tri nombres", "plus grand plus petit", "plus petit plus grand")]
+  SortNumbers
 }
