@@ -5,7 +5,6 @@ using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure.Models;
-using System.Reflection;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.Domain

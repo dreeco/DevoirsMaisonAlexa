@@ -39,6 +39,7 @@ public class MathExercisesTests
     Assert.NotNull(help);
     Assert.Matches(@"La bonne réponse est entre [-\d]+ et [-\d]+.", help.Text);
     Assert.Equal(@"Combien font 2 plus 2 ?", help.QuestionText);
+    Assert.Equal(QuestionType.Integer, help.QuestionType);
   }
 
   [Fact]
@@ -48,6 +49,7 @@ public class MathExercisesTests
     var help = exercice.Help("2_2");
     Assert.NotNull(help);
     Assert.Equal("Impossible de calculer la bonne réponse.", help.Text);
+    Assert.Equal(QuestionType.Integer, help.QuestionType);
   }
 
   [Theory]
@@ -78,6 +80,7 @@ public class MathExercisesTests
     Assert.NotNull(help);
     Assert.Matches(@"La bonne réponse est entre [-\d]+ et [-\d]+.", help.Text);
     Assert.Equal(@"Combien font 2 multiplié par 2 ?", help.QuestionText);
+    Assert.Equal(QuestionType.Integer, help.QuestionType);
   }
 
   [Fact]
@@ -87,6 +90,7 @@ public class MathExercisesTests
     var help = exercice.Help("2_2");
     Assert.NotNull(help);
     Assert.Equal("Impossible de calculer la bonne réponse.", help.Text);
+    Assert.Equal(QuestionType.Integer, help.QuestionType);
   }
 
 
@@ -117,6 +121,7 @@ public class MathExercisesTests
     Assert.NotNull(help);
     Assert.Matches(@"La bonne réponse est entre [-\d]+ et [-\d]+.", help.Text);
     Assert.Equal(@"Combien font 2 moins 2 ?", help.QuestionText);
+    Assert.Equal(QuestionType.Integer, help.QuestionType);
   }
 
   [Fact]
@@ -126,6 +131,7 @@ public class MathExercisesTests
     var help = exercice.Help("2_2");
     Assert.NotNull(help);
     Assert.Equal("Impossible de calculer la bonne réponse.", help.Text);
+    Assert.Equal(QuestionType.Integer, help.QuestionType);
   }
 
 

@@ -41,7 +41,7 @@ public abstract class BaseTableExercises
     }
     while (!isValid);
 
-    return new Question(key, $"Combien font {key.Replace(OperationChar.ToString(), $" {OperationText} ")} ?");
+    return new Question(key, $"Combien font {key.Replace(OperationChar.ToString(), $" {OperationText} ")} ?", QuestionType.Integer);
   }
 
   private int? GetCorrectAnswer(string questionKey)
@@ -91,10 +91,10 @@ public abstract class BaseTableExercises
     var text = $"Combien font {questionKey.Replace(OperationChar.ToString(), $" {OperationText} ")} ?";
     var resultNumber = GetCorrectAnswer(questionKey);
     if (resultNumber == null)
-      return new HelpResult("Impossible de calculer la bonne réponse.", text);
+      return new HelpResult("Impossible de calculer la bonne réponse.", text, QuestionType.Integer);
 
     int n = resultNumber.Value;
-    return new HelpResult($"La bonne réponse est entre {MathHelper.GetRandomNumberBetween(n - 10, n)} et {MathHelper.GetRandomNumberBetween(n, n + 10)}.", text);
+    return new HelpResult($"La bonne réponse est entre {MathHelper.GetRandomNumberBetween(n - 10, n)} et {MathHelper.GetRandomNumberBetween(n, n + 10)}.", text, QuestionType.Integer);
   }
 
 }

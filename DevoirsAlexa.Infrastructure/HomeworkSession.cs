@@ -53,6 +53,12 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
     set { this[nameof(Exercice)] = value?.ToString() ?? string.Empty; }
   }
 
+  public QuestionType? LastQuestionType
+  {
+    get { return TryGetString(nameof(LastQuestionType)).GetEnumFromTextRepresentations<QuestionType>(); }
+    set { this[nameof(LastQuestionType)] = value?.ToString() ?? string.Empty; }
+  }
+
   public string? LastAnswer
   {
     get { return TryGetString(nameof(LastAnswer)); }

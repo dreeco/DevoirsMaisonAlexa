@@ -14,4 +14,6 @@ public interface IHomeworkSession : IDictionary<string, object>
   public HomeworkExercisesTypes? Exercice { get; set; }
   public string? LastAnswer { get; set; }
   public DateTime? ExerciceStartTime { get; set; }
+
+  public QuestionType? LastQuestionType { get; set; }
 }

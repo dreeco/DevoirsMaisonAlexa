@@ -35,7 +35,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
 
     public HelpResult Help(string questionKey)
     {
-      return new HelpResult("Tu dois indquer par \"vrai\" ou \"faux\" si le chiffre " + FormatKeyToText(questionKey) + ".", GetQuestionText(questionKey));
+      return new HelpResult("Tu dois indiquer par \"vrai\" ou \"faux\" si le chiffre " + FormatKeyToText(questionKey) + ".", GetQuestionText(questionKey), QuestionType.Boolean);
     }
 
     private Question NextQuestion(Func<(int left, int right)> getNewNumbers, IEnumerable<ExerciceRule> rules, IEnumerable<string> alreadyAsked)
@@ -52,7 +52,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
       }
       while (!isValid);
 
-      return new Question(key, GetQuestionText(key));
+      return new Question(key, GetQuestionText(key), QuestionType.Boolean);
     }
 
     private static string GetQuestionText(string key)
@@ -68,7 +68,11 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
     public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
     {
       var bounds = LevelsBoundaries[level];
-      return NextQuestion(() => MathHelper.GetRandomNumbersBothBetween(bounds.min, bounds.max), ExercisesRulesByLevel[level], alreadyAsked);
+      var question = NextQuestion(() => MathHelper.GetRandomNumbersBothBetween(bounds.min, bounds.max), ExercisesRulesByLevel[level], alreadyAsked);
+      if (!alreadyAsked.Any()) {
+        question.Text = "Réponds par vrai ou faux. " + question.Text;
+      }
+      return question;
     }
 
     public AnswerValidation ValidateAnswer(string questionKey, string answer)
@@ -84,7 +88,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
         _ => null
       };
 
-      return new AnswerValidation(parsedAnswer && answeredTrue == shouldHaveAnsweredTrue, $"La bonne réponse était : \"{(shouldHaveAnsweredTrue == true ? "vrai" : "faux")}\"");
+      return new AnswerValidation(parsedAnswer && answeredTrue == shouldHaveAnsweredTrue, $"{(shouldHaveAnsweredTrue == true ? "vrai" : "faux")}");
     }
   }
 }

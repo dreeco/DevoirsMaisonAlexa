@@ -12,12 +12,13 @@ namespace DevoirsAlexa.Application.Handlers
       new IntentData("SetLevel", [nameof(IHomeworkSession.Level)], HomeworkStep.GetLevel),
       new IntentData("SetExercice", [nameof(IHomeworkSession.Exercice)], HomeworkStep.GetExercice),
       new IntentData("SetNbExercice", [nameof(IHomeworkSession.NbExercice)], HomeworkStep.GetNbExercice),
-      new IntentData("SetAnswer", [nameof(IHomeworkSession.LastAnswer)], HomeworkStep.StartExercice),
+      new IntentData("SetAnswer", [nameof(IHomeworkSession.LastAnswer)], HomeworkStep.StartExercice, QuestionType.Integer),
+      new IntentData("SetBoolAnswer", [nameof(IHomeworkSession.LastAnswer)], HomeworkStep.StartExercice, QuestionType.Boolean),
     ];
 
     public static IntentData GetNextExpectedIntent(IHomeworkSession session)
     {
-      return Intents.First(i => i.RelatedStep == GetNextStep(session));
+      return Intents.First(i => i.RelatedStep == GetNextStep(session) && i.QuestionType == session.LastQuestionType);
     }
 
     public static IntentData? GetIntent(string name)

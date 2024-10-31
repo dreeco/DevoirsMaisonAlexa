@@ -1,10 +1,12 @@
-﻿namespace DevoirsAlexa.Domain.Models;
+﻿using DevoirsAlexa.Domain.Enums;
+
+namespace DevoirsAlexa.Domain.Models;
 
 public class Question
 {
   public string Key { get; set; }
 
-  public Question(string key, string text)
+  public Question(string key, string text, QuestionType type)
   {
     if (string.IsNullOrEmpty(key))
       throw new ArgumentNullException(nameof(key));
@@ -13,9 +15,12 @@ public class Question
 
     Key = key;
     Text = text;
+    Type = type;
   }
 
   public string Text { get; set; }
 
   public int Index { get; set; }
+
+  public QuestionType Type { get; set; }
 }

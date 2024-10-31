@@ -22,7 +22,7 @@ public class TestSortExercises
     {
       var question = _exercice.NextQuestion(level, alreadyAsked);
       ThenIDontHaveDuplicateQuestions(alreadyAsked, question);
-      ThenTheQuestionTextIsProperlyFormatted(question);
+      ThenTheQuestionTextIsProperlyFormatted(question, !alreadyAsked.Any());
       alreadyAsked.Add(question.Key);
       var operation = GetOperationChar(question);
       var parts = question.Key.Split(operation).Select(int.Parse);
@@ -40,13 +40,15 @@ public class TestSortExercises
   {
     var help = _exercice.Help(question.Key);
     var insideText = GetQuestionKeyFormattedAsText(question);
-    Assert.Equal($"Tu dois indquer par \"vrai\" ou \"faux\" si le chiffre " + insideText + ".", help.Text);
+    Assert.Equal($"Tu dois indiquer par \"vrai\" ou \"faux\" si le chiffre " + insideText + ".", help.Text);
     Assert.Equal(insideText + " ?", help.QuestionText);
+    Assert.Equal(QuestionType.Boolean, help.QuestionType);
   }
 
-  private static void ThenTheQuestionTextIsProperlyFormatted(Question question)
+  private static void ThenTheQuestionTextIsProperlyFormatted(Question question, bool isFirstQuestion)
   {
-    Assert.Equal(GetQuestionKeyFormattedAsText(question) + " ?", question.Text);
+    var help = isFirstQuestion ? "Réponds par vrai ou faux. " : string.Empty;
+    Assert.Equal(help + GetQuestionKeyFormattedAsText(question) + " ?", question.Text);
   }
 
   private static string GetQuestionKeyFormattedAsText(Question question)
@@ -87,12 +89,12 @@ public class TestSortExercises
     var answer = parts.First() - parts.Last() > 0 == (operation == '>');
     var validation = exercice.ValidateAnswer(question.Key, answer ? "true" : "false");
     Assert.True(validation.IsValid, "The good answer should be accepted");
-    Assert.Equal($"La bonne réponse était : \"{(answer ? "vrai" : "faux")}\"", validation.CorrectAnswer);
+    Assert.Equal(answer ? "vrai" : "faux", validation.CorrectAnswer);
 
 
     var oppositeValidation = exercice.ValidateAnswer(question.Key, answer ? "false" : "true");
     ThenAWrongAnswerShouldBeRefused(oppositeValidation);
-    Assert.Equal($"La bonne réponse était : \"{(answer ? "vrai" : "faux")}\"", oppositeValidation.CorrectAnswer);
+    Assert.Equal(answer ? "vrai" : "faux", oppositeValidation.CorrectAnswer);
 
     ThenAWrongAnswerShouldBeRefused(exercice.ValidateAnswer(question.Key, string.Empty));
     ThenAWrongAnswerShouldBeRefused(exercice.ValidateAnswer(question.Key, "sdjkfsdkfh"));

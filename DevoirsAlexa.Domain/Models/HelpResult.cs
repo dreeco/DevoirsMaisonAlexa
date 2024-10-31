@@ -1,3 +1,5 @@
-﻿namespace DevoirsAlexa.Domain.Models;
+﻿using DevoirsAlexa.Domain.Enums;
 
-public record HelpResult(string Text, string QuestionText);
+namespace DevoirsAlexa.Domain.Models;
+
+public record HelpResult(string Text, string QuestionText, QuestionType QuestionType);
