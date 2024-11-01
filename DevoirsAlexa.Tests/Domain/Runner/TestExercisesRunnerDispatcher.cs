@@ -53,6 +53,7 @@ namespace DevoirsAlexa.Tests.Domain
     [InlineData("FirstName=Elio,Level=CE1,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
     [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
     [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,AlreadyAsked=2-2,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
+    [InlineData("FirstName=Jonathan,Level=CE2,Exercice=SortNumbers,AlreadyAsked=2>2,NbExercice=", 5, @"\d+[<>]\d+", @"\d+ est plus (grand|petit) que \d+ ?")]
     public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern)
     {
       session += nbExercice.ToString();

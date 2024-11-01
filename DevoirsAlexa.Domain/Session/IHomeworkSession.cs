@@ -12,7 +12,8 @@ public interface IHomeworkSession : IDictionary<string, object>
   public int CorrectAnswers { get; set; }
   public ImmutableArray<string> AlreadyAsked { get; set; }
   public HomeworkExercisesTypes? Exercice { get; set; }
-  public string? LastAnswer { get; set; }
+  public string? LastAnswer { get; set; }//Integer answer
+  public BooleanAnswer? Answer { get; set; }
   public DateTime? ExerciceStartTime { get; set; }
 
   public QuestionType? LastQuestionType { get; set; }

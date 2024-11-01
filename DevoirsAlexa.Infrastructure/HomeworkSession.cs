@@ -65,6 +65,12 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
     set { this[nameof(LastAnswer)] = value ?? string.Empty; }
   }
 
+  public BooleanAnswer? Answer
+  {
+    get { return TryGetString(nameof(Answer)).GetEnumFromTextRepresentations<BooleanAnswer>(); }
+    set { this[nameof(Answer)] = value?.ToString() ?? string.Empty; }
+  }
+
   public DateTime? ExerciceStartTime
   {
     get {

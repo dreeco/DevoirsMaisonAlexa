@@ -175,9 +175,8 @@ public static class RequestsHandler
     else if (result.Exercice?.TotalQuestions > 0) // Exercice is over
     {
       result.Exercice.GetEndOfExerciceCompletionSentence(sentenceBuilder);
+      sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
     } //else should not happen => log ?
-
-    sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
   }
 
   #endregion

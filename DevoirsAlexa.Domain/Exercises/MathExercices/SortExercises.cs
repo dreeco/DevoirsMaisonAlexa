@@ -80,7 +80,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
       var operationChar = MathHelper.GetOperationChar(questionKey);
       var numbers = MathHelper.GetNumbersInQuestion(questionKey, operationChar);
 
-      var parsedAnswer = bool.TryParse(answer, out var answeredTrue);
+      var answeredTrue = answer.ParseBooleanAnswer();
       bool? shouldHaveAnsweredTrue = operationChar switch
       {
         '>' => numbers.First() > numbers.Last(),
@@ -88,7 +88,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
         _ => null
       };
 
-      return new AnswerValidation(parsedAnswer && answeredTrue == shouldHaveAnsweredTrue, $"{(shouldHaveAnsweredTrue == true ? "vrai" : "faux")}");
+      return new AnswerValidation(shouldHaveAnsweredTrue != null && answeredTrue == shouldHaveAnsweredTrue, $"{(shouldHaveAnsweredTrue == true ? "vrai" : "faux")}");
     }
   }
 }

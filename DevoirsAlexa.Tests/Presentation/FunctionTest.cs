@@ -55,7 +55,7 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "SetNbExercice", "NbExercice=5", null, "SetAnswer")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "SetAnswer", "LastAnswer=*", null, "SetAnswer")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers", "SetNbExercice", "NbExercice=5", null, "SetBoolAnswer")]
-  [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers,NbExercice=3", "SetBoolAnswer", "LastAnswer=*", null, "SetBoolAnswer")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers,NbExercice=3", "SetBoolAnswer", "Answer=*", null, "SetBoolAnswer")]
   public async Task ShouldFillCustomData_WhenUsingTheSkill_GivenIntentAnswer(string context, string intent, string slots, string? expectedText, string expectedNextIntent)
   {
     SetContextData(context);

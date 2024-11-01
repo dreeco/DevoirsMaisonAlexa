@@ -111,7 +111,12 @@ public class ExerciceRunner
   private AnswerValidation ValidateAnswer(IExerciceQuestionsRunner exercice)
   {
     var lastAsked = SessionData.AlreadyAsked.Last();
-    var answerValidation = exercice.ValidateAnswer(lastAsked, SessionData.LastAnswer ?? string.Empty);
+
+    var answer = SessionData.LastAnswer;
+    if (string.IsNullOrEmpty(answer))
+      answer = SessionData.Answer.ToString() ?? string.Empty;
+
+    var answerValidation = exercice.ValidateAnswer(lastAsked, answer);
 
     if (answerValidation.IsValid)
       SessionData.CorrectAnswers++;

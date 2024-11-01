@@ -13,7 +13,7 @@ namespace DevoirsAlexa.Application.Handlers
       new IntentData("SetExercice", [nameof(IHomeworkSession.Exercice)], HomeworkStep.GetExercice),
       new IntentData("SetNbExercice", [nameof(IHomeworkSession.NbExercice)], HomeworkStep.GetNbExercice),
       new IntentData("SetAnswer", [nameof(IHomeworkSession.LastAnswer)], HomeworkStep.StartExercice, QuestionType.Integer),
-      new IntentData("SetBoolAnswer", [nameof(IHomeworkSession.LastAnswer)], HomeworkStep.StartExercice, QuestionType.Boolean),
+      new IntentData("SetBoolAnswer", [nameof(IHomeworkSession.Answer)], HomeworkStep.StartExercice, QuestionType.Boolean),
     ];
 
     public static IntentData GetNextExpectedIntent(IHomeworkSession session)
