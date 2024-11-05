@@ -1,13 +1,5 @@
-﻿namespace DevoirsAlexa.Domain.Models;
+﻿using DevoirsAlexa.Domain.Enums;
 
-public class HelpResult
-{
-  public string Text { get; set; }
-  public string QuestionText { get; set; }
+namespace DevoirsAlexa.Domain.Models;
 
-  public HelpResult(string text, string questionText)
-  {
-    Text = text;
-    QuestionText = questionText;
-  }
-}
+public record HelpResult(string Text, string QuestionText, QuestionType QuestionType);

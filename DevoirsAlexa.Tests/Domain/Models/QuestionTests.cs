@@ -10,6 +10,6 @@ public class QuestionTests
   [InlineData(false, true)]
   [InlineData(true, false)]
   public void toto(bool emptyKey, bool emptyText) {
-    Assert.Throws<ArgumentNullException>(() => new Question(emptyKey ? string.Empty : "2+2", emptyText ? string.Empty : "2 plus 2"));
+    Assert.Throws<ArgumentNullException>(() => new Question(emptyKey ? string.Empty : "2+2", emptyText ? string.Empty : "2 plus 2", DevoirsAlexa.Domain.Enums.QuestionType.Integer));
   }
 }

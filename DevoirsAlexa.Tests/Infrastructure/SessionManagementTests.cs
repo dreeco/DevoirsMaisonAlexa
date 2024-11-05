@@ -47,10 +47,11 @@ public class SessionPersistenceTests
   [Theory]
   [InlineData(null)]
   [InlineData(HomeworkExercisesTypes.Additions)]
-  [InlineData(HomeworkExercisesTypes.Dictation)]
+  //[InlineData(HomeworkExercisesTypes.Dictation)]
   [InlineData(HomeworkExercisesTypes.Multiplications)]
   [InlineData(HomeworkExercisesTypes.Unknown)]
   [InlineData(HomeworkExercisesTypes.Substractions)]
+  [InlineData(HomeworkExercisesTypes.SortNumbers)]
   public void ShouldReturnExerciceChosen_WhenUsingSession(HomeworkExercisesTypes? exercice)
   {
     var session = new HomeworkSession();

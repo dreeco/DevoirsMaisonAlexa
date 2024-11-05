@@ -47,7 +47,6 @@ namespace DevoirsAlexa.Tests.Application
         Assert.True(reprompt.IsEmpty());
       else
         Assert.Contains(repromptMatch, reprompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
-
     }
 
   }

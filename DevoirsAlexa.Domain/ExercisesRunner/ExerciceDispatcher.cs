@@ -8,12 +8,11 @@ public class ExerciceDispatcher
 {
   public IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
   {
-    var type = Assembly.GetExecutingAssembly().GetTypes()
-      .FirstOrDefault(t => t.GetCustomAttribute<ExerciceAttribute>()?.ExerciceType == exercice);
-
-    if (type == null)
-      return null;
-
-    return Activator.CreateInstance(type) as IExerciceQuestionsRunner;
+    return Assembly
+      .GetExecutingAssembly()
+      .GetTypes()
+      .Where(type => typeof(IExerciceQuestionsRunner).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+      .Select(t => Activator.CreateInstance(t) as IExerciceQuestionsRunner)
+      .FirstOrDefault(t => t?.Type == exercice);
   }
 }

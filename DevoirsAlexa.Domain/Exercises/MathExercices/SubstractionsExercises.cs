@@ -6,9 +6,9 @@ using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Domain.MathExercices;
 
-[Exercice(HomeworkExercisesTypes.Substractions)]
 public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
+  public HomeworkExercisesTypes Type => HomeworkExercisesTypes.Substractions;
   private IDictionary<Levels, (int sumAtLeast, int numbersUpTo, int simpleNumbersUpTo)> LevelsBoundaries { get; set; }
 
   public SubstractionsExercises() : base(Operations.Substraction, "moins")

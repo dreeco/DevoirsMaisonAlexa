@@ -26,6 +26,9 @@ public class FunctionTest : BaseFunctionTest
   [InlineData(null, "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
   [InlineData(null, "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
   [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Multiplications", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Substraction", "Sur combien de questions souhaites-tu t'entraîner ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=SortNumbers", "Sur combien de questions souhaites-tu t'entraîner ?")]
   public async Task ShouldAskNextQuestion_WhenUsingTheSkill_GivenSpecificContext(string? intent, string context, string expectedText)
   {
     SetContextData(context);
@@ -51,6 +54,8 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("FirstName=Lucie,Level=CE1", "SetExercice", "Exercice=Additions", "OK ! Et sur combien de questions souhaites-tu t'entraîner ?", "SetNbExercice")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "SetNbExercice", "NbExercice=5", null, "SetAnswer")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "SetAnswer", "LastAnswer=*", null, "SetAnswer")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers", "SetNbExercice", "NbExercice=5", null, "SetBoolAnswer")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers,NbExercice=3", "SetBoolAnswer", "Answer=*", null, "SetBoolAnswer")]
   public async Task ShouldFillCustomData_WhenUsingTheSkill_GivenIntentAnswer(string context, string intent, string slots, string? expectedText, string expectedNextIntent)
   {
     SetContextData(context);
@@ -92,6 +97,8 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("FirstName=Lucie", "En quel niveau es-tu à l'école ? Je comprends les classes suivantes :")]
   [InlineData("FirstName=Lucie,Level=CE1", "Je souhaite savoir quel exercice tu souhaites faire.")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Multiplications", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
   public async Task ShouldGiveHelp_GivenHelpIntent(string context, params string[] expectedTextParts)
   {
     SetContextData(context);

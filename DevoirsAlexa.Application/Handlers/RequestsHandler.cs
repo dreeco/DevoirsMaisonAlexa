@@ -23,6 +23,7 @@ public static class RequestsHandler
 
   public static void ExecuteRequest(ISentenceBuilder prompt, ISentenceBuilder reprompt, RequestType state, IHomeworkSession session)
   {
+    session.LastQuestionType = null;
     var nextStep = NextRequestRouting.GetNextStep(session);
     var promptsForStep = PromptsForSteps[nextStep];
     promptsForStep.Call(state, prompt, reprompt, session);
@@ -115,6 +116,7 @@ public static class RequestsHandler
     var result = runner.ValidateAnswerAndGetNext(false);
     GetPromptForQuestionResult(prompt, result);
     GetRepromptForQuestionResult(reprompt, result.Question?.Text ?? string.Empty);
+    session.LastQuestionType = result.Question?.Type;
   }
 
   private static void HelpQuestion(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
@@ -131,6 +133,7 @@ public static class RequestsHandler
       prompt.AppendSimpleText("Impossible de t'aider pour cette question.");
 
     GetRepromptForQuestionResult(reprompt, result.Help?.QuestionText ?? string.Empty);
+    session.LastQuestionType = result.Help?.QuestionType;
   }
 
   private static void StopQuestion(ISentenceBuilder prompt, IHomeworkSession session)
@@ -172,9 +175,8 @@ public static class RequestsHandler
     else if (result.Exercice?.TotalQuestions > 0) // Exercice is over
     {
       result.Exercice.GetEndOfExerciceCompletionSentence(sentenceBuilder);
+      sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
     } //else should not happen => log ?
-
-    sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
   }
 
   #endregion

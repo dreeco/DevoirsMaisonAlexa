@@ -113,6 +113,21 @@
           ]
         },
         {
+          "name": "SetBoolAnswer",
+          "slots": [
+            {
+              "name": "Answer",
+              "type": "BoolAnswer"
+            }
+          ],
+          "samples": [
+            "la réponse est {Answer}",
+            "c'est {Answer}",
+            "le résultat est {Answer}",
+            "{Answer}"
+          ]
+        },
+        {
           "name": "SetLevel",
           "slots": [
             {
@@ -186,6 +201,18 @@
                   "table d'additions"
                 ]
               }
+            },
+            {
+              "name": {
+                "value": "SortNumbers",
+                "synonyms": [
+                  "tri nombres",
+                  "tri",
+                  "plus grand moins grand",
+                  "comparaison de nombres",
+                  "comparaisons"
+                ]
+              }
             }
           ]
         },
@@ -196,6 +223,9 @@
               "name": {
                 "value": "CM2",
                 "synonyms": [
+                  "c m deux",
+                  "c.m.deux",
+                  "c'est m deux",
                   "c m 2",
                   "cm2",
                   "c.m.2",
@@ -211,6 +241,10 @@
               "name": {
                 "value": "CM1",
                 "synonyms": [
+                  "c.m.un",
+                  "c m un",
+                  "c'est m un",
+                  "c'est m 1",
                   "c.m.1",
                   "c m 1",
                   "cm1",
@@ -226,6 +260,10 @@
               "name": {
                 "value": "CE2",
                 "synonyms": [
+                  "c'est euh 2",
+                  "c e deux",
+                  "c'est euh deux",
+                  "c.e.deux",
                   "c e 2",
                   "c.e.2",
                   "ce2",
@@ -241,6 +279,10 @@
               "name": {
                 "value": "CE1",
                 "synonyms": [
+                  "c'est euh 1",
+                  "c'est euh un",
+                  "c e un",
+                  "c.e.un",
                   "c.e.1",
                   "ce1",
                   "c e 1",
@@ -262,6 +304,31 @@
                   "C P",
                   "C.P",
                   "cours préparatoire"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "BoolAnswer",
+          "values": [
+            {
+              "name": {
+                "value": "true",
+                "synonyms": [
+                  "oui",
+                  "vraie",
+                  "vrai"
+                ]
+              }
+            },
+            {
+              "name": {
+                "value": "false",
+                "synonyms": [
+                  "fausse",
+                  "faux",
+                  "non"
                 ]
               }
             }

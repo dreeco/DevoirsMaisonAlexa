@@ -6,9 +6,9 @@ using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Domain.MathExercices;
 
-[Exercice(HomeworkExercisesTypes.Multiplications)]
 public class MultiplicationsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
+  public HomeworkExercisesTypes Type => HomeworkExercisesTypes.Multiplications;
   private IDictionary<Levels, int> LevelsBoundaries { get; set; }
 
   public MultiplicationsExercises() : base(Operations.Multiplication, "multiplié par")

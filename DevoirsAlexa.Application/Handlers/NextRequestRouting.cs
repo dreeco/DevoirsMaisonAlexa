@@ -8,16 +8,17 @@ namespace DevoirsAlexa.Application.Handlers
   public class NextRequestRouting
   {
     private static IntentData[] Intents = [
-      new IntentData("SetFirstName") { Slots = [nameof(IHomeworkSession.FirstName)], RelatedStep = HomeworkStep.GetFirstName },
-      new IntentData("SetLevel") { Slots = [nameof(IHomeworkSession.Level)], RelatedStep = HomeworkStep.GetLevel },
-      new IntentData("SetExercice") { Slots = [nameof(IHomeworkSession.Exercice)], RelatedStep = HomeworkStep.GetExercice },
-      new IntentData("SetNbExercice") { Slots = [nameof(IHomeworkSession.NbExercice)], RelatedStep = HomeworkStep.GetNbExercice },
-      new IntentData("SetAnswer") { Slots = [nameof(IHomeworkSession.LastAnswer)], RelatedStep = HomeworkStep.StartExercice },
+      new IntentData("SetFirstName", [nameof(IHomeworkSession.FirstName)], HomeworkStep.GetFirstName),
+      new IntentData("SetLevel", [nameof(IHomeworkSession.Level)], HomeworkStep.GetLevel),
+      new IntentData("SetExercice", [nameof(IHomeworkSession.Exercice)], HomeworkStep.GetExercice),
+      new IntentData("SetNbExercice", [nameof(IHomeworkSession.NbExercice)], HomeworkStep.GetNbExercice),
+      new IntentData("SetAnswer", [nameof(IHomeworkSession.LastAnswer)], HomeworkStep.StartExercice, QuestionType.Integer),
+      new IntentData("SetBoolAnswer", [nameof(IHomeworkSession.Answer)], HomeworkStep.StartExercice, QuestionType.Boolean),
     ];
 
     public static IntentData GetNextExpectedIntent(IHomeworkSession session)
     {
-      return Intents.First(i => i.RelatedStep == GetNextStep(session));
+      return Intents.First(i => i.RelatedStep == GetNextStep(session) && i.QuestionType == session.LastQuestionType);
     }
 
     public static IntentData? GetIntent(string name)

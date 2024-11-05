@@ -35,4 +35,18 @@ public static class EnumHelper {
     }
     return null;
   }
+
+  public static bool? ParseBooleanAnswer(this string str)
+  {
+    var ba = str?
+      .ToLowerInvariant()
+      .GetEnumFromTextRepresentations<BooleanAnswer>();
+
+    return ba switch
+    {
+      BooleanAnswer.True => true,
+      BooleanAnswer.False => false,
+      _ => null
+    };
+  }
 }

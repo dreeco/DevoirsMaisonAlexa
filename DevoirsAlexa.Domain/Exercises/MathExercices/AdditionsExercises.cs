@@ -6,9 +6,9 @@ using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Domain.MathExercices;
 
-[Exercice(HomeworkExercisesTypes.Additions)]
 public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
+  public HomeworkExercisesTypes Type => HomeworkExercisesTypes.Additions;
   private IDictionary<Levels, (int numbersUpTo, int sumSimpleNumbersUpTo)> LevelsBoundaries { get; set; }
 
   public AdditionsExercises() : base(Operations.Addition, "plus")

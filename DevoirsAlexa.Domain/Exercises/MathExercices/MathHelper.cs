@@ -53,8 +53,13 @@ public class MathHelper
 
   public static IEnumerable<int> GetNumbersInQuestion(string questionKey, char? operation = null)
   {
-    var operationChar = operation ?? questionKey.Skip(1).First(c => !Digits.Contains(c));
+    var operationChar = operation ?? GetOperationChar(questionKey);
     return questionKey.Split(operationChar).Where(p => int.TryParse(p, out var d)).Select(int.Parse);
+  }
+
+  public static char GetOperationChar(string questionKey)
+  {
+    return questionKey.Skip(1).First(c => !Digits.Contains(c));
   }
 
   public static ExerciceRule GetRuleForMinSubOf(int sum)
@@ -72,11 +77,26 @@ public class MathHelper
   }
   public static ExerciceRule GetRuleForNoComplicatedNumberAbove(int max)
   {
-    return new ExerciceRule($"No complicated number above {max}", (string key) => GetNumbersInQuestion(key).All(n => n % 5 == 0 || n < max));
+    return new ExerciceRule($"No complicated number above {max}", (string key) => GetNumbersInQuestion(key).All(n => n % 5 == 0 || n <= max));
+  }
+
+  public static ExerciceRule GetRuleForNoNumberUnder(int min)
+  {
+    return new ExerciceRule($"No number under {min}", (string key) => GetNumbersInQuestion(key).All(n => n >= min));
+  }
+
+  public static ExerciceRule GetRuleForNoNumberOver(int max)
+  {
+    return new ExerciceRule($"No number over {max}", (string key) => GetNumbersInQuestion(key).All(n => n <= max));
+  }
+
+  public static ExerciceRule GetRuleForDifferentNumbers()
+  {
+    return new ExerciceRule($"Numbers should be different", (string key) => GetNumbersInQuestion(key).Distinct().Count() == GetNumbersInQuestion(key).Count());
   }
 
   public static ExerciceRule GetRuleForNoSimpleNumberAbove(int max)
   {
-    return new ExerciceRule($"No simple number above {max}", (string key) => GetNumbersInQuestion(key).All(n => n % 5 != 0 || n < max));
+    return new ExerciceRule($"No simple number above {max}", (string key) => GetNumbersInQuestion(key).All(n => n % 5 != 0 || n <= max));
   }
 }

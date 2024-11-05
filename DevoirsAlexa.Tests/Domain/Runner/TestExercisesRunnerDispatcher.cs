@@ -1,4 +1,6 @@
 ﻿using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.Exercises.MathExercices;
+using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
 using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
@@ -16,6 +18,7 @@ namespace DevoirsAlexa.Tests.Domain
     [InlineData(HomeworkExercisesTypes.Additions, typeof(AdditionsExercises))]
     [InlineData(HomeworkExercisesTypes.Substractions, typeof(SubstractionsExercises))]
     [InlineData(HomeworkExercisesTypes.Multiplications, typeof(MultiplicationsExercises))]
+    [InlineData(HomeworkExercisesTypes.SortNumbers, typeof(SortExercises))]
     public void ShouldReturnType_GivenSpecificExercice(HomeworkExercisesTypes exercice, Type? expectedType)
     {
       var dispatcher = new ExerciceDispatcher();
@@ -27,11 +30,30 @@ namespace DevoirsAlexa.Tests.Domain
         Assert.Equal(expectedType, exerciceInstance?.GetType());
     }
 
+    [Fact]
+    public void ShouldHaveAProperExerciceTypeListConfigured()
+    {
+      var exercises = typeof(IExerciceQuestionsRunner).Assembly
+      .GetTypes()
+      .Where(type => typeof(IExerciceQuestionsRunner).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract)
+      .Select(t => Activator.CreateInstance(t) as IExerciceQuestionsRunner);
+      Assert.True(exercises.Select(e => e?.Type).Distinct().Count() == exercises.Count(), $"There should be exactly one implementation of IExerciceQuestionRunner by ExerciceType");
+      Assert.True(exercises.All(e => e != null), $"All classes implementing IExerciceQuestionRunner should be able to create an instance");
+      foreach (HomeworkExercisesTypes e in Enum.GetValues(typeof(HomeworkExercisesTypes)))
+      {
+        if (e == HomeworkExercisesTypes.Unknown)
+          continue;
+
+        Assert.NotNull(exercises.SingleOrDefault(t => t?.Type == e));
+      }
+    }
+
     [Theory]
     [InlineData("FirstName=Alix,Level=CP,Exercice=Additions,NbExercice=", 5, @"\d+\+\d+", @"Combien font \d+ plus \d+ ?")]
     [InlineData("FirstName=Elio,Level=CE1,Exercice=Multiplications,NbExercice=", 5, @"\d+\*\d+", @"Combien font \d+ multiplié par \d+ ?")]
     [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
     [InlineData("FirstName=Jonathan,Level=CE2,Exercice=Soustractions,AlreadyAsked=2-2,NbExercice=", 5, @"\d+\-\d+", @"Combien font \d+ moins \d+ ?")]
+    [InlineData("FirstName=Jonathan,Level=CE2,Exercice=SortNumbers,AlreadyAsked=2>2,NbExercice=", 5, @"\d+[<>]\d+", @"\d+ est plus (grand|petit) que \d+ ?")]
     public void ShouldReturnNextQuestionAfterExercice_GivenCompleteSessionData(string session, int nbExercice, string questionKeyPattern, string questionTextPattern)
     {
       session += nbExercice.ToString();
@@ -83,7 +105,7 @@ namespace DevoirsAlexa.Tests.Domain
     }
 
     [Fact]
-    public void ShouldReturnNullAnswer_WhenCallingGetCorrectAnswer_GivenNoRunnerForExercice2()
+    public void ShouldReturnIsValidFalse_WhenCallingGetCorrectAnswer_GivenNoAnswer()
     {
       var session = new HomeworkSession("FirstName=Lucie,Level=CE2,Exercice=Additions,AlreadyAsked=2+2,NbExercice=2");
       var runner = new ExerciceRunner(session);
