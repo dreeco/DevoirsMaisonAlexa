@@ -87,14 +87,17 @@ public class ExerciceRunner
 
   private void EndSession(bool isStopping)
   {
+    SessionData.CorrectAnswers = 0;
+    SessionData.AlreadyAsked = SessionData.AlreadyAsked.Clear();
+    SessionData.QuestionAsked = 0;
+    SessionData.Exercice = null;
+    SessionData.NbExercice = 0;
+    SessionData.ExerciceStartTime = null;
+    SessionData.LastAnswer = null;
+
     if (isStopping)
-    {
       SessionData.Clear();
-    }
-    else
-    {
-      ResetSessionAfterExercice();
-    }
+
   }
 
   private IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
@@ -111,17 +114,6 @@ public class ExerciceRunner
       SessionData.AlreadyAsked = SessionData.AlreadyAsked.Add(question.Key);
 
     SessionData.QuestionAsked++;
-  }
-
-  private void ResetSessionAfterExercice()
-  {
-    SessionData.CorrectAnswers = 0;
-    SessionData.AlreadyAsked = SessionData.AlreadyAsked.Clear();
-    SessionData.QuestionAsked = 0;
-    SessionData.Exercice = null;
-    SessionData.NbExercice = 0;
-    SessionData.ExerciceStartTime = null;
-    SessionData.LastAnswer = null;
   }
 
   private AnswerValidation ValidateAnswer(IExerciceQuestionsRunner exercice)

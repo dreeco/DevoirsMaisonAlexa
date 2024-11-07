@@ -90,6 +90,18 @@ public class SessionPersistenceTests
     Assert.Equal(setNull ? string.Empty : d, session.LastAnswer);
   }
 
+  [Theory]
+  [InlineData(BooleanAnswer.Unknown)]
+  [InlineData(BooleanAnswer.True)]
+  [InlineData(BooleanAnswer.False)]
+  [InlineData(null)]
+  public void ShouldReturnBoolAnswerChosen_WhenUsingSession(BooleanAnswer? d)
+  {
+    var session = new HomeworkSession();
+    session.Answer = d;
+    Assert.Equal(d, session.Answer);
+  }
+
   [Fact]
   public void ShouldReturnAlreadyAskedChosen_WhenUsingSession()
   {

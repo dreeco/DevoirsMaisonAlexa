@@ -73,7 +73,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
       return new AnswerValidation(shouldHaveAnsweredTrue != null && answeredTrue == shouldHaveAnsweredTrue, $"{(shouldHaveAnsweredTrue == true ? "vrai" : "faux")}");
     }
 
-    private Question NextQuestion(Func<(int left, int right)> getNewNumbers, IEnumerable<ExerciceRule> rules, IEnumerable<string> alreadyAsked)
+    internal Question NextQuestion(Func<(int left, int right)> getNewNumbers, IEnumerable<ExerciceRule> rules, IEnumerable<string> alreadyAsked)
     {
       string key;
       var n = 0;

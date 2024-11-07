@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /DevoirsAlexa.Tests/coverage
 /DevoirsAlexa.Presentation/api
 /DevoirsAlexa.Presentation/_site
+/coverage/report
