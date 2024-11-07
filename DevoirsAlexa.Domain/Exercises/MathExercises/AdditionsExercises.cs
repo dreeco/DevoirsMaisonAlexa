@@ -1,16 +1,25 @@
 ﻿using DevoirsAlexa.Domain.Enums;
-using DevoirsAlexa.Domain.Exercises;
-using DevoirsAlexa.Domain.Exercises.MathExercices;
+using DevoirsAlexa.Domain.Helpers;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
 
-namespace DevoirsAlexa.Domain.MathExercices;
+namespace DevoirsAlexa.Domain.Exercises.MathExercices;
 
+/// <summary>
+/// The exercice to get questions about simple additions
+/// <para>Will provide <see cref="Question">Question</see> such as key: 1+2 Text: "Combien font 1 plus 2 ?"</para>
+/// </summary>
 public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
+  /// <inheritdoc/>
   public HomeworkExercisesTypes Type => HomeworkExercisesTypes.Additions;
+
   private IDictionary<Levels, (int numbersUpTo, int sumSimpleNumbersUpTo)> LevelsBoundaries { get; set; }
 
+
+  /// <summary>
+  /// Return an instance of <see cref="IExerciceQuestionsRunner"/> capable of providing additions and checking answers
+  /// </summary>
   public AdditionsExercises() : base(Operations.Addition, "plus")
   {
     LevelsBoundaries = new Dictionary<Levels, (int numbersUpTo, int sumSimpleNumbersUpTo)>() {
@@ -29,6 +38,7 @@ public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
     return [MathHelper.GetRuleForMaxSumOf(boundaries.sumUpTo), MathHelper.GetRuleForNoComplicatedNumberAbove(boundaries.numbersUpTo)];
   }
 
+  /// <inheritdoc/>
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {
     var boundaries = LevelsBoundaries[level];

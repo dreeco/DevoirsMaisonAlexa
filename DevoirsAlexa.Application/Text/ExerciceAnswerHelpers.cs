@@ -3,7 +3,7 @@ using DevoirsAlexa.Domain;
 
 namespace DevoirsAlexa.Application.Text;
 
-public static class ExerciceAnswerHelpers
+internal static class ExerciceAnswerHelpers
 {
 
   private readonly static string[] PositiveFeedback = [
@@ -87,7 +87,8 @@ public static class ExerciceAnswerHelpers
               ]
           }
       };
-  public static void AddAnswerValidationText(this AnswerValidation answer, ISentenceBuilder sentenceBuilder)
+
+  internal static void AddAnswerValidationText(this AnswerValidation answer, ISentenceBuilder sentenceBuilder)
   {
     if (answer.IsValid)
     {
@@ -108,7 +109,7 @@ public static class ExerciceAnswerHelpers
     }
   }
 
-  public static void GetEndOfExerciceCompletionSentence(this ExerciceResult result, ISentenceBuilder sentenceBuilder)
+  internal static void GetEndOfExerciceCompletionSentence(this ExerciceResult result, ISentenceBuilder sentenceBuilder)
   {
     var level = Math.Max(1, Math.Round((double)result.CorrectAnswers / (double)result.TotalQuestions * 5));
 

@@ -13,11 +13,15 @@ using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using static System.Net.WebRequestMethods;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace DevoirsAlexa;
+namespace DevoirsAlexa.Presentation;
 
+/// <summary>
+/// Holds the entry point for the Alexa Skill Handler
+/// </summary>
 public class Function
 {
   /// <summary>
@@ -25,6 +29,7 @@ public class Function
   /// initializes the .NET Lambda runtime client passing in the function handler to invoke for each Lambda event and
   /// the JSON serializer to use for converting Lambda JSON format to the .NET types. 
   /// </summary>
+  /// <exclude/>
 
   [ExcludeFromCodeCoverage]
   private static async Task Main()
@@ -35,8 +40,9 @@ public class Function
         .RunAsync();
   }
 
-  public const string StopIntent = "AMAZON.StopIntent";
-  public const string HelpIntent = "AMAZON.HelpIntent";
+
+  internal const string StopIntent = "AMAZON.StopIntent";
+  internal const string HelpIntent = "AMAZON.HelpIntent";
 
   /// <summary>
   /// Handler called by the Alexa endpoints
@@ -45,9 +51,9 @@ public class Function
   /// call the request router
   /// outputs the answer
   /// </summary>
-  /// <param name="input">The SkillRequest object</param>
+  /// <param name="input">The <see href="https://github.com/timheuer/alexa-skills-dotnet?tab=readme-ov-file#request-types">SkillRequest</see> object</param>
   /// <param name="context">The AWS lambda context</param>
-  /// <returns></returns>
+  /// <returns>The <see href="https://github.com/timheuer/alexa-skills-dotnet?tab=readme-ov-file#responses">Skill response</see></returns>
   public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
     if (input?.Session == null || context?.Logger == null)

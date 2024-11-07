@@ -1,4 +1,5 @@
 ﻿using DevoirsAlexa.Domain.Enums;
+using DevoirsAlexa.Domain.Exercises;
 using DevoirsAlexa.Domain.Exercises.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using Xunit;
@@ -30,10 +31,49 @@ public class TestSortExercises
       ThenTheNumbersAreDifferent(parts);
       ThenTheOperationCharForKeyIsGreaterOrLower(operation);
       ThenTheboundariesForLevelShouldBeRespected(min, max, parts);
-      ThenTheValidationShouldBeCorrect(_exercice, question, parts, operation);
+      ThenTheValidationShouldBeCorrect(question, parts, operation);
 
       ThenTheHelpProvidedIsCorrect(question);
     }
+  }
+
+  [Fact]
+  public void ShouldReturnFalse_WhenValidatingAnswer_GivenWrongKey()
+  {
+    Assert.False(_exercice.ValidateAnswer("2-5", BooleanAnswer.True.ToString()).IsValid);
+    Assert.False(_exercice.ValidateAnswer("2-5", BooleanAnswer.False.ToString()).IsValid);
+  }
+
+  [Fact]
+  public void ShouldStillAskQuestion_WhenGettingNextQuestion_GivenImpossibleRule()
+  {
+    var rule = new ExerciceRule("AlwaysFalse", (string str) => false);
+    var question = _exercice.NextQuestion(() => (1, 2), [rule], []);
+    Assert.NotNull(question);
+    ThenTheQuestionTextIsProperlyFormatted(question, isFirstQuestion: true);
+    var operation = GetOperationChar(question);
+    var parts = question.Key.Split(operation).Select(int.Parse);
+
+    ThenTheNumbersAreDifferent(parts);
+    ThenTheOperationCharForKeyIsGreaterOrLower(operation);
+    ThenTheValidationShouldBeCorrect(question, parts, operation);
+    ThenTheHelpProvidedIsCorrect(question);
+  }
+
+  [Fact]
+  public void ShouldStillAskQuestion_WhenGettingNextQuestion_GivenAlreadyAsked()
+  {
+    var rule = new ExerciceRule("AlwaysTrue", (string str) => true);
+    var question = _exercice.NextQuestion(() => (1, 2), [rule], ["1<2","1>2"]);
+    Assert.NotNull(question);
+    ThenTheQuestionTextIsProperlyFormatted(question, isFirstQuestion: false);
+    var operation = GetOperationChar(question);
+    var parts = question.Key.Split(operation).Select(int.Parse);
+
+    ThenTheNumbersAreDifferent(parts);
+    ThenTheOperationCharForKeyIsGreaterOrLower(operation);
+    ThenTheValidationShouldBeCorrect(question, parts, operation);
+    ThenTheHelpProvidedIsCorrect(question);
   }
 
   private void ThenTheHelpProvidedIsCorrect(Question question)
@@ -84,20 +124,20 @@ public class TestSortExercises
     ThenTheNumberShouldBeLowerThan(max, parts.Last());
   }
 
-  private static void ThenTheValidationShouldBeCorrect(SortExercises exercice, Question question, IEnumerable<int> parts, char operation)
+  private void ThenTheValidationShouldBeCorrect(Question question, IEnumerable<int> parts, char operation)
   {
     var answer = parts.First() - parts.Last() > 0 == (operation == '>');
-    var validation = exercice.ValidateAnswer(question.Key, answer ? "true" : "false");
+    var validation = _exercice.ValidateAnswer(question.Key, answer ? "true" : "false");
     Assert.True(validation.IsValid, "The good answer should be accepted");
     Assert.Equal(answer ? "vrai" : "faux", validation.CorrectAnswer);
 
 
-    var oppositeValidation = exercice.ValidateAnswer(question.Key, answer ? "false" : "true");
+    var oppositeValidation = _exercice.ValidateAnswer(question.Key, answer ? "false" : "true");
     ThenAWrongAnswerShouldBeRefused(oppositeValidation);
     Assert.Equal(answer ? "vrai" : "faux", oppositeValidation.CorrectAnswer);
 
-    ThenAWrongAnswerShouldBeRefused(exercice.ValidateAnswer(question.Key, string.Empty));
-    ThenAWrongAnswerShouldBeRefused(exercice.ValidateAnswer(question.Key, "sdjkfsdkfh"));
+    ThenAWrongAnswerShouldBeRefused(_exercice.ValidateAnswer(question.Key, string.Empty));
+    ThenAWrongAnswerShouldBeRefused(_exercice.ValidateAnswer(question.Key, "sdjkfsdkfh"));
   }
 
   private static void ThenAWrongAnswerShouldBeRefused(AnswerValidation oppositeValidation)

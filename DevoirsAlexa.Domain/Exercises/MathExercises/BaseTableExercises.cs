@@ -1,26 +1,28 @@
 ﻿using DevoirsAlexa.Domain.Enums;
-using DevoirsAlexa.Domain.Exercises;
-using DevoirsAlexa.Domain.Exercises.MathExercices;
+using DevoirsAlexa.Domain.Helpers;
 using DevoirsAlexa.Domain.Models;
 
-namespace DevoirsAlexa.Domain.MathExercices;
+namespace DevoirsAlexa.Domain.Exercises.MathExercices;
 
-public enum Operations
+internal enum Operations
 {
   Addition = '+',
   Multiplication = '*',
   Substraction = '-',
 }
 
+/// <summary>
+/// Serves as a base to deliver basic table math exercises
+/// </summary>
 public abstract class BaseTableExercises
 {
-  public Operations Operation { get; }
-  public char OperationChar => (char)Operation;
-  public string OperationText { get; }
+  internal Operations Operation { get; }
+  internal char OperationChar => (char)Operation;
+  internal string OperationText { get; }
 
-  public IDictionary<Levels, ExerciceRule[]> ExercisesRulesByLevel { get; set; }
+  internal IDictionary<Levels, ExerciceRule[]> ExercisesRulesByLevel { get; set; }
 
-  protected BaseTableExercises(Operations operation, string operationText)
+  internal BaseTableExercises(Operations operation, string operationText)
   {
     Operation = operation;
     OperationText = operationText;
@@ -28,7 +30,14 @@ public abstract class BaseTableExercises
     ExercisesRulesByLevel = new Dictionary<Levels, ExerciceRule[]>();
   }
 
-  protected Question NextQuestion(Func<(int left, int right)> getNewNumbers, IEnumerable<ExerciceRule> rules, IEnumerable<string> alreadyAsked)
+  /// <summary>
+  /// Get next question as left and right numbers to be associated with an operation
+  /// </summary>
+  /// <param name="getNewNumbers">A pointer to a func that allows to get 2 numbers</param>
+  /// <param name="rules">A list of rules to respect in order to be compliant with the level</param>
+  /// <param name="alreadyAsked">The list of already asked question in order to avoid duplicates</param>
+  /// <returns></returns>
+  internal Question NextQuestion(Func<(int left, int right)> getNewNumbers, IEnumerable<ExerciceRule> rules, IEnumerable<string> alreadyAsked)
   {
     string key;
     var n = 0;
@@ -41,7 +50,7 @@ public abstract class BaseTableExercises
     }
     while (!isValid);
 
-    return new Question(key, $"Combien font {key.Replace(OperationChar.ToString(), $" {OperationText} ")} ?", QuestionType.Integer);
+    return new Question(key, $"Combien font {key.Replace(OperationChar.ToString(), $" {OperationText} ")} ?", QuestionType.Integer, alreadyAsked.Count() + 1);
   }
 
   private int? GetCorrectAnswer(string questionKey)
@@ -77,6 +86,7 @@ public abstract class BaseTableExercises
     return previous;
   }
 
+  /// <inheritdoc/>
   public AnswerValidation ValidateAnswer(string questionKey, string answer)
   {
     var resultNumber = GetCorrectAnswer(questionKey);
@@ -86,6 +96,7 @@ public abstract class BaseTableExercises
     return new AnswerValidation(isValid, correctAnswer);
   }
 
+  /// <inheritdoc/>
   public HelpResult Help(string questionKey)
   {
     var text = $"Combien font {questionKey.Replace(OperationChar.ToString(), $" {OperationText} ")} ?";

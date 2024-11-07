@@ -2,7 +2,6 @@
 using DevoirsAlexa.Domain.Exercises.MathExercices;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.HomeworkExercisesRunner;
-using DevoirsAlexa.Domain.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure.Models;
 using Xunit;

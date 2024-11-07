@@ -16,11 +16,21 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5587F612-4A83-4512-87A3-893046522184}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci.yml = .github\workflows\ci.yml
+		coverage.cmd = coverage.cmd
+		.github\workflows\documentation.yml = .github\workflows\documentation.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{AB3A87FC-1A0E-4ABE-A1E6-DC2115F3187D}"
+	ProjectSection(SolutionItems) = preProject
+		docfx.json = docfx.json
+		documentation.cmd = documentation.cmd
 		Resources\icon.svg = Resources\icon.svg
-		Resources\Presentation - 1.png = Resources\Presentation - 1.png
-		Resources\Presentation - 2.png = Resources\Presentation - 2.png
+		index.md = index.md
+		Resources\Presentation-1.png = Resources\Presentation-1.png
+		Resources\Presentation-2.png = Resources\Presentation-2.png
+		Resources\Presentation-3.png = Resources\Presentation-3.png
 		README.md = README.md
-		Resources\Presentation - 3.png = Resources\Presentation - 3.png
+		toc.yml = toc.yml
 	EndProjectSection
 EndProject
 Global
@@ -36,7 +46,6 @@ Global
 		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{179FC3D1-F235-4AF3-A7C4-B442A2FF020E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13CFEDE8-A313-44E3-B385-101EB4C97C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -22,12 +22,7 @@ public class ExercisesSentenceBuilderTests
   {
 
     var prompt = new SentenceBuilder();
-    var exercice = new ExerciceResult
-    {
-      CorrectAnswers = 2,
-      ElapsedTime = TimeSpan.FromSeconds(seconds),
-      TotalQuestions = 2
-    };
+    var exercice = new ExerciceResult(TimeSpan.FromSeconds(seconds), CorrectAnswers: 2, TotalQuestions: 2);
 
     exercice.GetEndOfExerciceCompletionSentence(prompt);
 
@@ -41,12 +36,7 @@ public class ExercisesSentenceBuilderTests
   public void ShouldIncludeGoodAnswers_WhenAskingForExerciceCompletionSentence(int correctAnswers, int totalAnswers, string expectedText)
   {
     var prompt = new SentenceBuilder();
-    var exercice = new ExerciceResult
-    {
-      CorrectAnswers = correctAnswers,
-      ElapsedTime = TimeSpan.FromSeconds(30),
-      TotalQuestions = totalAnswers
-    };
+    var exercice = new ExerciceResult(TimeSpan.FromSeconds(30), correctAnswers, totalAnswers);
     exercice.GetEndOfExerciceCompletionSentence(prompt);
 
     Assert.Contains(expectedText, prompt.GetPromptAsText());
