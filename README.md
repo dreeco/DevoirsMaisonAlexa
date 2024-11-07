@@ -70,6 +70,9 @@ Pendant l'interaction, voici quelques exemples de commandes que vous pouvez util
     - Vous pouvez à tout moment interrompre la session. Lorsque vous demandez `stop`, vous aurez tout de même le résumé de votre score si vous avez commencé l'exercice.
 
 
+## Plus d'informations sur le code
+Vous pouvez plus d'informations sur le code en utilisant la [documentation de l'API](https://dreeco.github.io/DevoirsMaisonAlexa/api/DevoirsAlexa.html).
+
 ## Présentation 
 ![Présentation de la skill](./Resources/Presentation-1.png)
 ![Présentation de la skill](./Resources/Presentation-2.png)

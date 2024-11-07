@@ -10,7 +10,11 @@ namespace DevoirsAlexa.Application.Handlers
   /// </summary>
   public class NextRequestRouting
   {
-    private static IntentData[] Intents = [
+
+    /// <summary>
+    /// Represent the mapping between Intents, Steps and Slots
+    /// </summary>
+    private static IntentData[] Intents => [
       new IntentData("SetFirstName", [nameof(IHomeworkSession.FirstName)], HomeworkStep.GetFirstName),
       new IntentData("SetLevel", [nameof(IHomeworkSession.Level)], HomeworkStep.GetLevel),
       new IntentData("SetExercice", [nameof(IHomeworkSession.Exercice)], HomeworkStep.GetExercice),

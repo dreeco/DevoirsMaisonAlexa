@@ -13,10 +13,11 @@ using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using static System.Net.WebRequestMethods;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace DevoirsAlexa;
+namespace DevoirsAlexa.Presentation;
 
 /// <summary>
 /// Holds the entry point for the Alexa Skill Handler
@@ -50,9 +51,9 @@ public class Function
   /// call the request router
   /// outputs the answer
   /// </summary>
-  /// <param name="input">The SkillRequest object</param>
+  /// <param name="input">The <see href="https://github.com/timheuer/alexa-skills-dotnet?tab=readme-ov-file#request-types">SkillRequest</see> object</param>
   /// <param name="context">The AWS lambda context</param>
-  /// <returns>The skill response</returns>
+  /// <returns>The <see href="https://github.com/timheuer/alexa-skills-dotnet?tab=readme-ov-file#responses">Skill response</see></returns>
   public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
     if (input?.Session == null || context?.Logger == null)

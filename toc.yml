@@ -1,4 +1,4 @@
-- name: Docs
-  href: C:\Users\adris\source\repos\DevoirsAlexa\docs/
+- name: Readme
+  href: Readme.html
 - name: API
   href: api/
