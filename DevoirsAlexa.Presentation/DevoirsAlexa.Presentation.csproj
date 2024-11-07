@@ -18,8 +18,7 @@
     <!--<EnableTrimAnalyzer>true</EnableTrimAnalyzer>-->
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <PublishTrimmed>false</PublishTrimmed>
-
-
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,21 +1,39 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace DevoirsAlexa.Domain.HomeworkExercisesRunner;
 
+/// <summary>
+/// Main class to operate exercises
+/// Give the possibility to check an answer, get a question, end an exercice
+/// </summary>
 public class ExerciceRunner
 {
   private IHomeworkSession SessionData { get; }
   private ExerciceDispatcher _dispatcher { get; }
 
+  /// <summary>
+  /// Setup from the current session state
+  /// </summary>
+  /// <param name="sessionData"></param>
   public ExerciceRunner(IHomeworkSession sessionData)
   {
     SessionData = sessionData;
     _dispatcher = new ExerciceDispatcher();
   }
 
+  /// <summary>
+  /// Validate the answer
+  /// Returns a new question if exercice is not over
+  /// Returns
+  /// </summary>
+  /// <param name="isStopping">Did the user asked to stop the exercice</param>
+  /// <returns>The <cref>AnswerResult</cref> with:
+  ///   <para> - An <cref>AnswerValidation</cref> if a question was already asked.</para>
+  ///   <para> - A new <cref>Question</cref> if the exercice is not over.</para>
+  ///   <para> - The <cref>ExerciceResult</cref> (summary of the exercice) if it is over.</para>
+  /// </returns>
   public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {
     IExerciceQuestionsRunner exercice;
@@ -39,12 +57,7 @@ public class ExerciceRunner
     if (isStopping || SessionData.QuestionAsked >= SessionData.NbExercice)
     {
       var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
-      answerResult.Exercice = new ExerciceResult
-      {
-        CorrectAnswers = SessionData.CorrectAnswers,
-        ElapsedTime = timeInSeconds,
-        TotalQuestions = SessionData.QuestionAsked
-      };
+      answerResult.Exercice = new ExerciceResult(timeInSeconds, SessionData.CorrectAnswers, SessionData.QuestionAsked);
 
       EndSession(isStopping);
       return answerResult;
@@ -56,6 +69,10 @@ public class ExerciceRunner
     return answerResult;
   }
 
+  /// <summary>
+  /// Get some help over the exercice
+  /// </summary>
+  /// <returns>A <cref>AnswerResult</cref> object with a <cref>HelpResult</cref> containing a sentence that should help the user without giving the answer.</returns>
   public AnswerResult Help()
   {
     IExerciceQuestionsRunner? e;
@@ -94,7 +111,6 @@ public class ExerciceRunner
       SessionData.AlreadyAsked = SessionData.AlreadyAsked.Add(question.Key);
 
     SessionData.QuestionAsked++;
-    question.Index = SessionData.QuestionAsked;
   }
 
   private void ResetSessionAfterExercice()
@@ -124,7 +140,7 @@ public class ExerciceRunner
     return answerValidation;
   }
 
-  public string? GetCorrectAnswer(HomeworkExercisesTypes exercice, string questionKey)
+  internal string? GetCorrectAnswer(HomeworkExercisesTypes exercice, string questionKey)
   {
     return GetExerciceQuestionsRunner(exercice)?.ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
   }

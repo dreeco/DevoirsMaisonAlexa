@@ -3,7 +3,7 @@ namespace DevoirsAlexa.Domain.Enums;
 
 
 [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-public sealed class TextRepresentationsAttribute : Attribute
+internal sealed class TextRepresentationsAttribute : Attribute
 {
   public string[] StringValue { get; }
 
@@ -13,8 +13,18 @@ public sealed class TextRepresentationsAttribute : Attribute
   }
 }
 
+/// <summary>
+/// An helper class to pass from string to Enum
+/// Used especially within the session to transmit data properly
+/// </summary>
 public static class EnumHelper {
 
+  /// <summary>
+  /// Get the enum value from a string
+  /// </summary>
+  /// <typeparam name="TEnum">Which enum is concerned</typeparam>
+  /// <param name="str">The data string stored in the session</param>
+  /// <returns>The enum value parsed from the string and matched against potential synonyms</returns>
   public static TEnum? GetEnumFromTextRepresentations<TEnum>(this string str) where TEnum : struct, Enum
   {
     foreach (var e in Enum.GetValues<TEnum>())
@@ -36,6 +46,11 @@ public static class EnumHelper {
     return null;
   }
 
+  /// <summary>
+  /// Parse the string to get if true, false or unknown
+  /// </summary>
+  /// <param name="str"></param>
+  /// <returns>Boolean value</returns>
   public static bool? ParseBooleanAnswer(this string str)
   {
     var ba = str?

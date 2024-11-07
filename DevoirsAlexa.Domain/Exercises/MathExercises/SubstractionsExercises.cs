@@ -1,16 +1,22 @@
 ﻿using DevoirsAlexa.Domain.Enums;
-using DevoirsAlexa.Domain.Exercises;
-using DevoirsAlexa.Domain.Exercises.MathExercices;
+using DevoirsAlexa.Domain.Helpers;
 using DevoirsAlexa.Domain.HomeworkExercises;
 using DevoirsAlexa.Domain.Models;
 
-namespace DevoirsAlexa.Domain.MathExercices;
+namespace DevoirsAlexa.Domain.Exercises.MathExercices;
 
+/// <summary>
+/// The exercice to get questions about simple substractions
+/// </summary>
 public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
+  /// <inheritdoc/>
   public HomeworkExercisesTypes Type => HomeworkExercisesTypes.Substractions;
   private IDictionary<Levels, (int sumAtLeast, int numbersUpTo, int simpleNumbersUpTo)> LevelsBoundaries { get; set; }
 
+  /// <summary>
+  /// Get the question runner
+  /// </summary>
   public SubstractionsExercises() : base(Operations.Substraction, "moins")
   {
     LevelsBoundaries = new Dictionary<Levels, (int sumAtLeast, int numbersUpTo, int simpleNumbersUpTo)>() {
@@ -33,6 +39,7 @@ public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunn
     ];
   }
 
+  /// <inheritdoc/>
   public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
   {
     var subWithSimpleNumbers = MathHelper.GetRandomBoolean();

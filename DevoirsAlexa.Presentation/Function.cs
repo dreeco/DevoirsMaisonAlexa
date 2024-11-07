@@ -18,6 +18,9 @@ using System.Text.Json.Serialization;
 
 namespace DevoirsAlexa;
 
+/// <summary>
+/// Holds the entry point for the Alexa Skill Handler
+/// </summary>
 public class Function
 {
   /// <summary>
@@ -25,6 +28,7 @@ public class Function
   /// initializes the .NET Lambda runtime client passing in the function handler to invoke for each Lambda event and
   /// the JSON serializer to use for converting Lambda JSON format to the .NET types. 
   /// </summary>
+  /// <exclude/>
 
   [ExcludeFromCodeCoverage]
   private static async Task Main()
@@ -35,8 +39,9 @@ public class Function
         .RunAsync();
   }
 
-  public const string StopIntent = "AMAZON.StopIntent";
-  public const string HelpIntent = "AMAZON.HelpIntent";
+
+  internal const string StopIntent = "AMAZON.StopIntent";
+  internal const string HelpIntent = "AMAZON.HelpIntent";
 
   /// <summary>
   /// Handler called by the Alexa endpoints
@@ -47,7 +52,7 @@ public class Function
   /// </summary>
   /// <param name="input">The SkillRequest object</param>
   /// <param name="context">The AWS lambda context</param>
-  /// <returns></returns>
+  /// <returns>The skill response</returns>
   public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
     if (input?.Session == null || context?.Logger == null)

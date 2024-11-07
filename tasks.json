@@ -1,0 +1,60 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Clean",
+      "command": "docfx",
+      "args": [ "C:\\Users\\adris\\source\\repos\\DevoirsAlexa\\DevoirsAlexa.Presentation\\docfx.json", "--serve" ],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Clean",
+      "command": "dotnet",
+      "args": [ "clean" ],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build",
+      "command": "dotnet",
+      "args": [ "build" ],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Test with Coverage",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "--no-build",
+        "--verbosity",
+        "normal",
+        "--collect:\"XPlat Code Coverage\"",
+        "--results-directory",
+        "./coverage"
+      ],
+      "group": "test",
+      "dependsOn": [ "Clean", "Build" ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Generate Coverage Report",
+      "command": "reportgenerator",
+      "args": [
+        "-reports:coverage/**/coverage.cobertura.xml",
+        "-targetdir:coverage/coverage-report",
+        "-reporttypes:Html"
+      ],
+      "dependsOn": [ "Test with Coverage" ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Coverage Report",
+      "command": "cmd",
+      "args": [ "/c", "start", "coverage\\coverage-report\\index.html" ],
+      "dependsOn": [ "Generate Coverage Report" ],
+      "problemMatcher": []
+    }
+  ]
+}

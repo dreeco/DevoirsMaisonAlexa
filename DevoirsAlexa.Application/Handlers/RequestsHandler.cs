@@ -8,6 +8,10 @@ using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Application.Handlers;
 
+/// <summary>
+/// Handle a request.
+/// <param>Match the current state to the next epected intent</param>
+/// </summary>
 public static class RequestsHandler
 {
   /// <summary>
@@ -21,6 +25,15 @@ public static class RequestsHandler
     { HomeworkStep.StartExercice, new StepPromptsData(NextQuestion, HelpQuestion, StopQuestion) },
   };
 
+
+  /// <summary>
+  /// Execute the request by getting the next sentence after the current state and user session data
+  /// <para>Example: if the user has no sessoin data, we will start by asking its first name</para>
+  /// </summary>
+  /// <param name="prompt">A reference to the prompt that will be given to the user</param>
+  /// <param name="reprompt">A reference to the reprompt, that will be given to the user if no answer is given</param>
+  /// <param name="state">The current request state</param>
+  /// <param name="session">The user session data</param>
   public static void ExecuteRequest(ISentenceBuilder prompt, ISentenceBuilder reprompt, RequestType state, IHomeworkSession session)
   {
     session.LastQuestionType = null;
@@ -29,7 +42,7 @@ public static class RequestsHandler
     promptsForStep.Call(state, prompt, reprompt, session);
   }
 
-  public static void QuitSkill(ISentenceBuilder prompt, IHomeworkSession session)
+  private static void QuitSkill(ISentenceBuilder prompt, IHomeworkSession session)
   {
     session.Clear();
     prompt.AppendInterjection("Au revoir !");

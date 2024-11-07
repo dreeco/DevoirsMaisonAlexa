@@ -1,6 +1,6 @@
 ﻿using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Domain.HomeworkExercises;
-using DevoirsAlexa.Domain.MathExercices;
+using DevoirsAlexa.Domain.Exercises.MathExercices;
 using DevoirsAlexa.Domain.Models;
 using Xunit;
 
