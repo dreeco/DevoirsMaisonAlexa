@@ -7,6 +7,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices;
 
 /// <summary>
 /// The exercice to get questions about simple additions
+/// <para>Will provide <see cref="Question">Question</see> such as key: 1+2 Text: "Combien font 1 plus 2 ?"</para>
 /// </summary>
 public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
@@ -17,7 +18,7 @@ public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 
 
   /// <summary>
-  /// Get the question runner
+  /// Return an instance of <see cref="IExerciceQuestionsRunner"/> capable of providing additions and checking answers
   /// </summary>
   public AdditionsExercises() : base(Operations.Addition, "plus")
   {

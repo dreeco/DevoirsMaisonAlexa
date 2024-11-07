@@ -6,7 +6,7 @@
 public class AnswerResult
 {
   /// <summary>
-  /// How was the user answer
+  /// Contains information about the user answer (<see cref="AnswerValidation.IsValid">valid or not</see>, provide a <see cref="AnswerValidation.CorrectAnswer"/>, etc.)
   /// </summary>
   public AnswerValidation? Validation { get; set; }
 

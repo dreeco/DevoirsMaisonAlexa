@@ -16,7 +16,7 @@ public enum HomeworkStep
   GetLevel = 2,
 
   /// <summary>
-  /// The user needs to tell which <cref>ExerciceType</cref> is chosen
+  /// The user needs to tell which <see cref="Domain.Enums.HomeworkExercisesTypes">Exercice type</see> is chosen
   /// </summary>
   GetExercice = 3,
 

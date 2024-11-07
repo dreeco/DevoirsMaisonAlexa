@@ -7,6 +7,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices;
 
 /// <summary>
 /// The exercice to get questions about simple multiplications
+/// <para>Will provide <see cref="Question">Question</see> such as key: 1x2 Text: "Combien font 1 multiplié par 2 ?"</para>
 /// </summary>
 public class MultiplicationsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
@@ -15,7 +16,7 @@ public class MultiplicationsExercises : BaseTableExercises, IExerciceQuestionsRu
   private IDictionary<Levels, int> LevelsBoundaries { get; set; }
 
   /// <summary>
-  /// Get the question runner
+  /// Return an instance of <see cref="IExerciceQuestionsRunner"/> capable of providing multiplications and checking answers
   /// </summary>
   public MultiplicationsExercises() : base(Operations.Multiplication, "multiplié par")
   {

@@ -16,7 +16,7 @@ public class ExerciceRunner
   /// <summary>
   /// Setup from the current session state
   /// </summary>
-  /// <param name="sessionData"></param>
+  /// <param name="sessionData">This will provide the current state of the session with the user</param>
   public ExerciceRunner(IHomeworkSession sessionData)
   {
     SessionData = sessionData;
@@ -24,15 +24,14 @@ public class ExerciceRunner
   }
 
   /// <summary>
-  /// Validate the answer
-  /// Returns a new question if exercice is not over
-  /// Returns
+  /// Validate the <see cref="IHomeworkSession.Answer"/> or <see cref="IHomeworkSession.LastAnswer"/> against the <see cref="IExerciceQuestionsRunner.ValidateAnswer(string, string)"/>
+  /// Returns a new <see cref="Question"/> after the <see cref="IExerciceQuestionsRunner.NextQuestion(Levels, IEnumerable{string})"/> if needed
   /// </summary>
   /// <param name="isStopping">Did the user asked to stop the exercice</param>
-  /// <returns>The <cref>AnswerResult</cref> with:
-  ///   <para> - An <cref>AnswerValidation</cref> if a question was already asked.</para>
-  ///   <para> - A new <cref>Question</cref> if the exercice is not over.</para>
-  ///   <para> - The <cref>ExerciceResult</cref> (summary of the exercice) if it is over.</para>
+  /// <returns>The <see cref="AnswerResult">AnswerResult</see> with:
+  ///   <para> - An <see cref="AnswerValidation">AnswerValidation</see> if a question was already asked: the status of this answer (valid or not).</para>
+  ///   <para> - A new <see cref="Question">Question</see> if the exercice is not over.</para>
+  ///   <para> - The <see cref="ExerciceResult">ExerciceResult</see> (summary of the exercice) if it is over.</para>
   /// </returns>
   public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {

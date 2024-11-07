@@ -34,14 +34,14 @@ public interface IHomeworkSession : IDictionary<string, object>
 
   /// <summary>
   /// Number of correct answers during the current session.
-  /// Should be less or equal to <cref>QuestionAsked</cref>
+  /// Should be less or equal to <see cref="QuestionAsked">QuestionAsked</see>
   /// Used for summary when the exercice is over.
   /// </summary>
   public int CorrectAnswers { get; set; }
 
   /// <summary>
   /// The list of questions keys already asked during the current session.
-  /// Count should be equal to <cref>QuestionAsked</cref>.
+  /// Count should be equal to <see cref="QuestionAsked">QuestionAsked</see>.
   /// Used to prevent asking the same questions multiple times
   /// </summary>
   public ImmutableArray<string> AlreadyAsked { get; set; }

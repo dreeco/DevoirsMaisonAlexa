@@ -7,6 +7,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices;
 
 /// <summary>
 /// The exercice to get questions about simple substractions
+/// <para>Will provide <see cref="Question">Question</see> such as key: 1-2 Text: "Combien font 1 moins 2 ?"</para>
 /// </summary>
 public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunner
 {
@@ -15,7 +16,7 @@ public class SubstractionsExercises : BaseTableExercises, IExerciceQuestionsRunn
   private IDictionary<Levels, (int sumAtLeast, int numbersUpTo, int simpleNumbersUpTo)> LevelsBoundaries { get; set; }
 
   /// <summary>
-  /// Get the question runner
+  /// Return an instance of <see cref="IExerciceQuestionsRunner"/> capable of providing substractions and checking answers
   /// </summary>
   public SubstractionsExercises() : base(Operations.Substraction, "moins")
   {

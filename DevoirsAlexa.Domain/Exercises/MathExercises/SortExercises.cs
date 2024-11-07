@@ -5,10 +5,11 @@ using DevoirsAlexa.Domain.Models;
 
 namespace DevoirsAlexa.Domain.Exercises.MathExercices
 {
-    /// <summary>
-    /// The exercice to get questions about simple number comparisons
-    /// </summary>
-    public class SortExercises : IExerciceQuestionsRunner
+  /// <summary>
+  /// The exercice to get questions about simple number comparisons
+  /// <para>Will provide <see cref="Question">Question</see> such as key: 1<2 Text: "1 est plus petit que 2 ?"</para>
+  /// </summary>
+  public class SortExercises : IExerciceQuestionsRunner
   {
     /// <inheritdoc/>
     public HomeworkExercisesTypes Type => HomeworkExercisesTypes.SortNumbers;
@@ -17,7 +18,7 @@ namespace DevoirsAlexa.Domain.Exercises.MathExercices
 
 
     /// <summary>
-    /// Get the question runner
+    /// Return an instance of <see cref="IExerciceQuestionsRunner"/> capable of providing comparisons and checking answers
     /// </summary>
     public SortExercises()
     {
