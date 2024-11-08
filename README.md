@@ -7,6 +7,14 @@
 La skill **Devoirs Maison** aide les enfants à s'entraîner sur différents exercices scolaires, comme les additions, soustractions et multiplications.
 L'enfant peut choisir le type d'exercice, le nombre d'exercices à faire, et la difficulté sera adaptée en fonction de sa classe.
 
+## Documentation à destination des développeurs
+Si vous souhaitez installer vous-même la skill sur vos enceintes et personnaliser le code, ajouter des exercices, etc.
+Vous pouvez trouver plus d'informations sur la [documentation de l'API](https://dreeco.github.io/DevoirsMaisonAlexa/api/DevoirsAlexa.html).
+
+
+## Todo
+Voici [la liste](/TODO.md) des prochaines fonctionnalités qui seront développées sur la skill
+
 ## Démarrer la skill
 
 Pour commencer, il suffit de dire :
@@ -69,9 +77,6 @@ Pendant l'interaction, voici quelques exemples de commandes que vous pouvez util
 7. **Arrêter** :
     - Vous pouvez à tout moment interrompre la session. Lorsque vous demandez `stop`, vous aurez tout de même le résumé de votre score si vous avez commencé l'exercice.
 
-
-## Plus d'informations sur le code
-Vous pouvez plus d'informations sur le code en utilisant la [documentation de l'API](https://dreeco.github.io/DevoirsMaisonAlexa/api/DevoirsAlexa.html).
 
 ## Présentation 
 ![Présentation de la skill](./Resources/Presentation-1.png)

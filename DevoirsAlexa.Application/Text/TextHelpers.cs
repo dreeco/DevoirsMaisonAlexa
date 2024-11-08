@@ -1,8 +1,15 @@
 ﻿namespace DevoirsAlexa.Application.Text;
 
+/// <summary>
+/// Provide some static functions designed to help format text
+/// </summary>
 public static class TextHelpers
 {
-
+  /// <summary>
+  /// Transforms a timespan to a french text (minutes and seconds)
+  /// </summary>
+  /// <param name="timeSpan"></param>
+  /// <returns></returns>
   public static string GetTimeAsText(this TimeSpan timeSpan)
   {
     int minutes = timeSpan.Minutes;

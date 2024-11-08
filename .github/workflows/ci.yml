@@ -6,6 +6,7 @@ name: .NET
 permissions:
   pull-requests: write
   contents: read
+  issues: write
 
 on:
   push:
@@ -60,3 +61,6 @@ jobs:
       with:
         recreate: true
         path: code-coverage-results.md
+
+    - name: Check Dependencies
+      uses: mawosoft/dotnet-dependency-alert@v1
