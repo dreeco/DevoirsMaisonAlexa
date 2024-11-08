@@ -25,7 +25,7 @@ public class MathHelperTests
   [Fact]
   public void ShouldReturnTrueAndFalse_WhenUsingGetRandomBoolean()
   {
-    var loops = 7;
+    var loops = 100;
     bool? b = null;
     for (var i = 0; i < loops; i++)
     {
