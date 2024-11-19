@@ -43,12 +43,12 @@ namespace DevoirsAlexa.Tests.Application
       var requestsHandler = new RequestsHandler(new DevoirsAlexa.Domain.HomeworkExercisesRunner.ExerciceRunner(Extensions.GetRunner, session), session);
       requestsHandler.ExecuteRequest(prompt, reprompt, requestType);
       
-      Assert.Contains(promptMatch, prompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
+      Assert.Contains(promptMatch, prompt.GetAsText(), StringComparison.InvariantCultureIgnoreCase);
 
       if (repromptMatch == null)
         Assert.True(reprompt.IsEmpty());
       else
-        Assert.Contains(repromptMatch, reprompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
+        Assert.Contains(repromptMatch, reprompt.GetAsText(), StringComparison.InvariantCultureIgnoreCase);
     }
 
     [Theory]
@@ -66,12 +66,12 @@ namespace DevoirsAlexa.Tests.Application
       var requestsHandler = new RequestsHandler(new DevoirsAlexa.Domain.HomeworkExercisesRunner.ExerciceRunner(Extensions.GetRunner, session), session);
       requestsHandler.ExecuteRequest(prompt, reprompt, requestType);
 
-      Assert.Contains(promptMatch, prompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
+      Assert.Contains(promptMatch, prompt.GetAsText(), StringComparison.InvariantCultureIgnoreCase);
 
       if (repromptMatch == null)
         Assert.True(reprompt.IsEmpty());
       else
-        Assert.Contains(repromptMatch, reprompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
+        Assert.Contains(repromptMatch, reprompt.GetAsText(), StringComparison.InvariantCultureIgnoreCase);
     }
   }
 }

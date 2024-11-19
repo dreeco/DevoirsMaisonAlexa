@@ -82,7 +82,7 @@ public class FunctionTest : BaseFunctionTest
   [InlineData("FirstName=Lucie,Level=CE1", "Au revoir !")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Au revoir !")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "Au revoir !")]
-  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=1", "Tu as 1 bonne réponse sur 1 question", "Au revoir !")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3,AlreadyAsked=2+2;4+4,CorrectAnswers=1,QuestionAsked=2", "Tu as 1 bonne réponse sur 1 question", "Au revoir !")]
   public async Task ShouldEndSession_GivenStopIntent(string context, params string[] expectedTextParts)
   {
     SetContextData(context);

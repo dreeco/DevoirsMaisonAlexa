@@ -10,7 +10,7 @@ namespace DevoirsAlexa.Tests
 {
   public static class Extensions
   {
-    public static string? GetPromptAsText(this SentenceBuilder prompt)
+    public static string? GetAsText(this SentenceBuilder prompt)
     {
       var speech = prompt.GetSpeech();
       if (speech is SsmlOutputSpeech ssml)

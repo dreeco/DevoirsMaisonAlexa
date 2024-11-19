@@ -157,7 +157,7 @@ public class MathExercisesTests
     ThenTheAnswerValidationIsCorrect(question);
   }
 
-  private Question WhenIGetTheNextQuestion(Levels level, List<string> alreadyAsked)
+  private Question? WhenIGetTheNextQuestion(Levels level, List<string> alreadyAsked)
   {
     return Exercice.NextQuestion(level, alreadyAsked);
   }
@@ -173,8 +173,8 @@ public class MathExercisesTests
     var alreadyAsked = new List<string>();
     for (var n = 0; n < loopSize; n++)
     {
-      Question question = WhenIGetTheNextQuestion(level, alreadyAsked);
-
+      Question? question = WhenIGetTheNextQuestion(level, alreadyAsked);
+      Assert.NotNull(question);
       ThenIHaveAProperlyBuiltQuestionWithAPossibleAnswer(alreadyAsked, question);
       questionRespectExerciceRules(question);
     }

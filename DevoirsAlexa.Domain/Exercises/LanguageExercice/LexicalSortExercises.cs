@@ -16,6 +16,8 @@ namespace DevoirsAlexa.Domain.Exercises.LanguageExercices
     private const char Before = '<';
     private static string BeforeString => Before.ToString();
 
+    private static char[] AcceptedOperations = ['<', '>'];
+
     /// <inheritdoc/>
     public HomeworkExercisesTypes Type => HomeworkExercisesTypes.SortWords;
 
@@ -42,21 +44,28 @@ namespace DevoirsAlexa.Domain.Exercises.LanguageExercices
     }
 
     /// <inheritdoc/>
-    public Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
+    public Question? NextQuestion(Levels level, IEnumerable<string> alreadyAsked)
     {
-      return new Question("", "", QuestionType.Boolean, alreadyAsked.Count() + 1);
+      var words = WordRepository.GetWordsForComparison(level, 2);
+      if (words.Count() != 2)
+        return null;
+
+      var operation = MathHelper.GetRandomBoolean() ? '>' : '<';
+      var key = $"{words.First().Text}{operation}{words.Last().Text}";
+
+      return new Question(key, GetQuestionText(key), QuestionType.Boolean, alreadyAsked.Count() + 1);
     }
 
     /// <inheritdoc/>
     public AnswerValidation ValidateAnswer(string questionKey, string answer)
     {
-      var operationChar = MathHelper.GetOperationChar(questionKey);
+      var operationChar = questionKey.FirstOrDefault(c => AcceptedOperations.Contains(c));
       var strs = questionKey.Split(operationChar);
       var answeredTrue = answer.ParseBooleanAnswer();
       bool? shouldHaveAnsweredTrue = operationChar switch
       {
-        After => strs.First().CompareTo(strs.Last()) < 0,
-        Before => strs.First().CompareTo(strs.Last()) > 0,
+        After => strs.First().CompareTo(strs.Last()) > 0,
+        Before => strs.First().CompareTo(strs.Last()) < 0,
         _ => null
       };
 

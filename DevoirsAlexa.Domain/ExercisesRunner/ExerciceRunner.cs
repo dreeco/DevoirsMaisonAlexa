@@ -69,7 +69,8 @@ public class ExerciceRunner
     }
 
     answerResult.Question = Exercice.NextQuestion(SessionData.Level.Value, SessionData.AlreadyAsked);
-    AddNewQuestionToSession(answerResult.Question);
+    if (answerResult.Question != null) 
+      AddNewQuestionToSession(answerResult.Question);
 
     return answerResult;
   }
@@ -100,7 +101,6 @@ public class ExerciceRunner
 
     if (isStopping)
       SessionData.Clear();
-
   }
 
   private void AddNewQuestionToSession(Question question)

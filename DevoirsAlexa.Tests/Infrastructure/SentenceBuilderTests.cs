@@ -28,6 +28,6 @@ public class SentenceBuilderTests
     var ssml = sentenceBuilder.GetSpeech() as SsmlOutputSpeech;
     Assert.NotNull(ssml);
     Assert.Equal("<speak><say-as interpret-as='interjection'>Hello!</say-as> How are you doing? <say-as interpret-as='spell-out'>ET</say-as> is the best movie. There were a total of 3 movies.</speak>", ssml.Ssml);
-    Assert.Equal("Hello! How are you doing? ET is the best movie. There were a total of 3 movies.", sentenceBuilder.GetPromptAsText());
+    Assert.Equal("Hello! How are you doing? ET is the best movie. There were a total of 3 movies.", sentenceBuilder.GetAsText());
   }
 }

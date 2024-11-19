@@ -141,7 +141,9 @@ public class RequestsHandler
   {
     var result = Runner.ValidateAnswerAndGetNext(false);
     GetPromptForQuestionResult(prompt, result);
+
     GetRepromptForQuestionResult(reprompt, result.Question?.Text ?? string.Empty);
+
     Session.LastQuestionType = result.Question?.Type;
   }
 
@@ -200,10 +202,12 @@ public class RequestsHandler
     {
       result.Exercice.GetEndOfExerciceCompletionSentence(sentenceBuilder);
       sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
-    } //else should not happen => log ?
+    }
+    else
+    {
+      sentenceBuilder.AppendSimpleText("Je n'ai pas réussi à trouver une nouvelle question à te poser. Tu peux relancer La skill si tu souhaite rejouer. ");
+    }
   }
 
   #endregion
-
-
 }
