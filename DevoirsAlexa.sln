@@ -31,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Resources\Presentation-3.png = Resources\Presentation-3.png
 		README.md = README.md
 		toc.yml = toc.yml
+		TODO.md = TODO.md
 	EndProjectSection
 EndProject
 Global
