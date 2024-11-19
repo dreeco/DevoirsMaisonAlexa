@@ -14,5 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\DevoirsAlexa.Domain\DevoirsAlexa.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DevoirsAlexa.Tests" />
+  </ItemGroup>
 
 </Project>

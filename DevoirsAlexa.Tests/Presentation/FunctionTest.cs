@@ -6,6 +6,9 @@ using Alexa.NET.Request.Type;
 using DevoirsAlexa.Presentation;
 using DevoirsAlexa.Application.Handlers;
 using Alexa.NET.Request;
+using DevoirsAlexa.Domain.Enums;
+using static System.Reflection.Metadata.BlobBuilder;
+using Xunit.Abstractions;
 
 namespace DevoirsAlexa.Tests.Presentation;
 
@@ -96,14 +99,15 @@ public class FunctionTest : BaseFunctionTest
   [Theory]
   [InlineData("", "Comment t'appelles tu ?")]
   [InlineData("FirstName=Lucie", "En quel niveau es-tu à l'école ? Je comprends les classes suivantes :")]
+  [InlineData("FirstName=Lucie,Level=LevelThatDoesNotExists", "En quel niveau es-tu à l'école ? Je comprends les classes suivantes :")]
   [InlineData("FirstName=Lucie,Level=CE1", "Je souhaite savoir quel exercice tu souhaites faire.")]
+  [InlineData("FirstName=Lucie,Level=CE1,Exercice=ExerciceTHatDoesNotExists", "Je souhaite savoir quel exercice tu souhaites faire.")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Multiplications", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=SortNumbers", "Je souhaite savoir combien de questions te poser sur cette session d'exercice.")]
   public async Task ShouldGiveHelp_GivenHelpIntent(string context, params string[] expectedTextParts)
   {
-    SetContextData(context);
-    var h = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
+    var h = SetContextData(context);
 
     SkillResponse response = await WhenIUseTheFollowingIntent(Function.HelpIntent);
 
@@ -129,7 +133,7 @@ public class FunctionTest : BaseFunctionTest
   [InlineData(true, false)]
   public async Task ShouldNotThrowErrorButAnswerGracefully_GivenWrongInput(bool nullInput, bool nullContext)
   {
-    var response = await Function.FunctionHandler(nullInput ? null : _request, nullContext ? null : _context);
+    var response = await _sut.FunctionHandler(nullInput ? null : _request, nullContext ? null : _context);
     Assert.NotNull(response);
     var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
     ThenIHaveThisResponseText("Une erreur inattendue est survenue, merci de relancer la skill.", speech);
@@ -138,7 +142,7 @@ public class FunctionTest : BaseFunctionTest
   [Fact]
   public async Task ShouldNotThrowErrorButAnswerGracefully_GivenWrongInputRequestType()
   {
-    var response = await Function.FunctionHandler(new SkillRequest { Request = new MyFakeRequest(), Session = new Session()}, _context);
+    var response = await _sut.FunctionHandler(new SkillRequest { Request = new MyFakeRequest(), Session = new Session()}, _context);
     Assert.NotNull(response);
     var speech = ThenThereIsAnOutputSpeech<PlainTextOutputSpeech>(response);
   }
@@ -171,13 +175,13 @@ public class FunctionTest : BaseFunctionTest
   private async Task<SkillResponse> WhenIUseTheFollowingIntent(string intent, string? slots = null)
   {
     BuildSkillRequestWithIntent(intent, new HomeworkSession(slots));
-    return await Function.FunctionHandler(_request, _context);
+    return await _sut.FunctionHandler(_request, _context);
   }
 
   private async Task<SkillResponse> WhenIUseALaunchRequest(string? slots = null)
   {
     BuildSkillLaunchRequest();
-    return await Function.FunctionHandler(_request, _context);
+    return await _sut.FunctionHandler(_request, _context);
   }
 
   private static void ThenIHaveThisResponseText(string expectedText, PlainTextOutputSpeech speech)

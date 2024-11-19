@@ -10,6 +10,13 @@ namespace DevoirsAlexa.Tests.Presentation;
 
 public class SkillInputOutputTests
 {
+  private Function _sut;
+
+  public SkillInputOutputTests()
+  {
+    _sut = new Function();
+  }
+
   [Theory]
   [InlineData("StartSkill")]
   [InlineData("SetFirstName")]
@@ -27,7 +34,7 @@ public class SkillInputOutputTests
   {
     var skillRequest = ReadRequestFile(fileName);
 
-    var response = await Function.FunctionHandler(skillRequest, new TestLambdaContext());
+    var response = await _sut.FunctionHandler(skillRequest, new TestLambdaContext());
 
     var responseObject = ReadResponseFile(fileName);
 

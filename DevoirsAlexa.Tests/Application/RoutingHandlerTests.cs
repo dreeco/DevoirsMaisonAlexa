@@ -1,5 +1,6 @@
 ﻿using DevoirsAlexa.Application.Enums;
 using DevoirsAlexa.Application.Handlers;
+using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
 using Xunit;
@@ -39,7 +40,8 @@ namespace DevoirsAlexa.Tests.Application
       if (startedXSecondsAgo != null)
         session.ExerciceStartTime = DateTime.UtcNow.Add(-TimeSpan.FromSeconds(startedXSecondsAgo.Value));
 
-      RequestsHandler.ExecuteRequest(prompt, reprompt, requestType, session);
+      var requestsHandler = new RequestsHandler(new DevoirsAlexa.Domain.HomeworkExercisesRunner.ExerciceRunner(Extensions.GetRunner, session), session);
+      requestsHandler.ExecuteRequest(prompt, reprompt, requestType);
       
       Assert.Contains(promptMatch, prompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
 
