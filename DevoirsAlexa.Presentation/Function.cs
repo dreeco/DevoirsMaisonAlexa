@@ -46,7 +46,7 @@ public class Function
   internal const string HelpIntent = "AMAZON.HelpIntent";
 
 
-  private readonly IServiceProvider _serviceProvider;
+  internal readonly IServiceProvider _serviceProvider;
 
   private HomeworkSession CurrentSession { get; }
 

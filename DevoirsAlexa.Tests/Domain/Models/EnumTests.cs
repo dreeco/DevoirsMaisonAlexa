@@ -50,10 +50,4 @@ public class EnumTests
   {
     Assert.Equal(expectedEnum, EnumHelper.GetEnumFromTextRepresentations<TestEnum2>(s));
   }
-
-  //  [Fact]
-  //  public void ShouldReturnExpectedEnum_WhenGettingEnumByString_GivenMixOfTextRepresentation2()
-  //  {
-  //    Assert.Equal(expectedEnum, EnumHelper.GetEnumFromTextRepresentations<TestStruct>(""));
-  //  }
 }

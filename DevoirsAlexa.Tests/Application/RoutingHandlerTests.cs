@@ -1,21 +1,21 @@
 ﻿using DevoirsAlexa.Application.Enums;
 using DevoirsAlexa.Application.Handlers;
-using DevoirsAlexa.Domain.Enums;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
 using Xunit;
 
 namespace DevoirsAlexa.Tests.Application
 {
-    public class RoutingHandlerTests
+  public class RoutingHandlerTests
   {
     [Theory]
     [InlineData(RequestType.Stop, "", @"Au revoir !", null)]
     [InlineData(RequestType.Stop, "FirstName=Adrien", @"Au revoir !", null)]
     [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1", @"Au revoir !", null)]
     [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Multiplications", @"Au revoir !", null)]
-    [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercices=2", @"Au revoir !", null)]
-    [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercices=2,LastAnswer=2,QuestionAsked=1,AlreadyAsked=2*1", @"Au revoir !", null)]
+    [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2", @"Au revoir !", null)]
+    [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2,QuestionAsked=2,AlreadyAsked=2*1;2*2,CorrectAnswers=1", @"Tu as 1 bonne réponse sur 1 question. Au revoir !", null)]
+    [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Multiplications,NbExercice=2,QuestionAsked=1,AlreadyAsked=2*1", @"Au revoir !", null)]
 
     [InlineData(RequestType.Normal, "", "Quel est ton prénom ?", "Je n'ai pas compris ton prénom, peux tu répéter ?")]
     [InlineData(RequestType.Normal, "FirstName=Adrien", @", en quelle classe es tu ?", "Je n'ai pas compris ta classe, peux tu répéter ?")]
@@ -51,5 +51,27 @@ namespace DevoirsAlexa.Tests.Application
         Assert.Contains(repromptMatch, reprompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(RequestType.Stop, "FirstName=Adrien,Level=CE1,Exercice=Unknown,NbExercice=2,QuestionAsked=2,AlreadyAsked=2*1;2*2,CorrectAnswers=1", @"Au revoir !", null)]
+    [InlineData(RequestType.Normal, "FirstName=Adrien,Level=CE1,Exercice=Unknown,NbExercice=2,LastAnswer=2,AlreadyAsked=2*2;2*1,CorrectAnswers=1,QuestionAsked=2", @"Très bien ! Quel exercice souhaites-tu faire", "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.", 30)]
+    [InlineData(RequestType.Help, "FirstName=Adrien,Level=CE1,Exercice=Unknown,NbExercice=2", @"Je souhaite savoir quel exercice tu souhaites faire.", " n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.")]
+    public void ShouldAnswerGracefully_WhenExecutingIntent_GivenExerciceFailure(RequestType requestType, string sessionString, string promptMatch, string? repromptMatch, int? startedXSecondsAgo = null)
+    {
+      var prompt = new SentenceBuilder();
+      var reprompt = new SentenceBuilder();
+      var session = new HomeworkSession(sessionString);
+      if (startedXSecondsAgo != null)
+        session.ExerciceStartTime = DateTime.UtcNow.Add(-TimeSpan.FromSeconds(startedXSecondsAgo.Value));
+
+      var requestsHandler = new RequestsHandler(new DevoirsAlexa.Domain.HomeworkExercisesRunner.ExerciceRunner(Extensions.GetRunner, session), session);
+      requestsHandler.ExecuteRequest(prompt, reprompt, requestType);
+
+      Assert.Contains(promptMatch, prompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
+
+      if (repromptMatch == null)
+        Assert.True(reprompt.IsEmpty());
+      else
+        Assert.Contains(repromptMatch, reprompt.GetPromptAsText(), StringComparison.InvariantCultureIgnoreCase);
+    }
   }
 }

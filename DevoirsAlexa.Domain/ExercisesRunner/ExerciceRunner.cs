@@ -14,12 +14,11 @@ public class ExerciceRunner
   private IHomeworkSession SessionData { get; }
 
   private IExerciceQuestionsRunner? _exercice;
-  private IExerciceQuestionsRunner Exercice { get {
-      if (SessionData.Exercice == null)
-        throw new ArgumentException("The current session does not allow exercice", nameof(SessionData.Exercice));
 
-      return (_exercice ?? (_exercice = ExerciceFactory(SessionData.Exercice.Value))); } 
-  }
+#pragma warning disable CS8629 // Nullable value type may be null.
+  private IExerciceQuestionsRunner Exercice => (_exercice ??= ExerciceFactory(SessionData.Exercice.Value));
+#pragma warning restore CS8629 // Nullable value type may be null.
+
 
   /// <summary>
   /// Instantiate the exercice session runner
@@ -61,6 +60,8 @@ public class ExerciceRunner
     if (isStopping || SessionData.QuestionAsked >= SessionData.NbExercice)
     {
       var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
+      if (isStopping)
+        SessionData.QuestionAsked--;
       answerResult.Exercice = new ExerciceResult(timeInSeconds, SessionData.CorrectAnswers, SessionData.QuestionAsked);
 
       EndSession(isStopping);

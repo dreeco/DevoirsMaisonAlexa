@@ -89,6 +89,7 @@ namespace DevoirsAlexa.Tests.Domain
     [InlineData("FirstName=Alix,Level=CE2,NbExercices=5")]
     [InlineData("FirstName=Alix,Level=WTF,Exercice=Additions,NbExercices=5")]
     [InlineData("FirstName=Alix,Level=CE2,Exercice=Unknown,NbExercices=5")]
+    [InlineData("FirstName=Alix,Level=CE2,Exercice=Toto,NbExercices=5")]
     public void ShouldReturnCouldNotStart_GivenIncompleteSessionData(string sessionData)
     {
       _currentSession = new HomeworkSession(sessionData);
