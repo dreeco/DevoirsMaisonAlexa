@@ -38,6 +38,14 @@ public enum HomeworkExercisesTypes
   /// Comparing and sorting numbers
   /// <para>Should trigger the instantiationn of a <see cref="Exercises.MathExercices.SortExercises"/></para>
   /// </summary>
-  [TextRepresentations("tri", "tri nombres", "plus grand plus petit", "plus petit plus grand")]
-  SortNumbers
+  [TextRepresentations("tri nombres", "tri de nombres", "plus grand plus petit", "plus petit plus grand")]
+  SortNumbers,
+
+
+  /// <summary>
+  /// Comparing and sorting words
+  /// <para>Should trigger the instantiationn of a <see cref="Exercises.LanguageExercices.LexicalSortExercises"/></para>
+  /// </summary>
+  [TextRepresentations("tri lexical", "dictionnaire", "ordre des mots")]
+  SortWords
 }

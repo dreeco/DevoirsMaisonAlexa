@@ -5,6 +5,7 @@ using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 
 using DevoirsAlexa.Infrastructure.Models;
+using DevoirsAlexa.Presentation;
 
 namespace DevoirsAlexa.Tests.Presentation;
 
@@ -12,6 +13,7 @@ public class BaseFunctionTest
 {
   protected TestLambdaContext _context;
   protected SkillRequest _request;
+  protected Function _sut;
 
   public BaseFunctionTest()
   {
@@ -19,6 +21,7 @@ public class BaseFunctionTest
     _request = new SkillRequest();
     _request.Session = new Session();
     _request.Session.Attributes = new HomeworkSession();
+    _sut = new Function();
   }
 
   protected static T ThenThereIsAnOutputSpeech<T>(SkillResponse response) where T : class, IOutputSpeech
@@ -50,9 +53,10 @@ public class BaseFunctionTest
     _request.Request = new LaunchRequest();
   }
 
-  protected void SetContextData(string context)
+  protected HomeworkSession SetContextData(string context)
   {
-    _request.Session.Attributes = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
+    var session = HomeworkSession.CreateSessionFromCommaSeparatedKeyValues(context);
+    _request.Session.Attributes = session;
+    return session;
   }
-
 }

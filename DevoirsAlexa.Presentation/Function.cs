@@ -4,16 +4,13 @@ using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using Amazon.Lambda.Core;
-using Amazon.Lambda.RuntimeSupport;
-using Amazon.Lambda.Serialization.SystemTextJson;
 using DevoirsAlexa.Application.Enums;
 using DevoirsAlexa.Application.Handlers;
-using DevoirsAlexa.Domain.Models;
 using DevoirsAlexa.Infrastructure;
 using DevoirsAlexa.Infrastructure.Models;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using static System.Net.WebRequestMethods;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -31,18 +28,49 @@ public class Function
   /// </summary>
   /// <exclude/>
 
-  [ExcludeFromCodeCoverage]
-  private static async Task Main()
-  {
-    var handler = FunctionHandler;
-    await LambdaBootstrapBuilder.Create(handler, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
-        .Build()
-        .RunAsync();
-  }
+  //private static Function? function;
+
+  //[ExcludeFromCodeCoverage]
+  //private static async Task Main()
+  //{
+  //  //function ??= new Function();
+  //  //await LambdaBootstrapBuilder.Create<SkillRequest>(async (skillRequest, lambdaContext) => { await function.FunctionHandler(skillRequest, lambdaContext); }, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+  //  //    .Build()
+  //  //    .RunAsync();
+
+  //  await LambdaBootstrapBuilder.Create(async (SkillRequest request, ILambdaContext context) =>
+  //  {
+  //    var f = new Function();
+  //    await f.FunctionHandler(request, context);
+  //  }, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+  //      .Build()
+  //      .RunAsync();
+  //}
 
 
   internal const string StopIntent = "AMAZON.StopIntent";
   internal const string HelpIntent = "AMAZON.HelpIntent";
+
+
+  internal readonly IServiceProvider _serviceProvider;
+
+  private HomeworkSession CurrentSession { get; }
+
+  private readonly RequestsHandler RequestsHandler;
+
+
+  /// <summary>
+  /// Constructor called by the lambda, inject dependencies
+  /// </summary>
+  public Function() : this(new Startup().ConfigureServices()) { }
+
+  internal Function(IServiceProvider serviceProvider)
+  {
+    _serviceProvider = serviceProvider;
+
+    CurrentSession = serviceProvider.GetRequiredService<HomeworkSession>();
+    RequestsHandler = serviceProvider.GetRequiredService<RequestsHandler>();
+  }
 
   /// <summary>
   /// Handler called by the Alexa endpoints
@@ -54,7 +82,7 @@ public class Function
   /// <param name="input">The <see href="https://github.com/timheuer/alexa-skills-dotnet?tab=readme-ov-file#request-types">SkillRequest</see> object</param>
   /// <param name="context">The AWS lambda context</param>
   /// <returns>The <see href="https://github.com/timheuer/alexa-skills-dotnet?tab=readme-ov-file#responses">Skill response</see></returns>
-  public static async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
+  public async Task<SkillResponse> FunctionHandler(SkillRequest? input, ILambdaContext? context)
   {
     if (input?.Session == null || context?.Logger == null)
       return ResponseBuilder.Tell("Une erreur inattendue est survenue, merci de relancer la skill.");
@@ -63,16 +91,17 @@ public class Function
 
     await Task.Delay(0);
 
-    var homeworkSession = GetHomeworkSession(input);
+    FillHomeworkSession(input);
+
     context.Logger.LogInformation($"Updated session: {System.Text.Json.JsonSerializer.Serialize(input.Session)}");
 
-    homeworkSession.TryGetValue(nameof(homeworkSession.ExerciceStartTime), out var e);
-    context.Logger.LogInformation($"Exercice start time: {homeworkSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - homeworkSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
+    CurrentSession.TryGetValue(nameof(CurrentSession.ExerciceStartTime), out var e);
+    context.Logger.LogInformation($"Exercice start time: {CurrentSession.ExerciceStartTime}, {e}, started {(DateTime.UtcNow - CurrentSession.ExerciceStartTime)?.TotalSeconds} seconds ago");
 
     if (input.Request is SessionEndedRequest sessionEnded)
     {
       //Prevent false positive answers if user does not respond and previous answer is valid
-      homeworkSession.LastAnswer = "_";
+      CurrentSession.LastAnswer = "_";
     }
 
     var intentRequest = input.Request as IntentRequest;
@@ -84,10 +113,10 @@ public class Function
       _ => RequestType.Normal // LaunchRequest or any custom Intent request
     };
 
-    var response = BuildAnswer(homeworkSession, state);
+    var response = BuildAnswer(state);
 
-    response.SessionAttributes = homeworkSession.ToDictionary();
-    SetNextIntentExpected(homeworkSession, response, context.Logger);
+    response.SessionAttributes = CurrentSession.ToDictionary();
+    SetNextIntentExpected(response, context.Logger);
     return response;
   }
 
@@ -106,9 +135,9 @@ public class Function
     context.Logger.LogInformation($"Skill received the following Intent: {requestSerialized}");
   }
 
-  private static void SetNextIntentExpected(IHomeworkSession session, SkillResponse r, ILambdaLogger logger)
+  private void SetNextIntentExpected(SkillResponse r, ILambdaLogger logger)
   {
-    var data = NextRequestRouting.GetNextExpectedIntent(session);
+    var data = NextRequestRouting.GetNextExpectedIntent(CurrentSession);
 
     r.Response.Directives.Add(new DialogElicitSlot(data.Slots[0])
     {
@@ -122,12 +151,12 @@ public class Function
     logger.LogInformation($"Expected Next intent is : {data.Name}");
   }
 
-  private static SkillResponse BuildAnswer(IHomeworkSession session, RequestType state)
+  private SkillResponse BuildAnswer(RequestType state)
   {
     var prompt = new SentenceBuilder();
     var reprompt = new SentenceBuilder();
 
-    RequestsHandler.ExecuteRequest(prompt, reprompt, state, session);
+    RequestsHandler.ExecuteRequest(prompt, reprompt, state);
 
     if (reprompt.IsEmpty())
       return ResponseBuilder.Tell(prompt.GetSpeech());
@@ -135,10 +164,13 @@ public class Function
       return ResponseBuilder.Ask(prompt.GetSpeech(), new Reprompt() { OutputSpeech = reprompt.GetSpeech() });
   }
 
-  private static HomeworkSession GetHomeworkSession(SkillRequest input)
+  private void FillHomeworkSession(SkillRequest input)
   {
     if (input.Request is not IntentRequest intentRequest)
-      return new HomeworkSession(input.Session.Attributes);
+    {
+      CurrentSession.FillFromSessionAttributes(input.Session.Attributes);
+      return;
+    }
 
     var intent = NextRequestRouting.GetIntent(intentRequest.Intent.Name);
     foreach (var slotName in intent?.Slots ?? [])
@@ -150,7 +182,7 @@ public class Function
         input.Session.Attributes[slotName] = value;
     }
 
-    return new HomeworkSession(input.Session.Attributes);
+    CurrentSession.FillFromSessionAttributes(input.Session.Attributes);
   }
 }
 

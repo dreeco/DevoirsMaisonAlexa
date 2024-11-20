@@ -10,20 +10,29 @@ namespace DevoirsAlexa.Domain.HomeworkExercisesRunner;
 /// </summary>
 public class ExerciceRunner
 {
+  private Func<HomeworkExercisesTypes, IExerciceQuestionsRunner> ExerciceFactory { get; }
   private IHomeworkSession SessionData { get; }
-  private ExerciceDispatcher _dispatcher { get; }
+
+  private IExerciceQuestionsRunner? _exercice;
+
+#pragma warning disable CS8629 // Nullable value type may be null.
+  private IExerciceQuestionsRunner Exercice => (_exercice ??= ExerciceFactory(SessionData.Exercice.Value));
+#pragma warning restore CS8629 // Nullable value type may be null.
+
 
   /// <summary>
-  /// Setup from the current session state
+  /// Instantiate the exercice session runner
   /// </summary>
-  /// <param name="sessionData">This will provide the current state of the session with the user</param>
-  public ExerciceRunner(IHomeworkSession sessionData)
+  /// <param name="exerciceFactory">Factory to get an exercice from its type</param>
+  /// <param name="sessionData">The current session state</param>
+  public ExerciceRunner(Func<HomeworkExercisesTypes, IExerciceQuestionsRunner> exerciceFactory, IHomeworkSession sessionData)
   {
+    ExerciceFactory = exerciceFactory;
     SessionData = sessionData;
-    _dispatcher = new ExerciceDispatcher();
   }
 
   /// <summary>
+  /// Should be called when a user answer a question or asks to stop the current exercice session.
   /// Validate the <see cref="IHomeworkSession.Answer"/> or <see cref="IHomeworkSession.LastAnswer"/> against the <see cref="IExerciceQuestionsRunner.ValidateAnswer(string, string)"/>
   /// Returns a new <see cref="Question"/> after the <see cref="IExerciceQuestionsRunner.NextQuestion(Levels, IEnumerable{string})"/> if needed
   /// </summary>
@@ -35,35 +44,33 @@ public class ExerciceRunner
   /// </returns>
   public AnswerResult ValidateAnswerAndGetNext(bool isStopping)
   {
-    IExerciceQuestionsRunner exercice;
     var answerResult = new AnswerResult();
 
-    IExerciceQuestionsRunner? e;
     if (SessionData.Level == null ||
       SessionData.Exercice == null ||
-      SessionData.NbExercice == null ||
-      (e = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null)
+      SessionData.NbExercice == null)
     {
       answerResult.CouldNotStart = true;
       return answerResult;
     }
 
-    exercice = e;
-
     if (!isStopping && !string.IsNullOrEmpty(SessionData.AlreadyAsked.LastOrDefault()))
-      answerResult.Validation = ValidateAnswer(exercice);
+      answerResult.Validation = ValidateAnswer();
 
     if (isStopping || SessionData.QuestionAsked >= SessionData.NbExercice)
     {
       var timeInSeconds = DateTime.UtcNow - SessionData.ExerciceStartTime ?? TimeSpan.Zero;
+      if (isStopping)
+        SessionData.QuestionAsked--;
       answerResult.Exercice = new ExerciceResult(timeInSeconds, SessionData.CorrectAnswers, SessionData.QuestionAsked);
 
       EndSession(isStopping);
       return answerResult;
     }
 
-    answerResult.Question = exercice.NextQuestion(SessionData.Level.Value, SessionData.AlreadyAsked);
-    AddNewQuestionToSession(answerResult.Question);
+    answerResult.Question = Exercice.NextQuestion(SessionData.Level.Value, SessionData.AlreadyAsked);
+    if (answerResult.Question != null) 
+      AddNewQuestionToSession(answerResult.Question);
 
     return answerResult;
   }
@@ -74,13 +81,11 @@ public class ExerciceRunner
   /// <returns>A <cref>AnswerResult</cref> object with a <cref>HelpResult</cref> containing a sentence that should help the user without giving the answer.</returns>
   public AnswerResult Help()
   {
-    IExerciceQuestionsRunner? e;
-
     var key = SessionData.AlreadyAsked.LastOrDefault();
-    if (SessionData.Exercice == null || (e = GetExerciceQuestionsRunner(SessionData.Exercice.Value)) == null || key == null)
+    if (SessionData.Exercice == null || key == null)
       return new AnswerResult { CouldNotStart = true };
 
-    return new AnswerResult { Help = e.Help(key) };
+    return new AnswerResult { Help = Exercice.Help(key) };
   }
 
 
@@ -96,12 +101,6 @@ public class ExerciceRunner
 
     if (isStopping)
       SessionData.Clear();
-
-  }
-
-  private IExerciceQuestionsRunner? GetExerciceQuestionsRunner(HomeworkExercisesTypes exercice)
-  {
-    return _dispatcher.GetExerciceQuestionsRunner(exercice);
   }
 
   private void AddNewQuestionToSession(Question question)
@@ -115,7 +114,7 @@ public class ExerciceRunner
     SessionData.QuestionAsked++;
   }
 
-  private AnswerValidation ValidateAnswer(IExerciceQuestionsRunner exercice)
+  private AnswerValidation ValidateAnswer()
   {
     var lastAsked = SessionData.AlreadyAsked.Last();
 
@@ -123,7 +122,7 @@ public class ExerciceRunner
     if (string.IsNullOrEmpty(answer))
       answer = SessionData.Answer.ToString() ?? string.Empty;
 
-    var answerValidation = exercice.ValidateAnswer(lastAsked, answer);
+    var answerValidation = Exercice.ValidateAnswer(lastAsked, answer);
 
     if (answerValidation.IsValid)
       SessionData.CorrectAnswers++;
@@ -131,8 +130,8 @@ public class ExerciceRunner
     return answerValidation;
   }
 
-  internal string? GetCorrectAnswer(HomeworkExercisesTypes exercice, string questionKey)
+  internal string? GetCorrectAnswer(string questionKey)
   {
-    return GetExerciceQuestionsRunner(exercice)?.ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
+    return Exercice.ValidateAnswer(questionKey, string.Empty).CorrectAnswer;
   }
 }

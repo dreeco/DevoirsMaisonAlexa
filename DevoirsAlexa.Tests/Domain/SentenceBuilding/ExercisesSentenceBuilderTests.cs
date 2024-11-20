@@ -26,7 +26,7 @@ public class ExercisesSentenceBuilderTests
 
     exercice.GetEndOfExerciceCompletionSentence(prompt);
 
-    Assert.Contains(expectedText, prompt.GetPromptAsText());
+    Assert.Contains(expectedText, prompt.GetAsText());
   }
 
   [Theory]
@@ -39,6 +39,6 @@ public class ExercisesSentenceBuilderTests
     var exercice = new ExerciceResult(TimeSpan.FromSeconds(30), correctAnswers, totalAnswers);
     exercice.GetEndOfExerciceCompletionSentence(prompt);
 
-    Assert.Contains(expectedText, prompt.GetPromptAsText());
+    Assert.Contains(expectedText, prompt.GetAsText());
   }
 }

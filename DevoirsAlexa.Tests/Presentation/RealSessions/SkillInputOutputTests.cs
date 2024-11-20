@@ -10,6 +10,13 @@ namespace DevoirsAlexa.Tests.Presentation;
 
 public class SkillInputOutputTests
 {
+  private Function _sut;
+
+  public SkillInputOutputTests()
+  {
+    _sut = new Function();
+  }
+
   [Theory]
   [InlineData("StartSkill")]
   [InlineData("SetFirstName")]
@@ -23,11 +30,12 @@ public class SkillInputOutputTests
   [InlineData("HelpExercice")]
   [InlineData("HelpNbExercice")]
   [InlineData("HelpStartExerciceAddition", true)]
+  [InlineData("StopExercice", true)]
   public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName, bool hasUnpredictableElements = false)
   {
     var skillRequest = ReadRequestFile(fileName);
 
-    var response = await Function.FunctionHandler(skillRequest, new TestLambdaContext());
+    var response = await _sut.FunctionHandler(skillRequest, new TestLambdaContext());
 
     var responseObject = ReadResponseFile(fileName);
 

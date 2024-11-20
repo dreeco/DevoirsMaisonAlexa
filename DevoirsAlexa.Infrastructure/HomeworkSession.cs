@@ -17,19 +17,30 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
   /// <summary>
   /// Instantiate an homework session from the Alexa session dictionary
   /// </summary>
-  /// <param name="session"></param>
-  public HomeworkSession(Dictionary<string, object>? session) : base(session ?? new Dictionary<string, object>()) { }
-  
+  /// <param name="source">The Alexa session dictionary</param>
+  public void FillFromSessionAttributes(Dictionary<string, object>? source)
+  {
+    if (source != null)
+    {
+      foreach (var kvp in source)
+      {
+        // Add or update the current instance with each key-value pair from the source
+        this[kvp.Key] = kvp.Value;
+      }
+    }
+  }
+
   /// <summary>
   /// Parse a string to instantiate an HomeworkSession
   /// </summary>
   /// <param name="session"></param>
-  public HomeworkSession(string? session) : base(CreateSessionFromCommaSeparatedKeyValues(session)) { }
+  internal HomeworkSession(string? session) : base(CreateSessionFromCommaSeparatedKeyValues(session)) { }
 
   /// <inheritdoc/>
-  public string? FirstName { 
-    get { return TryGetString(nameof(FirstName)); } 
-    set { this[nameof(FirstName)] = value ?? string.Empty; } 
+  public string? FirstName
+  {
+    get { return TryGetString(nameof(FirstName)); }
+    set { this[nameof(FirstName)] = value ?? string.Empty; }
   }
 
   /// <inheritdoc/>
@@ -42,7 +53,7 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
   /// <inheritdoc/>
   public int? NbExercice
   {
-    get { return  int.TryParse(TryGetString(nameof(NbExercice)), out var n) ? n : null; }
+    get { return int.TryParse(TryGetString(nameof(NbExercice)), out var n) ? n : null; }
     set { this[nameof(NbExercice)] = value?.ToString() ?? string.Empty; }
   }
 
@@ -99,7 +110,8 @@ public class HomeworkSession : Dictionary<string, object>, IHomeworkSession
   /// <inheritdoc/>
   public DateTime? ExerciceStartTime
   {
-    get {
+    get
+    {
       var s = TryGetString(nameof(ExerciceStartTime));
       return long.TryParse(s, out var d) ? DateTime.FromFileTimeUtc(d) : null;
     }

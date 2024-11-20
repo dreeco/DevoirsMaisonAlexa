@@ -1,9 +1,7 @@
-﻿using DevoirsAlexa.Domain.Models;
-using DevoirsAlexa.Domain;
+﻿using DevoirsAlexa.Domain;
 using DevoirsAlexa.Application.Enums;
 
 namespace DevoirsAlexa.Application.Models;
-
 
 /// <summary>
 /// Defines handler prompt and reprompt concerning RequestType
@@ -11,39 +9,43 @@ namespace DevoirsAlexa.Application.Models;
 internal class StepPromptsData
 {
   /// <summary>
-  /// Called when a RequestType.Normal is made
+  /// Called when a <see cref="RequestType.Normal"/> is made
   /// </summary>
-  public Action<ISentenceBuilder, ISentenceBuilder, IHomeworkSession> Ask { get; }
+  public AskDelegate Ask { get; }
+
+  public delegate void AskDelegate(ISentenceBuilder prompt, ISentenceBuilder reprompt);
 
   /// <summary>
-  /// Called when a RequestType.Help is made
+  /// Called when a <see cref="RequestType.Help"/> is made
   /// </summary>
-  public Action<ISentenceBuilder, ISentenceBuilder, IHomeworkSession> Help { get; }
+  public HelpDelegate Help { get; }
+  public delegate void HelpDelegate(ISentenceBuilder prompt, ISentenceBuilder reprompt);
 
   /// <summary>
-  /// Called when a RequestType.Stop is made
+  /// Called when a <see cref="RequestType.Stop"/> is made
   /// </summary>
-  public Action<ISentenceBuilder, IHomeworkSession> Stop { get; }
+  public QuitDelegate Stop { get; }
+  public delegate void QuitDelegate(ISentenceBuilder prompt);
 
-  public StepPromptsData(Action<ISentenceBuilder, ISentenceBuilder, IHomeworkSession> ask, Action<ISentenceBuilder, ISentenceBuilder, IHomeworkSession> help, Action<ISentenceBuilder, IHomeworkSession> stop)
+  public StepPromptsData(AskDelegate ask, HelpDelegate help, QuitDelegate stop)
   {
     Ask = ask;
     Help = help;
     Stop = stop;
   }
 
-  public void Call(RequestType state, ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  public void Call(RequestType state, ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
     switch (state)
     {
       case RequestType.Normal:
-        Ask(prompt, reprompt, session);
+        Ask(prompt, reprompt);
         break;
       case RequestType.Help:
-        Help(prompt, reprompt, session);
+        Help(prompt, reprompt);
         break;
       case RequestType.Stop:
-        Stop(prompt, session);
+        Stop(prompt);
         break;
     }
   }

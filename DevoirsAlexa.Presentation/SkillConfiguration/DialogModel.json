@@ -148,20 +148,14 @@
           "values": [
             {
               "name": {
-                "value": "Dictée",
+                "value": "SortWords",
                 "synonyms": [
-                  "mots de la dictée"
-                ]
-              }
-            },
-            {
-              "name": {
-                "value": "Divisions",
-                "synonyms": [
-                  "division",
-                  "divisions",
-                  "diviser",
-                  "table de divisions"
+                  "ordre mots",
+                  "ordre des mots",
+                  "tri lexical",
+                  "tri de mot",
+                  "tri de mots",
+                  "dictionnaire"
                 ]
               }
             },

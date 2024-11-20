@@ -14,7 +14,7 @@ public interface IExerciceQuestionsRunner
   /// <param name="level">Get a question matching a class level expectations.</param>
   /// <param name="alreadyAsked">List of question keys already asked to avoid re asking the same question.</param>
   /// <returns>A question (key and text) to ask to the user.</returns>
-  Question NextQuestion(Levels level, IEnumerable<string> alreadyAsked);
+  Question? NextQuestion(Levels level, IEnumerable<string> alreadyAsked);
 
   /// <summary>
   /// Validate if the answer is correct or not

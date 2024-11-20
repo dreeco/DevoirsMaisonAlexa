@@ -116,7 +116,7 @@ internal static class ExerciceAnswerHelpers
     var assessmentsForLevel = LevelAssessment[(int)level];
     var assessment = assessmentsForLevel[Random.Shared.Next(0, assessmentsForLevel.Length)];
 
-    sentenceBuilder.AppendSimpleText($"{assessment}");
+    sentenceBuilder.AppendSimpleText(assessment + " ");
 
     sentenceBuilder.AppendSimpleText($"Tu as {result.CorrectAnswers} ");
     sentenceBuilder.AppendPossiblePlural("bonne", result.CorrectAnswers);

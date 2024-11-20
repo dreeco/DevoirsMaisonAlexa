@@ -12,50 +12,68 @@ namespace DevoirsAlexa.Application.Handlers;
 /// Handle a request.
 /// <param>Match the current state to the next epected intent</param>
 /// </summary>
-public static class RequestsHandler
+public class RequestsHandler
 {
+  internal const string Exercises = "Voici les exercices disponibles : additions, multiplications, soustractions, tri de nombres, tri lexical.";
+  internal const string ExerciceReprompt = "Je n'ai pas compris le titre de cet exercice. " + Exercises;
+
   /// <summary>
   /// Binds handlers to combinaison of HomeworkStep and RequestType
   /// </summary>
-  private static readonly IDictionary<HomeworkStep, StepPromptsData> PromptsForSteps = new Dictionary<HomeworkStep, StepPromptsData>() {
-    { HomeworkStep.GetFirstName, new StepPromptsData(AskForFirstName, HelpForFirstName, QuitSkill) },
-    { HomeworkStep.GetLevel, new StepPromptsData(AskForClassLevel, HelpForClassLevel, QuitSkill) },
-    { HomeworkStep.GetExercice, new StepPromptsData(AskForExerciceType, HelpForExerciceType, QuitSkill) },
-    { HomeworkStep.GetNbExercice, new StepPromptsData(AskForNumberOfQuestions, HelpForNumberOfQuestions, QuitSkill) },
-    { HomeworkStep.StartExercice, new StepPromptsData(NextQuestion, HelpQuestion, StopQuestion) },
-  };
+  private readonly IDictionary<HomeworkStep, StepPromptsData> PromptsForSteps;
 
+  private ExerciceRunner Runner { get; }
+  private IHomeworkSession Session { get; }
+
+  /// <summary>
+  /// Instantiate a new request Handler.
+  /// This handler route the intent to a prompt and eventually a reprompt
+  /// </summary>
+  /// <param name="runner">Dependency injected runner of the current exercice if any</param>
+  /// <param name="session">Dependency injected current session state</param>
+  public RequestsHandler(ExerciceRunner runner, IHomeworkSession session)
+  {
+    PromptsForSteps = new Dictionary<HomeworkStep, StepPromptsData>() {
+      { HomeworkStep.GetFirstName, new StepPromptsData(AskForFirstName, HelpForFirstName, QuitSkill) },
+      { HomeworkStep.GetLevel, new StepPromptsData(AskForClassLevel, HelpForClassLevel, QuitSkill) },
+      { HomeworkStep.GetExercice, new StepPromptsData(AskForExerciceType, HelpForExerciceType, QuitSkill) },
+      { HomeworkStep.GetNbExercice, new StepPromptsData(AskForNumberOfQuestions, HelpForNumberOfQuestions, QuitSkill) },
+      { HomeworkStep.StartExercice, new StepPromptsData(NextQuestion, HelpQuestion, StopQuestion) },
+    };
+
+    Runner = runner;
+    Session = session;
+  }
 
   /// <summary>
   /// Execute the request by getting the next sentence after the current state and user session data
-  /// <para>Example: if the user has no sessoin data, we will start by asking its first name</para>
+  /// <para>Example: if the user has no session data, we will start by asking its first name</para>
   /// </summary>
   /// <param name="prompt">A reference to the prompt that will be given to the user</param>
   /// <param name="reprompt">A reference to the reprompt, that will be given to the user if no answer is given</param>
   /// <param name="state">The current request state</param>
-  /// <param name="session">The user session data</param>
-  public static void ExecuteRequest(ISentenceBuilder prompt, ISentenceBuilder reprompt, RequestType state, IHomeworkSession session)
+  public void ExecuteRequest(ISentenceBuilder prompt, ISentenceBuilder reprompt, RequestType state)
   {
-    session.LastQuestionType = null;
-    var nextStep = NextRequestRouting.GetNextStep(session);
+    Session.LastQuestionType = null;
+    var nextStep = NextRequestRouting.GetNextStep(Session);
     var promptsForStep = PromptsForSteps[nextStep];
-    promptsForStep.Call(state, prompt, reprompt, session);
+    promptsForStep.Call(state, prompt, reprompt);
   }
 
-  private static void QuitSkill(ISentenceBuilder prompt, IHomeworkSession session)
+  private void QuitSkill(ISentenceBuilder prompt)
   {
-    session.Clear();
+    Session.Clear();
     prompt.AppendInterjection("Au revoir !");
   }
 
   #region firstname
-  private static void AskForFirstName(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void AskForFirstName(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
     prompt.AppendSimpleText("Quel est ton prénom ?");
     reprompt.AppendSimpleText("Je n'ai pas compris ton prénom, peux tu répéter ?");
   }
 
-  private static void HelpForFirstName(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void HelpForFirstName(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
     prompt.AppendSimpleText("Comment t'appelles tu ?");
     reprompt.AppendSimpleText("Je n'ai pas compris ton prénom, peux tu répéter ?");
@@ -64,13 +82,13 @@ public static class RequestsHandler
   #endregion
 
   #region nb questions
-  private static void AskForNumberOfQuestions(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void AskForNumberOfQuestions(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
     prompt.AppendSimpleText("OK ! Et sur combien de questions souhaites-tu t'entraîner ?");
     reprompt.AppendSimpleText("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?");
   }
 
-  private static void HelpForNumberOfQuestions(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void HelpForNumberOfQuestions(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
     prompt.AppendSimpleText("Je souhaite savoir combien de questions te poser sur cette session d'exercice.");
     reprompt.AppendSimpleText("Je n'ai pas compris combien de questions tu souhaites, peux tu répéter ?");
@@ -80,16 +98,16 @@ public static class RequestsHandler
 
   #region exercice
 
-  private static void AskForExerciceType(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void AskForExerciceType(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?");
-    reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
+    prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? " + Exercises);
+    reprompt.AppendSimpleText(ExerciceReprompt);
   }
 
-  private static void HelpForExerciceType(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void HelpForExerciceType(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    prompt.AppendSimpleText("Je souhaite savoir quel exercice tu souhaites faire. Dis moi : \"Additions\" si tu veux des calculs d'additions, je comprends également \"Multiplications\" et \"Soustractions\"");
-    reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
+    prompt.AppendSimpleText("Je souhaite savoir quel exercice tu souhaites faire. Si tu veux réviser tes tables tu peux me demander \"Additions\" , \"Multiplications\" ou \"Soustractions\". Je peux aussi te proposer un jeu de comparaison de nombres ou de mots, pour cela dit \"tri de nombres\" ou \"tri lexical\".");
+    reprompt.AppendSimpleText(ExerciceReprompt);
   }
 
 
@@ -97,13 +115,13 @@ public static class RequestsHandler
 
   #region level
 
-  private static void AskForClassLevel(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void AskForClassLevel(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    prompt.AppendSimpleText($"Bonjour {session.FirstName}, en quelle classe es tu ?");
+    prompt.AppendSimpleText($"Bonjour {Session.FirstName}, en quelle classe es tu ?");
     reprompt.AppendSimpleText("Je n'ai pas compris ta classe, peux tu répéter ?");
   }
 
-  private static void HelpForClassLevel(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void HelpForClassLevel(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
     prompt.AppendSimpleText("En quel niveau es-tu à l'école ? Je comprends les classes suivantes : ");
     var first = true;
@@ -119,23 +137,25 @@ public static class RequestsHandler
     reprompt.AppendSimpleText("Je n'ai pas compris ta classe, peux tu répéter ?");
   }
 
-
   #endregion
 
   #region start exercice
-  private static void NextQuestion(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void NextQuestion(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    var runner = new ExerciceRunner(session);
-    var result = runner.ValidateAnswerAndGetNext(false);
+    var result = Runner.ValidateAnswerAndGetNext(false);
     GetPromptForQuestionResult(prompt, result);
-    GetRepromptForQuestionResult(reprompt, result.Question?.Text ?? string.Empty);
-    session.LastQuestionType = result.Question?.Type;
+
+    if (result.Exercice?.TotalQuestions > 0)
+      reprompt.AppendSimpleText(ExerciceReprompt);
+    else
+      GetRepromptForQuestionResult(reprompt, result.Question?.Text ?? string.Empty);
+
+    Session.LastQuestionType = result.Question?.Type;
   }
 
-  private static void HelpQuestion(ISentenceBuilder prompt, ISentenceBuilder reprompt, IHomeworkSession session)
+  private void HelpQuestion(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    var runner = new ExerciceRunner(session);
-    var result = runner.Help();
+    var result = Runner.Help();
     if (result.Help != null)
     {
       prompt.AppendSimpleText(result.Help.Text);
@@ -146,13 +166,12 @@ public static class RequestsHandler
       prompt.AppendSimpleText("Impossible de t'aider pour cette question.");
 
     GetRepromptForQuestionResult(reprompt, result.Help?.QuestionText ?? string.Empty);
-    session.LastQuestionType = result.Help?.QuestionType;
+    Session.LastQuestionType = result.Help?.QuestionType;
   }
 
-  private static void StopQuestion(ISentenceBuilder prompt, IHomeworkSession session)
+  private void StopQuestion(ISentenceBuilder prompt)
   {
-    var runner = new ExerciceRunner(session);
-    var result = runner.ValidateAnswerAndGetNext(true);
+    var result = Runner.ValidateAnswerAndGetNext(true);
 
     if (result.Exercice?.TotalQuestions > 0)
       result.Exercice.GetEndOfExerciceCompletionSentence(prompt);
@@ -168,7 +187,6 @@ public static class RequestsHandler
     sentenceBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
     sentenceBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {questionText}");
 
-    sentenceBuilder.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
   }
   private static void GetPromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result)
   {
@@ -189,10 +207,12 @@ public static class RequestsHandler
     {
       result.Exercice.GetEndOfExerciceCompletionSentence(sentenceBuilder);
       sentenceBuilder.AppendSimpleText(" Quel exercice souhaites-tu faire désormais ?");
-    } //else should not happen => log ?
+    }
+    else
+    {
+      sentenceBuilder.AppendSimpleText("Je n'ai pas réussi à trouver une nouvelle question à te poser. Tu peux relancer La skill si tu souhaite rejouer. ");
+    }
   }
 
   #endregion
-
-
 }
