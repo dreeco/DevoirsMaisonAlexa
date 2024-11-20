@@ -2,8 +2,8 @@
 
 The list of future features to implement and technical modifications to add
 
-- [ ] Dependency Injection
-- [ ] Lexical Comparisons
+- [v] Dependency Injection
+- [v] Lexical Comparisons
 - [ ] Fun way of making additions / substractions / multiplications
 - [ ] Add exercises dynamically
 - [ ] Séparation text building from exercice to application ?
@@ -18,6 +18,3 @@ The list of future features to implement and technical modifications to add
   - [ ] Application Layer should transform exercice into view
   - [ ] Add some tests
   - [ ] Handle different screen sizes
-- [ ] Improve End-to-end tests ?
-  - [ ] Have a full workflow ?
-  - [ ] Implement SkillRequest building ?

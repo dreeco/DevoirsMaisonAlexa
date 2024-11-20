@@ -38,7 +38,7 @@ public enum HomeworkExercisesTypes
   /// Comparing and sorting numbers
   /// <para>Should trigger the instantiationn of a <see cref="Exercises.MathExercices.SortExercises"/></para>
   /// </summary>
-  [TextRepresentations("tri nombres", "plus grand plus petit", "plus petit plus grand")]
+  [TextRepresentations("tri nombres", "tri de nombres", "plus grand plus petit", "plus petit plus grand")]
   SortNumbers,
 
 
@@ -46,6 +46,6 @@ public enum HomeworkExercisesTypes
   /// Comparing and sorting words
   /// <para>Should trigger the instantiationn of a <see cref="Exercises.LanguageExercices.LexicalSortExercises"/></para>
   /// </summary>
-  [TextRepresentations("tri lexical", "avant après", "après avant")]
+  [TextRepresentations("tri lexical", "dictionnaire", "ordre des mots")]
   SortWords
 }

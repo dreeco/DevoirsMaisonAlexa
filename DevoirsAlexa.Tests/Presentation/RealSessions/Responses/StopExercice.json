@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "response": {
+    "outputSpeech": {
+      "type": "SSML",
+      "ssml": "<speak>Incroyable, tu es un champion ! Tu as 2 bonnes réponses sur 2 questions, en moins de 42 secondes. <say-as interpret-as='interjection'>Au revoir !</say-as></speak>"
+    },
+    "directives": [
+      {
+        "type": "Dialog.ElicitSlot",
+        "updatedIntent": {
+          "name": "SetFirstName",
+          "slots": {
+            "FirstName": {
+              "name": "FirstName"
+            }
+          }
+        },
+        "slotToElicit": "FirstName"
+      }
+    ],
+    "shouldEndSession": true,
+    "type": "_DEFAULT_RESPONSE"
+  },
+  "sessionAttributes": {}
+}

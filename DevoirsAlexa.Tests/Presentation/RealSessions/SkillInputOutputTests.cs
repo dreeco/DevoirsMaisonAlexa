@@ -30,6 +30,7 @@ public class SkillInputOutputTests
   [InlineData("HelpExercice")]
   [InlineData("HelpNbExercice")]
   [InlineData("HelpStartExerciceAddition", true)]
+  [InlineData("StopExercice", true)]
   public async Task ShouldProvideExpectedResponse_WhenCallingFunction_WithSpecificRequest(string fileName, bool hasUnpredictableElements = false)
   {
     var skillRequest = ReadRequestFile(fileName);
