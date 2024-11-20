@@ -4,8 +4,6 @@ using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Alexa.NET.Response.Directive;
 using Amazon.Lambda.Core;
-using Amazon.Lambda.RuntimeSupport;
-using Amazon.Lambda.Serialization.SystemTextJson;
 using DevoirsAlexa.Application.Enums;
 using DevoirsAlexa.Application.Handlers;
 using DevoirsAlexa.Infrastructure;
@@ -30,16 +28,24 @@ public class Function
   /// </summary>
   /// <exclude/>
 
-  private static Function? function;
+  //private static Function? function;
 
-  [ExcludeFromCodeCoverage]
-  private static async Task Main()
-  {
-    function ??= new Function();
-    await LambdaBootstrapBuilder.Create<SkillRequest>(async (skillRequest, lambdaContext) => { await function.FunctionHandler(skillRequest, lambdaContext); }, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
-        .Build()
-        .RunAsync();
-  }
+  //[ExcludeFromCodeCoverage]
+  //private static async Task Main()
+  //{
+  //  //function ??= new Function();
+  //  //await LambdaBootstrapBuilder.Create<SkillRequest>(async (skillRequest, lambdaContext) => { await function.FunctionHandler(skillRequest, lambdaContext); }, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+  //  //    .Build()
+  //  //    .RunAsync();
+
+  //  await LambdaBootstrapBuilder.Create(async (SkillRequest request, ILambdaContext context) =>
+  //  {
+  //    var f = new Function();
+  //    await f.FunctionHandler(request, context);
+  //  }, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+  //      .Build()
+  //      .RunAsync();
+  //}
 
 
   internal const string StopIntent = "AMAZON.StopIntent";

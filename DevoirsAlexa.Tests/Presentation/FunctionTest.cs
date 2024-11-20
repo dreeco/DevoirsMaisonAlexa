@@ -6,29 +6,28 @@ using Alexa.NET.Request.Type;
 using DevoirsAlexa.Presentation;
 using DevoirsAlexa.Application.Handlers;
 using Alexa.NET.Request;
-using DevoirsAlexa.Domain.Enums;
-using static System.Reflection.Metadata.BlobBuilder;
-using Xunit.Abstractions;
 
 namespace DevoirsAlexa.Tests.Presentation;
 
 public class FunctionTest : BaseFunctionTest
 {
+  private const string AskForExercice = "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? " + RequestsHandler.Exercises;
+
   [Theory]
   [InlineData("", "", "Quel est ton prénom ?")]
   [InlineData("", "FirstName=Lucie", "en quelle classe es tu ?")]
-  [InlineData("", "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData("", "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("", "FirstName=Lucie,Level=CE2", AskForExercice)]
+  [InlineData("", "FirstName=Lucie,Level=CE1,LastAnswer=20", AskForExercice)]
   [InlineData("", "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
   [InlineData("SetFirstName", "", "Quel est ton prénom ?")]
   [InlineData("SetFirstName", "FirstName=Lucie", "en quelle classe es tu ?")]
-  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE2", AskForExercice)]
+  [InlineData("SetFirstName", "FirstName=Lucie,Level=CE1,LastAnswer=20", AskForExercice)]
   [InlineData("SetFirstName", "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
   [InlineData(null, "", "Quel est ton prénom ?")]
   [InlineData(null, "FirstName=Lucie", "en quelle classe es tu ?")]
-  [InlineData(null, "FirstName=Lucie,Level=CE2", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
-  [InlineData(null, "FirstName=Lucie,Level=CE1,LastAnswer=20", "Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ?")]
+  [InlineData(null, "FirstName=Lucie,Level=CE2", AskForExercice)]
+  [InlineData(null, "FirstName=Lucie,Level=CE1,LastAnswer=20", AskForExercice)]
   [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Additions", "Sur combien de questions souhaites-tu t'entraîner ?")]
   [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Multiplications", "Sur combien de questions souhaites-tu t'entraîner ?")]
   [InlineData(null, "FirstName=Lucie,Level=CE2,Exercice=Substraction", "Sur combien de questions souhaites-tu t'entraîner ?")]
@@ -54,7 +53,7 @@ public class FunctionTest : BaseFunctionTest
   [Theory]
   [InlineData("", "", "", "Quel est ton prénom ?", "SetFirstName")]
   [InlineData("", "SetFirstName", "FirstName=Lucie", "en quelle classe es tu ?", "SetLevel")]
-  [InlineData("FirstName=Lucie", "SetLevel", "Level=CP", "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ?", "SetExercice")]
+  [InlineData("FirstName=Lucie", "SetLevel", "Level=CP", AskForExercice, "SetExercice")]
   [InlineData("FirstName=Lucie,Level=CE1", "SetExercice", "Exercice=Additions", "OK ! Et sur combien de questions souhaites-tu t'entraîner ?", "SetNbExercice")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions", "SetNbExercice", "NbExercice=5", null, "SetAnswer")]
   [InlineData("FirstName=Lucie,Level=CE1,Exercice=Additions,NbExercice=3", "SetAnswer", "LastAnswer=*", null, "SetAnswer")]

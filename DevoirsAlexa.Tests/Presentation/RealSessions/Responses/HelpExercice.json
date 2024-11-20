@@ -3,7 +3,7 @@
   "response": {
     "outputSpeech": {
       "type": "PlainText",
-      "text": "Je souhaite savoir quel exercice tu souhaites faire. Dis moi : \"Additions\" si tu veux des calculs d'additions, je comprends également \"Multiplications\" et \"Soustractions\""
+      "text": "Je souhaite savoir quel exercice tu souhaites faire. Si tu veux réviser tes tables tu peux me demander \"Additions\" , \"Multiplications\" ou \"Soustractions\". Je peux aussi te proposer un jeu de comparaison de nombres ou de mots, pour cela dit \"tri de nombres\" ou \"tri lexical\"."
     },
     "directives": [
       {
@@ -22,7 +22,7 @@
     "reprompt": {
       "outputSpeech": {
         "type": "PlainText",
-        "text": "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions."
+        "text": "Je n'ai pas compris le titre de cet exercice. Voici les exercices disponibles : additions, multiplications, soustractions, tri de nombres, tri lexical."
       }
     },
     "shouldEndSession": false,

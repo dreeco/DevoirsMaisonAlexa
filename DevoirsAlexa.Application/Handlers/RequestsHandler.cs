@@ -14,6 +14,9 @@ namespace DevoirsAlexa.Application.Handlers;
 /// </summary>
 public class RequestsHandler
 {
+  internal const string Exercises = "Voici les exercices disponibles : additions, multiplications, soustractions, tri de nombres, tri lexical.";
+  internal const string ExerciceReprompt = "Je n'ai pas compris le titre de cet exercice. " + Exercises;
+
   /// <summary>
   /// Binds handlers to combinaison of HomeworkStep and RequestType
   /// </summary>
@@ -97,14 +100,14 @@ public class RequestsHandler
 
   private void AskForExerciceType(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?");
-    reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
+    prompt.AppendSimpleText("Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? " + Exercises);
+    reprompt.AppendSimpleText(ExerciceReprompt);
   }
 
   private void HelpForExerciceType(ISentenceBuilder prompt, ISentenceBuilder reprompt)
   {
-    prompt.AppendSimpleText("Je souhaite savoir quel exercice tu souhaites faire. Dis moi : \"Additions\" si tu veux des calculs d'additions, je comprends également \"Multiplications\" et \"Soustractions\"");
-    reprompt.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
+    prompt.AppendSimpleText("Je souhaite savoir quel exercice tu souhaites faire. Si tu veux réviser tes tables tu peux me demander \"Additions\" , \"Multiplications\" ou \"Soustractions\". Je peux aussi te proposer un jeu de comparaison de nombres ou de mots, pour cela dit \"tri de nombres\" ou \"tri lexical\".");
+    reprompt.AppendSimpleText(ExerciceReprompt);
   }
 
 
@@ -142,7 +145,10 @@ public class RequestsHandler
     var result = Runner.ValidateAnswerAndGetNext(false);
     GetPromptForQuestionResult(prompt, result);
 
-    GetRepromptForQuestionResult(reprompt, result.Question?.Text ?? string.Empty);
+    if (result.Exercice?.TotalQuestions > 0)
+      reprompt.AppendSimpleText(ExerciceReprompt);
+    else
+      GetRepromptForQuestionResult(reprompt, result.Question?.Text ?? string.Empty);
 
     Session.LastQuestionType = result.Question?.Type;
   }
@@ -181,7 +187,6 @@ public class RequestsHandler
     sentenceBuilder.AppendPause(TimeSpan.FromMilliseconds(500));
     sentenceBuilder.AppendSimpleText($"Peux tu répéter ? La question était : {questionText}");
 
-    sentenceBuilder.AppendSimpleText("Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions.");
   }
   private static void GetPromptForQuestionResult(ISentenceBuilder sentenceBuilder, AnswerResult result)
   {

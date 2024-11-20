@@ -16,8 +16,6 @@ namespace DevoirsAlexa.Domain.Exercises.LanguageExercices
     private const char Before = '<';
     private static string BeforeString => Before.ToString();
 
-    private static char[] AcceptedOperations = ['<', '>'];
-
     /// <inheritdoc/>
     public HomeworkExercisesTypes Type => HomeworkExercisesTypes.SortWords;
 
@@ -59,13 +57,14 @@ namespace DevoirsAlexa.Domain.Exercises.LanguageExercices
     /// <inheritdoc/>
     public AnswerValidation ValidateAnswer(string questionKey, string answer)
     {
-      var operationChar = questionKey.FirstOrDefault(c => AcceptedOperations.Contains(c));
-      var strs = questionKey.Split(operationChar);
+      var operationChar = GetOperationChar(questionKey);
+
+      var words = questionKey.Split(operationChar);
       var answeredTrue = answer.ParseBooleanAnswer();
       bool? shouldHaveAnsweredTrue = operationChar switch
       {
-        After => strs.First().CompareTo(strs.Last()) > 0,
-        Before => strs.First().CompareTo(strs.Last()) < 0,
+        After => words.First().CompareTo(words.Last()) > 0,
+        Before => words.First().CompareTo(words.Last()) < 0,
         _ => null
       };
 

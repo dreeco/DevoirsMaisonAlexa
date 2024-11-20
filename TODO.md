@@ -5,6 +5,7 @@ The list of future features to implement and technical modifications to add
 - [ ] Dependency Injection
 - [ ] Lexical Comparisons
 - [ ] Fun way of making additions / substractions / multiplications
+- [ ] Add exercises dynamically
 - [ ] Séparation text building from exercice to application ?
   - [ ] Have all text in resources files
   - [ ] Have all text in application layer

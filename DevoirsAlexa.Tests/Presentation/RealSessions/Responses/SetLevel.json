@@ -3,7 +3,7 @@
   "response": {
     "outputSpeech": {
       "type": "PlainText",
-      "text": "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Additions ? Multiplications ? Soustractions ?"
+      "text": "Très bien ! Quel exercice souhaites-tu faire aujourd'hui ? Voici les exercices disponibles : additions, multiplications, soustractions, tri de nombres, tri lexical."
     },
     "directives": [
       {
@@ -22,7 +22,7 @@
     "reprompt": {
       "outputSpeech": {
         "type": "PlainText",
-        "text": "Je n'ai pas compris le titre de cet exercice. Tu peux me demander : additions, multiplications ou soustractions."
+        "text": "Je n'ai pas compris le titre de cet exercice. Voici les exercices disponibles : additions, multiplications, soustractions, tri de nombres, tri lexical."
       }
     },
     "shouldEndSession": false,
