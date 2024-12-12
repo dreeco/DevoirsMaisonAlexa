@@ -27,7 +27,7 @@ public class AdditionsExercises : BaseTableExercises, IExerciceQuestionsRunner
       { Levels.CE1, (20, 100)},
       { Levels.CE2, (30, 1000)},
       { Levels.CM1, (100, 10000)},
-      { Levels.CM2, (1000, 100000)},
+      { Levels.CM2, (1000, 87687686)},
     };
 
     ExercisesRulesByLevel = LevelsBoundaries.ToDictionary(l => l.Key, l => GetAdditionsRules(LevelsBoundaries[l.Key]));
